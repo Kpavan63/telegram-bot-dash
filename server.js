@@ -631,44 +631,114 @@ app.get('/product/:id', async (req, res) => {
         <title>${product.name}</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
+          /* Background Animation */
+          @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+
           body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBackground 15s ease infinite;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
           }
-          h1 {
-            color: #333;
-            animation: fadeIn 2s;
+
+          .product-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
           }
+
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
           .product-image {
             max-width: 100%;
-            height: auto;
             border-radius: 10px;
-            animation: slideIn 1s;
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-in-out;
           }
-          .product-details {
-            margin-top: 20px;
-            animation: fadeIn 3s;
-          }
-          @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-          }
+
           @keyframes slideIn {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(0); }
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+
+          .product-details {
+            animation: fadeIn 1.5s ease-in-out;
+          }
+
+          .product-details h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #333;
+          }
+
+          .product-details p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+          }
+
+          .product-details .price {
+            font-size: 1.5rem;
+            color: #e73c7e;
+            font-weight: bold;
+          }
+
+          .product-details .mrp {
+            font-size: 1.2rem;
+            color: #777;
+            text-decoration: line-through;
+          }
+
+          .product-details .rating {
+            font-size: 1.2rem;
+            color: #ffc107;
+          }
+
+          .btn-order {
+            background: linear-gradient(45deg, #e73c7e, #23a6d5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+
+          .btn-order:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
           }
         </style>
       </head>
       <body>
-        <div class="container">
-          <h1>${product.name}</h1>
+        <div class="product-card">
           <img src="${product.image}" alt="${product.name}" class="product-image">
           <div class="product-details">
-            <p><strong>Description:</strong> ${product.description}</p>
-            <p><strong>Price:</strong> $${product.price.toFixed(2)}</p>
-            <p><strong>MRP:</strong> <s>$${product.mrp.toFixed(2)}</s></p>
-            <p><strong>Rating:</strong> ${product.rating} ⭐</p>
-            <a href="${product.buyLink}" class="btn btn-primary">Order Now</a>
+            <h1>${product.name}</h1>
+            <p>${product.description}</p>
+            <p class="price">💰 Price: $${product.price.toFixed(2)}</p>
+            <p class="mrp">💵 MRP: <s>$${product.mrp.toFixed(2)}</s></p>
+            <p class="rating">⭐ Rating: ${product.rating} ⭐</p>
+            <a href="${product.buyLink}" class="btn-order">Order Now</a>
           </div>
         </div>
       </body>
@@ -677,6 +747,7 @@ app.get('/product/:id', async (req, res) => {
 
     res.send(productPage);
   } catch (error) {
+    console.error('Error loading product details:', error);
     res.status(500).send('Error loading product details');
   }
 });
