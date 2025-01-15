@@ -20,6 +20,23 @@ app.use(express.static('public'));
 const productsFile = path.join(__dirname, 'products.json');
 const analyticsFile = path.join(__dirname, 'analytics.json');
 
+// Webhook URL (replace with your Render URL)
+const webhookUrl = `${process.env.RENDER_EXTERNAL_URL}/webhook`;
+
+// Set webhook
+bot.setWebHook(webhookUrl)
+  .then(() => console.log('Webhook set successfully'))
+  .catch(err => console.error('Error setting webhook:', err));
+
+app.use(express.json());
+app.use(express.static('public'));
+
+// Webhook endpoint
+app.post('/webhook', (req, res) => {
+  bot.processUpdate(req.body); // Process the update
+  res.sendStatus(200); // Acknowledge receipt
+});
+
 // Initialize analytics data
 async function initializeAnalytics() {
   try {
