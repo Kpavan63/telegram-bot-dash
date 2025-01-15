@@ -1,4 +1,4 @@
-this is server.js code
+
 import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs/promises';
