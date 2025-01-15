@@ -29,6 +29,10 @@ app.post('/webhook', (req, res) => {
   bot.processUpdate(req.body); // Process the update
   res.sendStatus(200); // Acknowledge receipt
 });
+// Root endpoint for UptimeRobot
+app.get('/', (req, res) => {
+  res.send('Bot is running!');
+});
 
 // Define file paths
 const productsFile = path.join(__dirname, 'products.json');
