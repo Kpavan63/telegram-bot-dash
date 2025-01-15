@@ -271,150 +271,201 @@ app.get('/admin', (req, res) => {
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
       <style>
-  /* Body Styling with Gradient Animation */
+       /* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientBackground 15s ease infinite;
+  min-height: 100vh;
+  color: #333;
+}
+
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+h1, h2 {
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #555;
+}
+
+.card p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Query Status Table */
+.query-status {
+  margin-bottom: 30px;
+}
+
+.table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #2c3e50;
+  color: #fff;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.status.pending {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.status.resolved {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+/* Chat Window */
+.chat-window {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message {
+  margin-bottom: 10px;
+}
+
+.chat-message.admin {
+  text-align: right;
+  color: #007bff;
+}
+
+/* Product Views Table */
+.product-views {
+  margin-bottom: 30px;
+}
+
+/* Realtime Traffic Chart */
+.traffic-chart {
+  margin-bottom: 30px;
+}
+
+canvas {
+  max-width: 100%;
+  height: 300px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientBackground 15s ease infinite;
-    min-height: 100vh;
-    padding: 20px;
+    padding: 10px;
   }
 
-  /* Gradient Background Animation */
-  @keyframes gradientBackground {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  /* Heading Styling */
   h1 {
-    color: #fff; /* White text for better contrast */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow for better readability */
+    font-size: 24px;
   }
 
-  /* Card Styling */
+  h2 {
+    font-size: 20px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+
   .card {
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
   }
 
-  /* Table Wrapper for Scrollable Table */
   .table-wrapper {
-    max-height: 300px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
   }
 
-  /* Table Styling */
-  .table {
-    margin-top: 20px;
-    width: 100%;
-  }
-
-  /* Table Header Sticky */
-  .table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa; /* Match Bootstrap's table header color */
-    z-index: 1;
-  }
-
-  /* Table Body Scrollable */
-  .table tbody {
-    display: block;
-  }
-
-  /* Table Row Styling */
-  .table tbody tr {
-    display: table;
-    width: 100%;
-  }
-
-  /* Badge Styling */
-  .badge {
-    font-size: 14px;
-  }
-
-  /* Eye Icon Styling */
-  .fa-eye {
-    color: #007bff;
-  }
-
-  /* Chart Styling */
-  canvas {
-    max-width: 100%;
-    height: 300px;
-    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  /* Chat Window Styling */
   .chat-window {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-top: 20px;
-    max-height: 300px;
-    overflow-y: auto;
-    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
   }
 
-  /* Chat Message Styling */
-  .chat-message {
-    margin-bottom: 10px;
+  canvas {
+    height: 200px;
   }
-
-  /* Admin Chat Message Styling */
-  .chat-message.admin {
-    text-align: right;
-    color: #007bff;
-  }
-
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    body {
-      padding: 10px;
-    }
-
-    h1 {
-      font-size: 24px;
-    }
-
-    .card {
-      margin-bottom: 15px;
-    }
-
-    .table-wrapper {
-      max-height: 200px; /* Smaller height for mobile */
-    }
-
-    .chat-window {
-      max-height: 200px; /* Smaller height for mobile */
-    }
-
-    canvas {
-      height: 200px; /* Smaller height for mobile */
-    }
-  }
+}
 </style>
 
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
