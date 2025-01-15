@@ -1,0 +1,57 @@
+[
+  {
+    "id": 1,
+    "name": "Wireless Earbuds",
+    "description": "High-quality wireless earbuds with noise cancellation.",
+    "price": 99.99,
+    "mrp": 129.99,
+    "rating": 4.5,
+    "image": "https://example.com/images/earbuds.jpg",
+    "buyLink": "https://example.com/buy/earbuds",
+    "keywords": ["earbuds", "wireless", "audio"]
+  },
+  {
+    "id": 2,
+    "name": "Smartwatch",
+    "description": "A sleek smartwatch with fitness tracking and heart rate monitoring.",
+    "price": 199.99,
+    "mrp": 249.99,
+    "rating": 4.7,
+    "image": "https://example.com/images/smartwatch.jpg",
+    "buyLink": "https://example.com/buy/smartwatch",
+    "keywords": ["smartwatch", "fitness", "wearable"]
+  },
+  {
+    "id": 3,
+    "name": "Bluetooth Speaker",
+    "description": "Portable Bluetooth speaker with 20-hour battery life.",
+    "price": 59.99,
+    "mrp": 79.99,
+    "rating": 4.3,
+    "image": "https://example.com/images/speaker.jpg",
+    "buyLink": "https://example.com/buy/speaker",
+    "keywords": ["speaker", "bluetooth", "audio"]
+  },
+  {
+    "id": 4,
+    "name": "Gaming Mouse",
+    "description": "High-precision gaming mouse with customizable RGB lighting.",
+    "price": 49.99,
+    "mrp": 69.99,
+    "rating": 4.6,
+    "image": "https://example.com/images/gaming-mouse.jpg",
+    "buyLink": "https://example.com/buy/gaming-mouse",
+    "keywords": ["mouse", "gaming", "accessories"]
+  },
+  {
+    "id": 5,
+    "name": "Laptop Backpack",
+    "description": "Durable laptop backpack with anti-theft design.",
+    "price": 39.99,
+    "mrp": 59.99,
+    "rating": 4.4,
+    "image": "https://example.com/images/backpack.jpg",
+    "buyLink": "https://example.com/buy/backpack",
+    "keywords": ["backpack", "laptop", "accessories"]
+  }
+]
