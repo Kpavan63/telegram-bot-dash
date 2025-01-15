@@ -6,7 +6,7 @@
     "price": 99.99,
     "mrp": 129.99,
     "rating": 4.5,
-    "image": "https://example.com/images/earbuds.jpg",
+    "image": "https://images.unsplash.com/photo-1606220945771-2094b9f1bcd7",
     "buyLink": "https://example.com/buy/earbuds",
     "keywords": ["earbuds", "wireless", "audio"]
   },
@@ -17,7 +17,7 @@
     "price": 199.99,
     "mrp": 249.99,
     "rating": 4.7,
-    "image": "https://example.com/images/smartwatch.jpg",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
     "buyLink": "https://example.com/buy/smartwatch",
     "keywords": ["smartwatch", "fitness", "wearable"]
   },
