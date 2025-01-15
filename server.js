@@ -145,7 +145,7 @@ bot.on('callback_query', async (callbackQuery) => {
     `;
 
     // Use Glitch URL here
-    const glitchUrl = 'https://your-project-name.glitch.me';
+    const glitchUrl = 'https://telegram-bot-dash.onrender.com';
     const inlineKeyboard = {
       inline_keyboard: [
         [{ text: 'View Product', url: `${glitchUrl}/product/${product.id}` }],
