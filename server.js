@@ -423,6 +423,14 @@ h1, h2 {
   margin-bottom: 30px;
 }
 
+#realtimeTrafficChart {
+  max-width: 100%;
+  height: 300px; /* Fixed height for desktop */
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 canvas {
   max-width: 100%;
   height: 300px;
@@ -464,6 +472,9 @@ canvas {
 
   canvas {
     height: 200px;
+  }
+  #realtimeTrafficChart {
+    height: 200px; /* Smaller height for mobile */
   }
 }
 </style>
