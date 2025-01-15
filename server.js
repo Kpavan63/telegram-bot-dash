@@ -30,6 +30,10 @@ app.post('/webhook', (req, res) => {
   res.sendStatus(200); // Acknowledge receipt
 });
 
+// Define file paths
+const productsFile = path.join(__dirname, 'products.json');
+const analyticsFile = path.join(__dirname, 'analytics.json');
+
 // Initialize analytics data
 async function initializeAnalytics() {
   try {
