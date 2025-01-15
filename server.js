@@ -132,20 +132,32 @@ bot.on('message', async (msg) => {
   }
 });
 
+      
 bot.on('callback_query', async (callbackQuery) => {
   const chatId = callbackQuery.message.chat.id;
   const productId = callbackQuery.data;
 
-  await trackProductView(productId);
+  console.log(`Product ID selected: ${productId}`); // Log the selected product ID
 
   try {
+    // Track product view
+    await trackProductView(productId);
+
+    // Read products from the JSON file
     const products = await readProducts();
+    console.log(`All products: ${JSON.stringify(products)}`); // Log all products
+
+    // Find the selected product by ID
     const product = products.find(p => p.id.toString() === productId);
     if (!product) {
+      console.log(`Product not found for ID: ${productId}`); // Log if product is not found
       bot.sendMessage(chatId, 'Product not found.');
       return;
     }
 
+    console.log(`Product found: ${JSON.stringify(product)}`); // Log the found product
+
+    // Create the HTML message for the product
     const htmlMessage = `
       <b>🎧 ${product.name}</b>
       
@@ -156,6 +168,7 @@ bot.on('callback_query', async (callbackQuery) => {
       <b>⭐ Rating:</b> ${product.rating} ⭐
     `;
 
+    // Create the inline keyboard with buttons
     const inlineKeyboard = {
       inline_keyboard: [
         [{ text: 'View Product', url: `${process.env.RENDER_EXTERNAL_URL}/product/${product.id}` }],
@@ -163,21 +176,23 @@ bot.on('callback_query', async (callbackQuery) => {
       ]
     };
 
-    // Send photo with caption and inline keyboard
+    // Send the product details to the user
     if (product.image) {
+      // Send the product image with a caption
       await bot.sendPhoto(chatId, product.image, {
         caption: htmlMessage,
         parse_mode: 'HTML',
         reply_markup: inlineKeyboard
       });
     } else {
+      // If no image is available, send a text message
       await bot.sendMessage(chatId, htmlMessage, {
         parse_mode: 'HTML',
         reply_markup: inlineKeyboard
       });
     }
   } catch (error) {
-    console.error('Error fetching product details:', error);
+    console.error('Error in callback_query handler:', error); // Log the full error
     bot.sendMessage(chatId, 'An error occurred while fetching product details. Please try again later.');
   }
 });
