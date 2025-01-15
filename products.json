@@ -6,7 +6,7 @@
     "price": 99.99,
     "mrp": 129.99,
     "rating": 4.5,
-    "image": "https://images.unsplash.com/photo-1606220945771-2094b9f1bcd7",
+    "image": "https://img.freepik.com/free-photo/wireless-headphones_144627-10866.jpg",
     "buyLink": "https://example.com/buy/earbuds",
     "keywords": ["earbuds", "wireless", "audio"]
   },
@@ -17,7 +17,7 @@
     "price": 199.99,
     "mrp": 249.99,
     "rating": 4.7,
-    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30",
+    "image": "https://img.freepik.com/free-photo/smart-watch-digital-device_53876-96854.jpg",
     "buyLink": "https://example.com/buy/smartwatch",
     "keywords": ["smartwatch", "fitness", "wearable"]
   },
@@ -28,7 +28,7 @@
     "price": 59.99,
     "mrp": 79.99,
     "rating": 4.3,
-    "image": "https://example.com/images/speaker.jpg",
+    "image": "https://img.freepik.com/free-photo/portable-speaker_53876-96841.jpg",
     "buyLink": "https://example.com/buy/speaker",
     "keywords": ["speaker", "bluetooth", "audio"]
   },
@@ -39,7 +39,7 @@
     "price": 49.99,
     "mrp": 69.99,
     "rating": 4.6,
-    "image": "https://example.com/images/gaming-mouse.jpg",
+    "image": "https://img.freepik.com/free-photo/gaming-mouse_53876-96847.jpg",
     "buyLink": "https://example.com/buy/gaming-mouse",
     "keywords": ["mouse", "gaming", "accessories"]
   },
@@ -50,7 +50,7 @@
     "price": 39.99,
     "mrp": 59.99,
     "rating": 4.4,
-    "image": "https://example.com/images/backpack.jpg",
+    "image": "https://img.freepik.com/free-photo/laptop-backpack_53876-96848.jpg",
     "buyLink": "https://example.com/buy/backpack",
     "keywords": ["backpack", "laptop", "accessories"]
   }
