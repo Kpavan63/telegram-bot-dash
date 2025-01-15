@@ -1,4 +1,3 @@
-
 import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs/promises';
@@ -12,13 +11,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
-
-app.use(express.json());
-app.use(express.static('public'));
-
-const productsFile = path.join(__dirname, 'products.json');
-const analyticsFile = path.join(__dirname, 'analytics.json');
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 
 // Webhook URL (replace with your Render URL)
 const webhookUrl = `${process.env.RENDER_EXTERNAL_URL}/webhook`;
@@ -128,7 +121,7 @@ bot.on('message', async (msg) => {
     }
 
     const keyboard = matchedProducts.map(product => [{ text: product.name, callback_data: product.id.toString() }]);
-    bot.sendMessage(chatId, 'Select a product:', { reply_markup: JSON.stringify({ inline_keyboard: keyboard }) });
+    bot.sendMessage(chatId, 'Select a product:', { reply_markup: { inline_keyboard: keyboard } });
   } catch (error) {
     console.error('Error searching products:', error);
     bot.sendMessage(chatId, 'An error occurred while searching for products. Please try again later.');
@@ -157,24 +150,28 @@ bot.on('callback_query', async (callbackQuery) => {
       <b>💰 Price:</b> $${product.price.toFixed(2)}
       <b>💵 MRP:</b> <s>$${product.mrp.toFixed(2)}</s>
       <b>⭐ Rating:</b> ${product.rating} ⭐
-      
-      <a href="${product.image}">&#8205;</a>
     `;
 
-    // Use Glitch URL here
-    const glitchUrl = 'https://telegram-bot-dash.onrender.com';
     const inlineKeyboard = {
       inline_keyboard: [
-        [{ text: 'View Product', url: `${glitchUrl}/product/${product.id}` }],
+        [{ text: 'View Product', url: `${process.env.RENDER_EXTERNAL_URL}/product/${product.id}` }],
         [{ text: 'Order Now', url: product.buyLink }]
       ]
     };
 
-    bot.sendPhoto(chatId, product.image, {
-      caption: htmlMessage,
-      parse_mode: 'HTML',
-      reply_markup: JSON.stringify(inlineKeyboard)
-    });
+    // Send photo with caption and inline keyboard
+    if (product.image) {
+      await bot.sendPhoto(chatId, product.image, {
+        caption: htmlMessage,
+        parse_mode: 'HTML',
+        reply_markup: inlineKeyboard
+      });
+    } else {
+      await bot.sendMessage(chatId, htmlMessage, {
+        parse_mode: 'HTML',
+        reply_markup: inlineKeyboard
+      });
+    }
   } catch (error) {
     console.error('Error fetching product details:', error);
     bot.sendMessage(chatId, 'An error occurred while fetching product details. Please try again later.');
