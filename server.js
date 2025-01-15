@@ -271,66 +271,151 @@ app.get('/admin', (req, res) => {
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
       <style>
-        body {
-          font-family: Arial, sans-serif;
-          margin: 20px;
-        }
-        h1 {
-          color: #333;
-        }
-        .card {
-          margin-bottom: 20px;
-        }
-        .table {
-          margin-top: 20px;
-        }
-        .badge {
-          font-size: 14px;
-        }
-        .fa-eye {
-          color: #007bff;
-        }
-        canvas {
-          max-width: 100%;
-          height: 300px;
-        }
-        .chat-window {
-          border: 1px solid #ccc;
-          padding: 10px;
-          margin-top: 20px;
-          max-height: 300px;
-          overflow-y: auto;
-        }
-        .chat-message {
-          margin-bottom: 10px;
-        }
-        .chat-message.admin {
-          text-align: right;
-          color: #007bff;
-        }
-        .table-wrapper {
+  /* Body Styling with Gradient Animation */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientBackground 15s ease infinite;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* Gradient Background Animation */
+  @keyframes gradientBackground {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Heading Styling */
+  h1 {
+    color: #fff; /* White text for better contrast */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add shadow for better readability */
+  }
+
+  /* Card Styling */
+  .card {
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Table Wrapper for Scrollable Table */
+  .table-wrapper {
     max-height: 300px;
     overflow-y: auto;
     border: 1px solid #ddd;
     margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
+  /* Table Styling */
+  .table {
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  /* Table Header Sticky */
   .table thead th {
     position: sticky;
     top: 0;
-    background-color: #f8f9fa;
+    background-color: #f8f9fa; /* Match Bootstrap's table header color */
     z-index: 1;
   }
 
+  /* Table Body Scrollable */
   .table tbody {
     display: block;
   }
 
+  /* Table Row Styling */
   .table tbody tr {
     display: table;
     width: 100%;
   }
-      </style>
+
+  /* Badge Styling */
+  .badge {
+    font-size: 14px;
+  }
+
+  /* Eye Icon Styling */
+  .fa-eye {
+    color: #007bff;
+  }
+
+  /* Chart Styling */
+  canvas {
+    max-width: 100%;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Chat Window Styling */
+  .chat-window {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Chat Message Styling */
+  .chat-message {
+    margin-bottom: 10px;
+  }
+
+  /* Admin Chat Message Styling */
+  .chat-message.admin {
+    text-align: right;
+    color: #007bff;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    .card {
+      margin-bottom: 15px;
+    }
+
+    .table-wrapper {
+      max-height: 200px; /* Smaller height for mobile */
+    }
+
+    .chat-window {
+      max-height: 200px; /* Smaller height for mobile */
+    }
+
+    canvas {
+      height: 200px; /* Smaller height for mobile */
+    }
+  }
+</style>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
