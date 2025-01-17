@@ -53,5 +53,20 @@
     "image": "https://img.freepik.com/free-photo/laptop-backpack_53876-96848.jpg",
     "buyLink": "https://example.com/buy/backpack",
     "keywords": ["backpack", "laptop", "accessories"]
+  },
+  {
+  "id": 6,
+  "name": "Mobile Phone Charging Stand, Multi-Functional Storage Holder",
+  "description": "Tensea Mobile Phone Charging Stand, Multi-Functional Storage Holder, Bedside Fixed Rack, Bedroom, Office Accessories, Acrylonitrile Butadiene Styrene, White 01, Portable Electronic Devices",
+  "price": 94,
+  "mrp": 324,
+  "rating": 5,
+  "image": "https://m.media-amazon.com/images/I/61jVUB4y7pL._AC_SL1500_.jpg",
+  "buyLink": "https://amzn.to/4hgWJrd",
+  "keywords": [
+    "Mobile",
+    "charger",
+    "stand"
+  ]
   }
 ]
