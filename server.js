@@ -921,11 +921,3 @@ app.listen(PORT, () => {
 });
 
 console.log('Bot is running...');
-
-admin:358 Error fetching analytics: TypeError: Reduce of empty array with no initial value
-    at Array.reduce (<anonymous>)
-    at fetchAnalytics (admin:305:77)
-fetchAnalytics @ admin:358Understand this errorAI
-16admin:358 Error fetching analytics: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'realtimeTrafficChart' can be reused.
-    at new An (chart.js:19:89869)
-    at fetchAnalytics (admin:337:34)
