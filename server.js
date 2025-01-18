@@ -292,6 +292,25 @@ app.get('/admin', (req, res) => {
         .badge.bg-success {
           background-color: #28a745;
         }
+        .chat-window {
+          height: 300px;
+          overflow-y: auto;
+          border: 1px solid #ddd;
+          padding: 10px;
+          border-radius: 10px;
+          background: #fff;
+        }
+        .chat-message {
+          margin-bottom: 10px;
+        }
+        .chat-message.admin {
+          text-align: right;
+          color: #007bff;
+        }
+        .chat-message.user {
+          text-align: left;
+          color: #333;
+        }
       </style>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -345,6 +364,16 @@ app.get('/admin', (req, res) => {
           </tbody>
         </table>
 
+        <!-- Chat Window -->
+        <h2 class="mt-4">Chat with User</h2>
+        <div class="chat-window" id="chatWindow">
+          <!-- Chat messages will be displayed here -->
+        </div>
+        <div class="input-group mt-3">
+          <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
+          <button class="btn btn-primary" id="sendMessageBtn">Send</button>
+        </div>
+
         <!-- Product Views -->
         <h2 class="mt-4">Product Views</h2>
         <table class="table table-bordered">
@@ -368,6 +397,7 @@ app.get('/admin', (req, res) => {
 
       <script>
         let trafficChart = null; // Store the chart instance
+        let currentChatId = null; // Store the current chat ID
 
         async function fetchAnalytics() {
           try {
@@ -395,9 +425,9 @@ app.get('/admin', (req, res) => {
             const queryTable = document.getElementById('queryTable');
             queryTable.innerHTML = analytics.queries.map(query => `
               <tr>
-                <td>\${query.chatId}</td>
-                <td>\${query.query}</td>
-                <td>\${new Date(query.timestamp).toLocaleString()}</td>
+                <td>${query.chatId}</td>
+                <td>${query.query}</td>
+                <td>${new Date(query.timestamp).toLocaleString()}</td>
                 <td><span class="badge ${query.status === 'Pending' ? 'bg-warning' : 'bg-success'}">${query.status}</span></td>
                 <td><button class="btn btn-sm btn-primary" onclick="openChat(${query.chatId})">Chat</button></td>
               </tr>
@@ -448,8 +478,27 @@ app.get('/admin', (req, res) => {
 
         // Open chat with a user
         function openChat(chatId) {
-          alert(`Chat with user ${chatId}`);
+          currentChatId = chatId;
+          document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
         }
+
+        // Send message to user
+        document.getElementById('sendMessageBtn').addEventListener('click', async () => {
+          const message = document.getElementById('chatInput').value;
+          if (!message || !currentChatId) return;
+
+          try {
+            const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
+            if (response.data.success) {
+              const chatWindow = document.getElementById('chatWindow');
+              chatWindow.innerHTML += `<div class="chat-message admin">${message}</div>`;
+              document.getElementById('chatInput').value = '';
+              chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+            }
+          } catch (error) {
+            console.error('Error sending message:', error);
+          }
+        });
 
         // Fetch analytics data every 5 seconds
         fetchAnalytics();
@@ -627,6 +676,19 @@ app.get('/product/:id', async (req, res) => {
   } catch (error) {
     console.error('Error loading product details:', error);
     res.status(500).send('Error loading product details');
+  }
+});
+
+// API to send messages to users
+app.post('/api/send-message', async (req, res) => {
+  const { chatId, message } = req.body;
+
+  try {
+    await bot.sendMessage(chatId, message);
+    res.status(200).json({ success: true, message: 'Message sent successfully!' });
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).json({ success: false, message: 'Failed to send message.' });
   }
 });
 
