@@ -575,31 +575,31 @@ canvas {
 
           // Update query status table
           const queryTable = document.getElementById('queryTable');
-          queryTable.innerHTML = analytics.queries.map(query => `
+          queryTable.innerHTML = analytics.queries.map(query => \`
             <tr>
-              <td>${query.chatId}</td>
-              <td>${query.query}</td>
-              <td>${new Date(query.timestamp).toLocaleString()}</td>
-              <td><span class="badge bg-warning">${query.status}</span></td>
-              <td><button class="btn btn-sm btn-primary" onclick="openChat(${query.chatId})">Chat</button></td>
+              <td>\${query.chatId}</td>
+              <td>\${query.query}</td>
+              <td>\${new Date(query.timestamp).toLocaleString()}</td>
+              <td><span class="badge bg-warning">\${query.status}</span></td>
+              <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
             </tr>
-          `).join('');
+          \`).join('');
 
           // Update product views table
           const productViewsTable = document.getElementById('productViewsTable');
-          productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => `
+          productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
             <tr>
-              <td>${id}</td>
-              <td><i class="fas fa-eye"></i> ${views}</td>
+              <td>\${id}</td>
+              <td><i class="fas fa-eye"></i> \${views}</td>
             </tr>
-          `).join('');
+          \`).join('');
 
           // Update realtime traffic chart
           const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
           const trafficChart = new Chart(ctx, {
             type: 'line',
             data: {
-              labels: analytics.queries.map((_, index) => `Query ${index + 1}`),
+              labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
               datasets: [{
                 label: 'Traffic',
                 data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
@@ -636,7 +636,7 @@ canvas {
           const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
           if (response.data.success) {
             const chatWindow = document.getElementById('chatWindow');
-            chatWindow.innerHTML += `<div class="chat-message admin">${message}</div>`;
+            chatWindow.innerHTML += \`<div class="chat-message admin">\${message}</div>\`;
             document.getElementById('chatInput').value = '';
           }
         } catch (error) {
