@@ -395,9 +395,9 @@ app.get('/admin', (req, res) => {
             const queryTable = document.getElementById('queryTable');
             queryTable.innerHTML = analytics.queries.map(query => `
               <tr>
-                <td>${query.chatId}</td>
-                <td>${query.query}</td>
-                <td>${new Date(query.timestamp).toLocaleString()}</td>
+                <td>\${query.chatId}</td>
+                <td>\${query.query}</td>
+                <td>\${new Date(query.timestamp).toLocaleString()}</td>
                 <td><span class="badge ${query.status === 'Pending' ? 'bg-warning' : 'bg-success'}">${query.status}</span></td>
                 <td><button class="btn btn-sm btn-primary" onclick="openChat(${query.chatId})">Chat</button></td>
               </tr>
