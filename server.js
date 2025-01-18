@@ -96,10 +96,21 @@ async function trackQuery(chatId, query) {
 // Track product views
 async function trackProductView(productId) {
   const analytics = await readAnalytics();
+
+  // Update product views
   if (!analytics.productViews[productId]) {
     analytics.productViews[productId] = 0;
   }
   analytics.productViews[productId] += 1;
+
+  // Update query status to "Success" for the corresponding product
+  analytics.queries = analytics.queries.map(query => {
+    if (query.query.includes(productId)) {
+      query.status = 'Success'; // Update status to "Success"
+    }
+    return query;
+  });
+
   await writeAnalytics(analytics);
 }
 
