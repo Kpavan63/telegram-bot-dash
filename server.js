@@ -555,85 +555,72 @@ canvas {
         let currentChatId = null;
 
         // Fetch analytics data
-        let trafficChart = null; // Global variable to store the chart instance
+        async function fetchAnalytics() {
+          try {
+            const response = await axios.get('/api/analytics');
+            const analytics = response.data;
 
-async function fetchAnalytics() {
-  try {
-    const response = await axios.get('/api/analytics');
-    const analytics = response.data;
+            // Update total products
+            const productsResponse = await axios.get('/api/products');
+            document.getElementById('totalProducts').textContent = productsResponse.data.length;
 
-    // Update total products
-    const productsResponse = await axios.get('/api/products');
-    document.getElementById('totalProducts').textContent = productsResponse.data.length;
+            // Update most viewed product
+            const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
+              analytics.productViews[a] > analytics.productViews[b] ? a : b
+            );
+            const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
+            document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
 
-    // Update most viewed product
-    const productViews = analytics.productViews;
-    let mostViewedProductId = 'N/A';
-    if (Object.keys(productViews).length > 0) {
-      mostViewedProductId = Object.keys(productViews).reduce((a, b) => 
-        productViews[a] > productViews[b] ? a : b
-      );
-    }
-    const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
-    document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
+            // Update realtime traffic
+            document.getElementById('realtimeTraffic').textContent = analytics.traffic;
 
-    // Update realtime traffic
-    document.getElementById('realtimeTraffic').textContent = analytics.traffic;
+            // Update query status table
+            const queryTable = document.getElementById('queryTable');
+            queryTable.innerHTML = analytics.queries.map(query => \`
+              <tr>
+                <td>\${query.chatId}</td>
+                <td>\${query.query}</td>
+                <td>\${new Date(query.timestamp).toLocaleString()}</td>
+                <td><span class="badge bg-warning">\${query.status}</span></td>
+                <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
+              </tr>
+            \`).join('');
 
-    // Update query status table
-    const queryTable = document.getElementById('queryTable');
-    queryTable.innerHTML = analytics.queries.map(query => \`
-  <tr>
-    <td>\${query.chatId}</td>
-    <td>\${query.query}</td>
-    <td>\${new Date(query.timestamp).toLocaleString()}</td>
-    <td><span class="badge bg-warning">\${query.status}</span></td>
-    <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
-  </tr>
-\`).join('');
+            // Update product views table
+            const productViewsTable = document.getElementById('productViewsTable');
+            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
+              <tr>
+                <td>\${id}</td>
+                <td><i class="fas fa-eye"></i> \${views}</td>
+              </tr>
+            \`).join('');
 
-    // Update product views table
-    const productViewsTable = document.getElementById('productViewsTable');
-    productViewsTable.innerHTML = Object.entries(productViews).map(([id, views]) => `
-      <tr>
-        <td>${id}</td>
-        <td><i class="fas fa-eye"></i> ${views}</td>
-      </tr>
-    `).join('');
-
-    // Update realtime traffic chart
-    const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
-
-    // Destroy existing chart instance if it exists
-    if (trafficChart) {
-      trafficChart.destroy();
-    }
-
-    // Create a new chart instance
-    trafficChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: analytics.queries.map((_, index) => `Query ${index + 1}`),
-        datasets: [{
-          label: 'Traffic',
-          data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
-          fill: false
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
+            // Update realtime traffic chart
+            const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
+            const trafficChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
+                datasets: [{
+                  label: 'Traffic',
+                  data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  fill: false
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          } catch (error) {
+            console.error('Error fetching analytics:', error);
           }
         }
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching analytics:', error);
-  }
-}
 
         // Open chat with a user
         function openChat(chatId) {
@@ -934,3 +921,11 @@ app.listen(PORT, () => {
 });
 
 console.log('Bot is running...');
+
+admin:358 Error fetching analytics: TypeError: Reduce of empty array with no initial value
+    at Array.reduce (<anonymous>)
+    at fetchAnalytics (admin:305:77)
+fetchAnalytics @ admin:358Understand this errorAI
+16admin:358 Error fetching analytics: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID 'realtimeTrafficChart' can be reused.
+    at new An (chart.js:19:89869)
+    at fetchAnalytics (admin:337:34)
