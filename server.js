@@ -576,31 +576,31 @@ canvas {
 
             // Update query status table
             const queryTable = document.getElementById('queryTable');
-            queryTable.innerHTML = analytics.queries.map(query => \`
+            queryTable.innerHTML = analytics.queries.map(query => `
               <tr>
-                <td>\${query.chatId}</td>
-                <td>\${query.query}</td>
-                <td>\${new Date(query.timestamp).toLocaleString()}</td>
-                <td><span class="badge bg-warning">\${query.status}</span></td>
-                <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
+                <td>${query.chatId}</td>
+                <td>${query.query}</td>
+                <td>${new Date(query.timestamp).toLocaleString()}</td>
+                <td><span class="badge bg-warning">${query.status}</span></td>
+                <td><button class="btn btn-sm btn-primary" onclick="openChat(${query.chatId})">Chat</button></td>
               </tr>
-            \`).join('');
+            `).join('');
 
             // Update product views table
             const productViewsTable = document.getElementById('productViewsTable');
-            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
+            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => `
               <tr>
-                <td>\${id}</td>
-                <td><i class="fas fa-eye"></i> \${views}</td>
+                <td>${id}</td>
+                <td><i class="fas fa-eye"></i> ${views}</td>
               </tr>
-            \`).join('');
+            `).join('');
 
             // Update realtime traffic chart
             const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
             const trafficChart = new Chart(ctx, {
               type: 'line',
               data: {
-                labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
+                labels: analytics.queries.map((_, index) => `Query ${index + 1}`),
                 datasets: [{
                   label: 'Traffic',
                   data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
@@ -637,7 +637,7 @@ canvas {
             const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
             if (response.data.success) {
               const chatWindow = document.getElementById('chatWindow');
-              chatWindow.innerHTML += \`<div class="chat-message admin">\${message}</div>\`;
+              chatWindow.innerHTML += `<div class="chat-message admin">${message}</div>`;
               document.getElementById('chatInput').value = '';
             }
           } catch (error) {
@@ -785,6 +785,13 @@ app.get('/product/:id', async (req, res) => {
       return;
     }
 
+    // Get real-time stock data (simulated)
+    const stockData = await getRealtimeStockData(product.id);
+
+    // Get real-time user views
+    const analytics = await readAnalytics();
+    const productViews = analytics.productViews[product.id] || 0;
+
     const productPage = `
       <!DOCTYPE html>
       <html lang="en">
@@ -832,6 +839,9 @@ app.get('/product/:id', async (req, res) => {
 
           .product-image {
             max-width: 100%;
+            height: auto;
+            max-height: 400px; /* Adjust the max-height as needed */
+            object-fit: contain;
             border-radius: 10px;
             margin-bottom: 20px;
             animation: slideIn 1s ease-in-out;
@@ -890,6 +900,12 @@ app.get('/product/:id', async (req, res) => {
             transform: scale(1.05);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
           }
+          .real-time-data {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 20px;
+          }
         </style>
       </head>
       <body>
@@ -902,8 +918,24 @@ app.get('/product/:id', async (req, res) => {
             <p class="mrp">💵 MRP: <s>$${product.mrp.toFixed(2)}</s></p>
             <p class="rating">⭐ Rating: ${product.rating} ⭐</p>
             <a href="${product.buyLink}" class="btn-order">Order Now</a>
+            <div class="real-time-data">
+              <h3>Real-time Data</h3>
+              <p>📊 Current Stock: ${stockData.stock}</p>
+              <p>👁️ Total Views: ${productViews}</p>
+            </div>
           </div>
         </div>
+        <script>
+          // Simulated real-time updates
+          setInterval(() => {
+            fetch('/api/real-time-data/${product.id}')
+              .then(response => response.json())
+              .then(data => {
+                document.querySelector('.real-time-data p:first-child').textContent = `📊 Current Stock: ${data.stock}`;
+                document.querySelector('.real-time-data p:last-child').textContent = `👁️ Total Views: ${data.views}`;
+              });
+          }, 5000);
+        </script>
       </body>
       </html>
     `;
@@ -912,6 +944,32 @@ app.get('/product/:id', async (req, res) => {
   } catch (error) {
     console.error('Error loading product details:', error);
     res.status(500).send('Error loading product details');
+  }
+});
+
+// Add the following function to simulate real-time stock data
+async function getRealtimeStockData(productId) {
+  // Simulated stock data (replace with actual data source in production)
+  return {
+    stock: Math.floor(Math.random() * 100) + 1
+  };
+}
+
+// Add a new API route for real-time data updates
+app.get('/api/real-time-data/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const stockData = await getRealtimeStockData(productId);
+    const analytics = await readAnalytics();
+    const productViews = analytics.productViews[productId] || 0;
+
+    res.json({
+      stock: stockData.stock,
+      views: productViews
+    });
+  } catch (error) {
+    console.error('Error fetching real-time data:', error);
+    res.status(500).json({ error: 'Error fetching real-time data' });
   }
 });
 
