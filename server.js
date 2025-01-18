@@ -775,6 +775,7 @@ app.get('/admin/add-product', (req, res) => {
 });
 
 // Serve Product Details Page
+// Serve Product Details Page
 app.get('/product/:id', async (req, res) => {
   try {
     const products = await readProducts();
