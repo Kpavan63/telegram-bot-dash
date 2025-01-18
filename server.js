@@ -926,16 +926,17 @@ app.get('/product/:id', async (req, res) => {
           </div>
         </div>
         <script>
-          // Simulated real-time updates
-          setInterval(() => {
-            fetch('/api/real-time-data/${product.id}')
-              .then(response => response.json())
-              .then(data => {
-                document.querySelector('.real-time-data p:first-child').textContent = `📊 Current Stock: ${data.stock}`;
-                document.querySelector('.real-time-data p:last-child').textContent = `👁️ Total Views: ${data.views}`;
-              });
-          }, 5000);
-        </script>
+  // Simulated real-time updates
+  setInterval(() => {
+    fetch('/api/real-time-data/' + product.id) // Use string concatenation
+      .then(response => response.json())
+      .then(data => {
+        // Use string concatenation instead of template literals
+        document.querySelector('.real-time-data p:first-child').textContent = '📊 Current Stock: ' + data.stock;
+        document.querySelector('.real-time-data p:last-child').textContent = '👁️ Total Views: ' + data.views;
+      });
+  }, 5000);
+</script>
       </body>
       </html>
     `;
