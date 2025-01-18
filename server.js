@@ -29,7 +29,6 @@ app.post('/webhook', (req, res) => {
   bot.processUpdate(req.body); // Process the update
   res.sendStatus(200); // Acknowledge receipt
 });
-
 // Root endpoint for UptimeRobot
 app.get('/', (req, res) => {
   res.send('Bot is running!');
@@ -50,7 +49,6 @@ async function initializeAnalytics() {
 
 initializeAnalytics();
 
-// Read products from file
 async function readProducts() {
   try {
     const data = await fs.readFile(productsFile, 'utf8');
@@ -61,7 +59,6 @@ async function readProducts() {
   }
 }
 
-// Write products to file
 async function writeProducts(products) {
   try {
     await fs.writeFile(productsFile, JSON.stringify(products, null, 2));
@@ -70,7 +67,6 @@ async function writeProducts(products) {
   }
 }
 
-// Read analytics from file
 async function readAnalytics() {
   try {
     const data = await fs.readFile(analyticsFile, 'utf8');
@@ -81,7 +77,6 @@ async function readAnalytics() {
   }
 }
 
-// Write analytics to file
 async function writeAnalytics(analytics) {
   try {
     await fs.writeFile(analyticsFile, JSON.stringify(analytics, null, 2));
@@ -101,21 +96,10 @@ async function trackQuery(chatId, query) {
 // Track product views
 async function trackProductView(productId) {
   const analytics = await readAnalytics();
-
-  // Update product views
   if (!analytics.productViews[productId]) {
     analytics.productViews[productId] = 0;
   }
   analytics.productViews[productId] += 1;
-
-  // Update query status to "Success" for the corresponding product
-  analytics.queries = analytics.queries.map(query => {
-    if (query.query.includes(productId)) {
-      query.status = 'Success';
-    }
-    return query;
-  });
-
   await writeAnalytics(analytics);
 }
 
@@ -152,9 +136,12 @@ bot.on('message', async (msg) => {
   }
 });
 
+      
 bot.on('callback_query', async (callbackQuery) => {
   const chatId = callbackQuery.message.chat.id;
   const productId = callbackQuery.data;
+
+  console.log(`Product ID selected: ${productId}`); // Log the selected product ID
 
   try {
     // Track product view
@@ -162,13 +149,17 @@ bot.on('callback_query', async (callbackQuery) => {
 
     // Read products from the JSON file
     const products = await readProducts();
+    console.log(`All products: ${JSON.stringify(products)}`); // Log all products
 
     // Find the selected product by ID
     const product = products.find(p => p.id.toString() === productId);
     if (!product) {
+      console.log(`Product not found for ID: ${productId}`); // Log if product is not found
       bot.sendMessage(chatId, 'Product not found.');
       return;
     }
+
+    console.log(`Product found: ${JSON.stringify(product)}`); // Log the found product
 
     // Create the HTML message for the product
     const htmlMessage = `
@@ -191,19 +182,21 @@ bot.on('callback_query', async (callbackQuery) => {
 
     // Send the product details to the user
     if (product.image) {
+      // Send the product image with a caption
       await bot.sendPhoto(chatId, product.image, {
         caption: htmlMessage,
         parse_mode: 'HTML',
         reply_markup: inlineKeyboard
       });
     } else {
+      // If no image is available, send a text message
       await bot.sendMessage(chatId, htmlMessage, {
         parse_mode: 'HTML',
         reply_markup: inlineKeyboard
       });
     }
   } catch (error) {
-    console.error('Error in callback_query handler:', error);
+    console.error('Error in callback_query handler:', error); // Log the full error
     bot.sendMessage(chatId, 'An error occurred while fetching product details. Please try again later.');
   }
 });
@@ -253,6 +246,19 @@ app.delete('/api/products/:id', async (req, res) => {
   }
 });
 
+// API to send messages to users
+app.post('/api/send-message', async (req, res) => {
+  const { chatId, message } = req.body;
+
+  try {
+    await bot.sendMessage(chatId, message);
+    res.status(200).json({ success: true, message: 'Message sent successfully!' });
+  } catch (error) {
+    console.error('Error sending message:', error);
+    res.status(500).json({ success: false, message: 'Failed to send message.' });
+  }
+});
+
 // Serve Admin Panel HTML
 app.get('/admin', (req, res) => {
   const adminHTML = `
@@ -265,53 +271,203 @@ app.get('/admin', (req, res) => {
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
       <style>
-        body {
-          font-family: Arial, sans-serif;
-          background: #f4f4f4;
-          padding: 20px;
-        }
-        .card {
-          margin-bottom: 20px;
-          border: none;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .card-body {
-          padding: 20px;
-        }
-        .table {
-          margin-top: 20px;
-        }
-        .badge {
-          padding: 5px 10px;
-          border-radius: 5px;
-        }
-        .badge.bg-warning {
-          background-color: #ffc107;
-        }
-        .badge.bg-success {
-          background-color: #28a745;
-        }
-        .chat-window {
-          height: 300px;
-          overflow-y: auto;
-          border: 1px solid #ddd;
-          padding: 10px;
-          border-radius: 10px;
-          background: #fff;
-        }
-        .chat-message {
-          margin-bottom: 10px;
-        }
-        .chat-message.admin {
-          text-align: right;
-          color: #007bff;
-        }
-        .chat-message.user {
-          text-align: left;
-          color: #333;
-        }
-      </style>
+       /* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientBackground 15s ease infinite;
+  min-height: 100vh;
+  color: #333;
+}
+
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+h1, h2 {
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #555;
+}
+
+.card p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+/* Query Status Table */
+.query-status {
+  margin-bottom: 30px;
+}
+
+.table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #2c3e50;
+  color: #fff;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.status.pending {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+.status.resolved {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+/* Chat Window */
+.chat-window {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chat-message {
+  margin-bottom: 10px;
+}
+
+.chat-message.admin {
+  text-align: right;
+  color: #007bff;
+}
+
+/* Product Views Table */
+.product-views {
+  margin-bottom: 30px;
+}
+
+/* Realtime Traffic Chart */
+.traffic-chart {
+  margin-bottom: 30px;
+}
+
+canvas {
+  max-width: 100%;
+  height: 300px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    margin-bottom: 15px;
+  }
+
+  .table-wrapper {
+    max-height: 200px;
+  }
+
+  .chat-window {
+    max-height: 200px;
+  }
+
+  canvas {
+    height: 200px;
+  }
+}
+</style>
+
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
@@ -396,9 +552,9 @@ app.get('/admin', (req, res) => {
       </div>
 
       <script>
-        let trafficChart = null; // Store the chart instance
-        let currentChatId = null; // Store the current chat ID
+        let currentChatId = null;
 
+        // Fetch analytics data
         async function fetchAnalytics() {
           try {
             const response = await axios.get('/api/analytics');
@@ -409,12 +565,9 @@ app.get('/admin', (req, res) => {
             document.getElementById('totalProducts').textContent = productsResponse.data.length;
 
             // Update most viewed product
-            let mostViewedProductId = null;
-            if (Object.keys(analytics.productViews).length > 0) {
-              mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
-                analytics.productViews[a] > analytics.productViews[b] ? a : b
-              );
-            }
+            const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
+              analytics.productViews[a] > analytics.productViews[b] ? a : b
+            );
             const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
             document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
 
@@ -423,38 +576,31 @@ app.get('/admin', (req, res) => {
 
             // Update query status table
             const queryTable = document.getElementById('queryTable');
-            queryTable.innerHTML = analytics.queries.map(query => `
+            queryTable.innerHTML = analytics.queries.map(query => \`
               <tr>
-                <td>${query.chatId}</td>
-                <td>${query.query}</td>
-                <td>${new Date(query.timestamp).toLocaleString()}</td>
-                <td><span class="badge ${query.status === 'Pending' ? 'bg-warning' : 'bg-success'}">${query.status}</span></td>
-                <td><button class="btn btn-sm btn-primary" onclick="openChat(${query.chatId})">Chat</button></td>
+                <td>\${query.chatId}</td>
+                <td>\${query.query}</td>
+                <td>\${new Date(query.timestamp).toLocaleString()}</td>
+                <td><span class="badge bg-warning">\${query.status}</span></td>
+                <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
               </tr>
-            `).join('');
+            \`).join('');
 
             // Update product views table
             const productViewsTable = document.getElementById('productViewsTable');
-            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => `
+            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
               <tr>
-                <td>${id}</td>
-                <td>${views}</td>
+                <td>\${id}</td>
+                <td><i class="fas fa-eye"></i> \${views}</td>
               </tr>
-            `).join('');
+            \`).join('');
 
             // Update realtime traffic chart
             const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
-
-            // Destroy existing chart instance
-            if (trafficChart) {
-              trafficChart.destroy();
-            }
-
-            // Create new chart instance
-            trafficChart = new Chart(ctx, {
+            const trafficChart = new Chart(ctx, {
               type: 'line',
               data: {
-                labels: analytics.queries.map((_, index) => `Query ${index + 1}`),
+                labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
                 datasets: [{
                   label: 'Traffic',
                   data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
@@ -491,9 +637,8 @@ app.get('/admin', (req, res) => {
             const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
             if (response.data.success) {
               const chatWindow = document.getElementById('chatWindow');
-              chatWindow.innerHTML += `<div class="chat-message admin">${message}</div>`;
+              chatWindow.innerHTML += \`<div class="chat-message admin">\${message}</div>\`;
               document.getElementById('chatInput').value = '';
-              chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
             }
           } catch (error) {
             console.error('Error sending message:', error);
@@ -591,6 +736,14 @@ app.get('/admin/add-product', (req, res) => {
             <input type="url" class="form-control" id="image" name="image" required>
           </div>
           <div class="mb-3">
+            <label for="productLink" class="form-label">Product Link:</label>
+            <input type="url" class="form-control" id="productLink" name="productLink" required>
+          </div>
+          <div class="mb-3">
+            <label for="buyLink" class="form-label">Buy Link:</label>
+            <input type="url" class="form-control" id="buyLink" name="buyLink" required>
+          </div>
+          <div class="mb-3">
             <label for="keywords" class="form-label">Keywords (comma-separated):</label>
             <input type="text" class="form-control" id="keywords" name="keywords" required>
           </div>
@@ -641,54 +794,124 @@ app.get('/product/:id', async (req, res) => {
         <title>${product.name}</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
+          /* Background Animation */
+          @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+
           body {
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBackground 15s ease infinite;
+            margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
           }
+
           .product-card {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
           }
-          .product-card img {
+
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
+          .product-image {
             max-width: 100%;
             border-radius: 10px;
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-in-out;
+          }
+
+          @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+          }
+
+          .product-details {
+            animation: fadeIn 1.5s ease-in-out;
+          }
+
+          .product-details h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #333;
+          }
+
+          .product-details p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 10px;
+          }
+
+          .product-details .price {
+            font-size: 1.5rem;
+            color: #e73c7e;
+            font-weight: bold;
+          }
+
+          .product-details .mrp {
+            font-size: 1.2rem;
+            color: #777;
+            text-decoration: line-through;
+          }
+
+          .product-details .rating {
+            font-size: 1.2rem;
+            color: #ffc107;
+          }
+
+          .btn-order {
+            background: linear-gradient(45deg, #e73c7e, #23a6d5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+
+          .btn-order:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
           }
         </style>
       </head>
       <body>
-        <div class="container mt-5">
-          <div class="product-card">
+        <div class="product-card">
+          <img src="${product.image}" alt="${product.name}" class="product-image">
+          <div class="product-details">
             <h1>${product.name}</h1>
             <p>${product.description}</p>
-            <p>Price: $${product.price.toFixed(2)}</p>
-            <p>MRP: <s>$${product.mrp.toFixed(2)}</s></p>
-            <p>Rating: ${product.rating} ⭐</p>
-            <a href="${product.buyLink}" class="btn btn-primary">Order Now</a>
+            <p class="price">💰 Price: $${product.price.toFixed(2)}</p>
+            <p class="mrp">💵 MRP: <s>$${product.mrp.toFixed(2)}</s></p>
+            <p class="rating">⭐ Rating: ${product.rating} ⭐</p>
+            <a href="${product.buyLink}" class="btn-order">Order Now</a>
           </div>
         </div>
       </body>
       </html>
     `;
+
     res.send(productPage);
   } catch (error) {
     console.error('Error loading product details:', error);
     res.status(500).send('Error loading product details');
-  }
-});
-
-// API to send messages to users
-app.post('/api/send-message', async (req, res) => {
-  const { chatId, message } = req.body;
-
-  try {
-    await bot.sendMessage(chatId, message);
-    res.status(200).json({ success: true, message: 'Message sent successfully!' });
-  } catch (error) {
-    console.error('Error sending message:', error);
-    res.status(500).json({ success: false, message: 'Failed to send message.' });
   }
 });
 
