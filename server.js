@@ -262,16 +262,16 @@ app.post('/api/send-message', async (req, res) => {
 // Serve Admin Panel HTML
 app.get('/admin', (req, res) => {
   const adminHTML = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Admin Dashboard</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-      <style>
-       /* General Styles */
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+      /* General Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -466,192 +466,191 @@ canvas {
     height: 200px;
   }
 }
-</style>
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="mb-4">Admin Dashboard</h1>
 
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
-    <body>
-      <div class="container mt-5">
-        <h1 class="mb-4">Admin Dashboard</h1>
-
-        <!-- Dashboard Cards -->
-        <div class="row mb-4">
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Total Products</h5>
-                <p class="card-text" id="totalProducts">0</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Most Viewed Product</h5>
-                <p class="card-text" id="mostViewedProduct">N/A</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Realtime Traffic</h5>
-                <p class="card-text" id="realtimeTraffic">0</p>
-              </div>
+      <!-- Dashboard Cards -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Total Products</h5>
+              <p class="card-text" id="totalProducts">0</p>
             </div>
           </div>
         </div>
-
-        <!-- Query Status -->
-        <h2 class="mt-4">Query Status</h2>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Chat ID</th>
-              <th>Query</th>
-              <th>Timestamp</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="queryTable">
-            <!-- Queries will be populated here -->
-          </tbody>
-        </table>
-
-        <!-- Chat Window -->
-        <h2 class="mt-4">Chat with User</h2>
-        <div class="chat-window" id="chatWindow">
-          <!-- Chat messages will be displayed here -->
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Most Viewed Product</h5>
+              <p class="card-text" id="mostViewedProduct">N/A</p>
+            </div>
+          </div>
         </div>
-        <div class="input-group mt-3">
-          <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
-          <button class="btn btn-primary" id="sendMessageBtn">Send</button>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Realtime Traffic</h5>
+              <p class="card-text" id="realtimeTraffic">0</p>
+            </div>
+          </div>
         </div>
-
-        <!-- Product Views -->
-        <h2 class="mt-4">Product Views</h2>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Product ID</th>
-              <th>Views</th>
-            </tr>
-          </thead>
-          <tbody id="productViewsTable">
-            <!-- Product views will be populated here -->
-          </tbody>
-        </table>
-
-        <!-- Realtime Traffic Chart -->
-        <h2 class="mt-4">Realtime Traffic Chart</h2>
-        <canvas id="realtimeTrafficChart"></canvas>
-
-        <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
       </div>
 
-      <script>
-        let currentChatId = null;
+      <!-- Query Status -->
+      <h2 class="mt-4">Query Status</h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Chat ID</th>
+            <th>Query</th>
+            <th>Timestamp</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="queryTable">
+          <!-- Queries will be populated here -->
+        </tbody>
+      </table>
 
-        // Fetch analytics data
-        async function fetchAnalytics() {
-          try {
-            const response = await axios.get('/api/analytics');
-            const analytics = response.data;
+      <!-- Chat Window -->
+      <h2 class="mt-4">Chat with User</h2>
+      <div class="chat-window" id="chatWindow">
+        <!-- Chat messages will be displayed here -->
+      </div>
+      <div class="input-group mt-3">
+        <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
+        <button class="btn btn-primary" id="sendMessageBtn">Send</button>
+      </div>
 
-            // Update total products
-            const productsResponse = await axios.get('/api/products');
-            document.getElementById('totalProducts').textContent = productsResponse.data.length;
+      <!-- Product Views -->
+      <h2 class="mt-4">Product Views</h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Product ID</th>
+            <th>Views</th>
+          </tr>
+        </thead>
+        <tbody id="productViewsTable">
+          <!-- Product views will be populated here -->
+        </tbody>
+      </table>
 
-            // Update most viewed product
-            const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
-              analytics.productViews[a] > analytics.productViews[b] ? a : b
-            );
-            const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
-            document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
+      <!-- Realtime Traffic Chart -->
+      <h2 class="mt-4">Realtime Traffic Chart</h2>
+      <canvas id="realtimeTrafficChart"></canvas>
 
-            // Update realtime traffic
-            document.getElementById('realtimeTraffic').textContent = analytics.traffic;
+      <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
+    </div>
 
-            // Update query status table
-            const queryTable = document.getElementById('queryTable');
-            queryTable.innerHTML = analytics.queries.map(query => `
-              <tr>
-                <td>${query.chatId}</td>
-                <td>${query.query}</td>
-                <td>${new Date(query.timestamp).toLocaleString()}</td>
-                <td><span class="badge bg-warning">${query.status}</span></td>
-                <td><button class="btn btn-sm btn-primary" onclick="openChat(${query.chatId})">Chat</button></td>
-              </tr>
-            `).join('');
+    <script>
+      let currentChatId = null;
 
-            // Update product views table
-            const productViewsTable = document.getElementById('productViewsTable');
-            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => `
-              <tr>
-                <td>${id}</td>
-                <td><i class="fas fa-eye"></i> ${views}</td>
-              </tr>
-            `).join('');
+      // Fetch analytics data
+      async function fetchAnalytics() {
+        try {
+          const response = await axios.get('/api/analytics');
+          const analytics = response.data;
 
-            // Update realtime traffic chart
-            const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
-            const trafficChart = new Chart(ctx, {
-              type: 'line',
-              data: {
-                labels: analytics.queries.map((_, index) => `Query ${index + 1}`),
-                datasets: [{
-                  label: 'Traffic',
-                  data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1,
-                  fill: false
-                }]
-              },
-              options: {
-                scales: {
-                  y: {
-                    beginAtZero: true
-                  }
+          // Update total products
+          const productsResponse = await axios.get('/api/products');
+          document.getElementById('totalProducts').textContent = productsResponse.data.length;
+
+          // Update most viewed product
+          const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
+            analytics.productViews[a] > analytics.productViews[b] ? a : b
+          );
+          const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
+          document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
+
+          // Update realtime traffic
+          document.getElementById('realtimeTraffic').textContent = analytics.traffic;
+
+          // Update query status table
+          const queryTable = document.getElementById('queryTable');
+          queryTable.innerHTML = analytics.queries.map(query => `
+            <tr>
+              <td>${query.chatId}</td>
+              <td>${query.query}</td>
+              <td>${new Date(query.timestamp).toLocaleString()}</td>
+              <td><span class="badge bg-warning">${query.status}</span></td>
+              <td><button class="btn btn-sm btn-primary" onclick="openChat(${query.chatId})">Chat</button></td>
+            </tr>
+          `).join('');
+
+          // Update product views table
+          const productViewsTable = document.getElementById('productViewsTable');
+          productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => `
+            <tr>
+              <td>${id}</td>
+              <td><i class="fas fa-eye"></i> ${views}</td>
+            </tr>
+          `).join('');
+
+          // Update realtime traffic chart
+          const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
+          const trafficChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: analytics.queries.map((_, index) => `Query ${index + 1}`),
+              datasets: [{
+                label: 'Traffic',
+                data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
                 }
               }
-            });
-          } catch (error) {
-            console.error('Error fetching analytics:', error);
-          }
-        }
-
-        // Open chat with a user
-        function openChat(chatId) {
-          currentChatId = chatId;
-          document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
-        }
-
-        // Send message to user
-        document.getElementById('sendMessageBtn').addEventListener('click', async () => {
-          const message = document.getElementById('chatInput').value;
-          if (!message || !currentChatId) return;
-
-          try {
-            const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
-            if (response.data.success) {
-              const chatWindow = document.getElementById('chatWindow');
-              chatWindow.innerHTML += `<div class="chat-message admin">${message}</div>`;
-              document.getElementById('chatInput').value = '';
             }
-          } catch (error) {
-            console.error('Error sending message:', error);
-          }
-        });
+          });
+        } catch (error) {
+          console.error('Error fetching analytics:', error);
+        }
+      }
 
-        // Fetch analytics data every 5 seconds
-        fetchAnalytics();
-        setInterval(fetchAnalytics, 5000);
-      </script>
-    </body>
-    </html>
-  `;
+      // Open chat with a user
+      function openChat(chatId) {
+        currentChatId = chatId;
+        document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
+      }
+
+      // Send message to user
+      document.getElementById('sendMessageBtn').addEventListener('click', async () => {
+        const message = document.getElementById('chatInput').value;
+        if (!message || !currentChatId) return;
+
+        try {
+          const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
+          if (response.data.success) {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.innerHTML += `<div class="chat-message admin">${message}</div>`;
+            document.getElementById('chatInput').value = '';
+          }
+        } catch (error) {
+          console.error('Error sending message:', error);
+        }
+      });
+
+      // Fetch analytics data every 5 seconds
+      fetchAnalytics();
+      setInterval(fetchAnalytics, 5000);
+    </script>
+  </body>
+  </html>
+`;
   res.send(adminHTML);
 });
 
