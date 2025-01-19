@@ -1,72 +1,16 @@
 [
   {
-    "id": 1,
-    "name": "Wireless Earbuds",
-    "description": "High-quality wireless earbuds with noise cancellation.",
-    "price": 99.99,
-    "mrp": 129.99,
-    "rating": 4.5,
-    "image": "https://img.freepik.com/free-photo/wireless-headphones_144627-10866.jpg",
-    "buyLink": "https://example.com/buy/earbuds",
-    "keywords": ["earbuds", "wireless", "audio"]
-  },
-  {
-    "id": 2,
-    "name": "Smartwatch",
-    "description": "A sleek smartwatch with fitness tracking and heart rate monitoring.",
-    "price": 199.99,
-    "mrp": 249.99,
-    "rating": 4.7,
-    "image": "https://img.freepik.com/free-photo/smart-watch-digital-device_53876-96854.jpg",
-    "buyLink": "https://example.com/buy/smartwatch",
-    "keywords": ["smartwatch", "fitness", "wearable"]
-  },
-  {
-    "id": 3,
-    "name": "Bluetooth Speaker",
-    "description": "Portable Bluetooth speaker with 20-hour battery life.",
-    "price": 59.99,
-    "mrp": 79.99,
-    "rating": 4.3,
-    "image": "https://img.freepik.com/free-photo/portable-speaker_53876-96841.jpg",
-    "buyLink": "https://example.com/buy/speaker",
-    "keywords": ["speaker", "bluetooth", "audio"]
-  },
-  {
-    "id": 4,
-    "name": "Gaming Mouse",
-    "description": "High-precision gaming mouse with customizable RGB lighting.",
-    "price": 49.99,
-    "mrp": 69.99,
-    "rating": 4.6,
-    "image": "https://img.freepik.com/free-photo/gaming-mouse_53876-96847.jpg",
-    "buyLink": "https://example.com/buy/gaming-mouse",
-    "keywords": ["mouse", "gaming", "accessories"]
-  },
-  {
-    "id": 5,
-    "name": "Laptop Backpack",
-    "description": "Durable laptop backpack with anti-theft design.",
-    "price": 39.99,
-    "mrp": 59.99,
-    "rating": 4.4,
-    "image": "https://img.freepik.com/free-photo/laptop-backpack_53876-96848.jpg",
-    "buyLink": "https://example.com/buy/backpack",
-    "keywords": ["backpack", "laptop", "accessories"]
-  },
-  {
-  "id": 6,
-  "name": "Mobile Phone Charging Stand, Multi-Functional Storage Holder",
-  "description": "Tensea Mobile Phone Charging Stand, Multi-Functional Storage Holder, Bedside Fixed Rack, Bedroom, Office Accessories, Acrylonitrile Butadiene Styrene, White 01, Portable Electronic Devices",
-  "price": 94,
-  "mrp": 324,
-  "rating": 5,
-  "image": "https://m.media-amazon.com/images/I/61jVUB4y7pL._AC_SL1500_.jpg",
-  "buyLink": "https://amzn.to/4hgWJrd",
-  "keywords": [
-    "Mobile",
-    "charger",
-    "stand"
-  ]
+    "name": "Egg Boiler",
+    "description": "Amazon Basics Electric Egg Boiler | 3 Boiling Modes | Automatic Operation | Overheat Protection|75ml|Plastic|White",
+    "price": 349,
+    "mrp": 550,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41z7nDJEy4L._SY300_SX300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/40HUpnO",
+    "keywords": [
+      "eggs boiler",
+      "boiler"
+    ],
+    "id": 1
   }
 ]
