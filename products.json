@@ -55,5 +55,90 @@
       "earbuds"
     ],
     "id": 4
+  },
+  {
+    "name": "Wireless Mouse",
+    "description": "ZEBRONICS Blanc Slim Wireless Mouse with Rechargeable Battery, BT + 2.4GHz, 4 Buttons, 800/1200/1600 DPI, Silent Operation, Multicolor LED Lights",
+    "price": 398,
+    "mrp": 700,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/716-80YSCcL._SL1500_.jpg",
+    "buyLink": "https://amzn.to/40GwG7r",
+    "keywords": [
+      "Mouse",
+      "gaming mouse",
+      "wireless mouse"
+    ],
+    "id": 5
+  },
+  {
+    "name": "Gaming Mouse",
+    "description": "ZEBRONICS-Transformer-M with a High-Performance Gold-Plated USB Mouse: 6 Buttons, Multi-Color LED Lights,High-Resolution Sensor with max 3600 DPI, and DPI Switch(Black)",
+    "price": 298,
+    "mrp": 1000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/81KDevJhhNL._SL1500_.jpg",
+    "buyLink": "https://amzn.to/40GwIw5",
+    "keywords": [
+      "gaming mouse",
+      "mouse"
+    ],
+    "id": 6
+  },
+  {
+    "name": "Gaming Keyboard",
+    "description": "ZEBRONICS Trion USB Gaming Keyboard & Mouse Gaming Combo, 104 Keys Backlit, Translucent Material, Multi Color LED, Multi DPI Modes, High Precision Key",
+    "price": 598,
+    "mrp": 2000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/81cl0hEiyLL._SL1500_.jpg",
+    "buyLink": "https://amzn.to/4hmexB7",
+    "keywords": [
+      "gaming keyboard",
+      "lowprice keyboard",
+      "keyboard"
+    ],
+    "id": 7
+  },
+  {
+    "name": "Keyboard",
+    "description": "ZEBRONICS K24 USB Keyboard with Long Life 8 Million Keystrokes, Silent & Comfortable Use, Slim Design, Retractable Stand, 1.3 Meter Textured Cable, Chiclet Keys and Uv Coated Keycaps",
+    "price": 278,
+    "mrp": 700,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/61jJuQHSvYL._SL1500_.jpg",
+    "buyLink": "https://amzn.to/4hmeANj",
+    "keywords": [
+      "keyboard"
+    ],
+    "id": 8
+  },
+  {
+    "name": "Gaming Headphones",
+    "description": "Cosmic Byte Stardust Wired On Ear Headphones with Mic Flexible for PS4, Xbox One, Laptop, PC, iPhone and Android Phones (Black,Blue)\n",
+    "price": 749,
+    "mrp": 1500,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/I/71IrKF5DG0L._SL1200_.jpg",
+    "buyLink": "https://amzn.to/4hmp9Ac",
+    "keywords": [
+      "Gaming headphones",
+      "headphones"
+    ],
+    "id": 9
+  },
+  {
+    "name": "Room Heater",
+    "description": "Amazon Brand - Solimo 2000/1000 Watts Room Heater with Adjustable Thermostat (ISI certified, White colour, Ideal for small to medium room/area)",
+    "price": 749,
+    "mrp": 1500,
+    "rating": 3.9,
+    "image": "https://m.media-amazon.com/images/I/410ZRlkc6AL.jpg",
+    "buyLink": "https://amzn.to/40lKWRu",
+    "keywords": [
+      "room heater",
+      "heater"
+    ],
+    "id": 10
   }
 ]
