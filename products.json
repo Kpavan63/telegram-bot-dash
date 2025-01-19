@@ -12,5 +12,48 @@
       "boiler"
     ],
     "id": 1
+  },
+  {
+    "name": "Electric Kettle",
+    "description": "Pigeon by Stovekraft Amaze Plus Electric Kettle (14289) with Stainless Steel Body, 1.5 litre, used for boiling Water, making tea and coffee, instant noodles, soup etc. (Silver)",
+    "price": 499,
+    "mrp": 1245,
+    "rating": 4.5,
+    "image": "https://m.media-amazon.com/images/I/51DGcy8eBCL._SL1080_.jpg",
+    "buyLink": "https://amzn.to/4h26cCQ",
+    "keywords": [
+      "cooker",
+      "kettle",
+      "stove"
+    ],
+    "id": 2
+  },
+  {
+    "name": "pTron Bassbuds",
+    "description": "pTron Bassbuds Bliss TWS In-Ear Earbuds with 4 Quadpro Mics, 3D Audioscape, TruTalk ENC Calls, 40H Playtime, 50ms Low-Latency Game/Music Modes, BT5.3 Headphones,Type C Fast Charging & IPX5 (Navy Blue)",
+    "price": 699,
+    "mrp": 1500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51DJx5VXGXL._SL1200_.jpg",
+    "buyLink": "https://amzn.to/4jk55jD",
+    "keywords": [
+      "buds",
+      "earbuds",
+      "earphones"
+    ],
+    "id": 3
+  },
+  {
+    "name": "boAt Airdopes",
+    "description": "boAt Airdopes 91 Prime, 45HRS Battery, 13mm Drivers, Metallic Finish, Low Latency,ENx Tech, Fast Charge, v5.3 Bluetooth Earbuds, TWS Ear Buds Wireless Earphones with mic (Midnight Black)",
+    "price": 699,
+    "mrp": 1245,
+    "rating": 4.7,
+    "image": "https://m.media-amazon.com/images/I/713Lr2oNWaL._SL1500_.jpg",
+    "buyLink": "https://amzn.to/3CcZZ8a",
+    "keywords": [
+      "earbuds"
+    ],
+    "id": 4
   }
 ]
