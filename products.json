@@ -140,5 +140,152 @@
       "heater"
     ],
     "id": 10
+  },
+  {
+    "name": "Hot Kettle Boiler",
+    "description": "Pigeon 1.5 litre Hot Kettle and Stainless Steel Water Bottle Combo used for boiling Water, Making Tea and Coffee, Instant Noodles, Soup with Auto Shut- off Feature",
+    "price": 599,
+    "mrp": 1599,
+    "rating": 4.5,
+    "image": "https://m.media-amazon.com/images/I/510sIxSnACL._SL1080_.jpg",
+    "buyLink": "https://amzn.to/3PK1PR3",
+    "keywords": [
+      "boiler"
+    ],
+    "id": 11
+  },
+  {
+    "name": "Switch Board",
+    "description": "Anchor by Panasonic 4 way Extension Board Socket with Single Switch | 4 Way Socket with 1.5 Mtr Extension Cord | Multi Plug Socket for Home Wall, Office (22061)",
+    "price": 389,
+    "mrp": 500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51ZO2ojHP0L._SL1500_.jpg",
+    "buyLink": "https://amzn.to/3Wk49Sf",
+    "keywords": [
+      "switch board",
+      "board",
+      "switch",
+      "wire"
+    ],
+    "id": 12
+  },
+  {
+    "name": "Bathroom Folding Towel Rack",
+    "description": "iSTAR Stainless Steel 24 Inch Long Heavy Double Folding Towel Rack for Bathroom/Towel Stand/Hanger/Rod/Towel Stand/Bathroom Accessories",
+    "price": 915,
+    "mrp": 1300,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/I/91KwJZgLvTL._SL1500_.jpg",
+    "buyLink": "https://amzn.to/42jLxpi",
+    "keywords": [
+      "bathroom",
+      "towel rack",
+      "towel"
+    ],
+    "id": 13
+  },
+  {
+    "name": "Bathroom Shelf",
+    "description": "Plantex Self Adhesive Bathroom Shelf for Wall/Shelf Organizer/Kitchen Shelf with Magic Stickers - Pack of 1 (Black, Powder Coated)",
+    "price": 349,
+    "mrp": 500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51-3sf3GxGL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/42kvMOZ",
+    "keywords": [
+      "bathroom",
+      "shelf",
+      "kitchen"
+    ],
+    "id": 14
+  },
+  {
+    "name": "Camera CCTV",
+    "description": "Beetel 3MP Full HD Smart Wi-Fi CCTV Home Security Camera|360° with Pan Tilt|View & 2-Way Talk|Motion Alert|Night Vision|Smart Tracking|SD Card (Upto 256 GB), Alexa & Google Support|CC3",
+    "price": 1490,
+    "mrp": 2000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41J7VaBmGQL._SL1000_.jpg",
+    "buyLink": "https://amzn.to/3DYvByN",
+    "keywords": [
+      "cctv",
+      "cctv camera",
+      "camera"
+    ],
+    "id": 15
+  },
+  {
+    "name": "Room Cleaner",
+    "description": "Scotch-Brite 2-in-1 Bucket Spin Mop (Green, 2 Refills), 4 Pcs",
+    "price": 998,
+    "mrp": 1200,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/41YSjsGbSFL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4hjjBWR",
+    "keywords": [
+      "cleaner",
+      "clean",
+      "Scotch-Brite",
+      "Bucket Spin Mop"
+    ],
+    "id": 16
+  },
+  {
+    "name": "Gloves for Pet Grooming Washing Dishes Bathroom",
+    "description": "Zureni Silicone Gloves Reusable Rubber Dishwashing Kitchen Scrubber for Pet Grooming Washing Dishes Bathroom Car - (1 Pair, Multicolour)",
+    "price": 169,
+    "mrp": 250,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/71Qy3KHSUeL._SX679_.jpg",
+    "buyLink": "https://amzn.to/4g2tcjV",
+    "keywords": [
+      "Gloves",
+      "Dishwashing",
+      "kitchen"
+    ],
+    "id": 17
+  },
+  {
+    "name": "Cleaning Brush",
+    "description": "VYOOx Toilet Cleaning Brush with Wiper Tiles Cleaning Bathroom Brush Floor Scrub Brush with Long Handle 120° Rotate 2IN1 Home Kitchen Bathroom Toilet Cleaning Brush Pack-1",
+    "price": 196,
+    "mrp": 250,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41kU1Am4rwL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3E2NaxE",
+    "keywords": [
+      "Cleaning Brush",
+      "brush"
+    ],
+    "id": 18
+  },
+  {
+    "name": "Drill Tool Set",
+    "description": "BOSCH Professional GSB 500 RE Corded-Electric Drill Tool Set | 500 W Motor | 100-piece Tools Box Kit | Speed Range upto 2600 RPM | Impact Rate upto 41600 BPM | Chuck Capacity of 10 mm | 1 Yr Warranty",
+    "price": 3588,
+    "mrp": 4000,
+    "rating": 4.5,
+    "image": "https://m.media-amazon.com/images/I/71KCggBzQ-L._SX569_.jpg",
+    "buyLink": "https://www.amazon.in/Bosch-GSB-500W-500-RE/dp/B00INTGY6O/ref=s9_acsd_al_ot_cv2_0_t?_encoding=UTF8&pf_rd_m=A21TJRUUN4KGV&pf_rd_s=merchandised-search-7&pf_rd_r=QX7XBSG0H1Q5NEJKMF5J&pf_rd_p=18b33c68-778c-4c72-aabd-f9ae1270b74e&pf_rd_t=&pf_rd_i=95174669031&tag=shoppingzo0ba-21",
+    "keywords": [
+      "drilling",
+      "tools"
+    ],
+    "id": 19
+  },
+  {
+    "name": "Boult Newly Launched Trail Smart Watch",
+    "description": "Boult Newly Launched Trail Smart Watch 2.01'' 3D Curved HD Display, BT Calling, Working Crown, 190+Watchfaces, 500 Nits Brightness, AI Voice Assistant, SpO2 Monitoring, 120+ Sports Mode (Raven Black)",
+    "price": 1199,
+    "mrp": 2000,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/41DU-FLkBDL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3CraTah",
+    "keywords": [
+      "smart watch",
+      "watches"
+    ],
+    "id": 20
   }
 ]
