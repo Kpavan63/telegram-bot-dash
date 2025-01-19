@@ -109,6 +109,17 @@ bot.onText(/\/start/, (msg) => {
   bot.sendMessage(chatId, 'Welcome! Please enter a product name to search.');
 });
 
+bot.onText(/\/help/, (msg) => {
+  const chatId = msg.chat.id;
+  const helpMessage = `
+    <b>Help Center</b>
+    <i>Here are the details you need:</i>
+
+    <b>📧 Email:</b> gggamer9848@gmail.com
+    <b>🌐 Website:</b> <a href="">Visit Us</a>
+  `;
+  bot.sendMessage(chatId, helpMessage, { parse_mode: 'HTML' });
+});
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
   const userInput = msg.text;
@@ -163,14 +174,14 @@ bot.on('callback_query', async (callbackQuery) => {
 
     // Create the HTML message for the product
     const htmlMessage = `
-      <b>🎧 ${product.name}</b>
-      
-      ${product.description}
-      
-      <b>💰 Price:</b> $${product.price.toFixed(2)}
-      <b>💵 MRP:</b> <s>$${product.mrp.toFixed(2)}</s>
-      <b>⭐ Rating:</b> ${product.rating} ⭐
-    `;
+  <b>🎧 ${product.name}</b>
+  
+  ${product.description}
+  
+  <b>💰 Price:</b> ₹${product.price.toFixed(2)}
+  <b>💵 MRP:</b> <s>₹${product.mrp.toFixed(2)}</s>
+  <b>⭐ Rating:</b> ${product.rating} ⭐
+`;
 
     // Create the inline keyboard with buttons
     const inlineKeyboard = {
@@ -922,8 +933,8 @@ app.get('/product/:id', async (req, res) => {
     <div class="product-details">
       <h1>${product.name}</h1>
       <p>${product.description}</p>
-      <p class="price">💰 Price: $${product.price.toFixed(2)}</p>
-      <p class="mrp">💵 MRP: <s>$${product.mrp.toFixed(2)}</s></p>
+      <p class="price">💰 Price: ₹${product.price.toFixed(2)}</p>
+      <p class="mrp">💵 MRP: <s>₹${product.mrp.toFixed(2)}</s></p>
       <p class="rating">⭐ Rating: ${product.rating} ⭐</p>
       <a href="${product.buyLink}" class="btn-order">Order Now</a>
     </div>
