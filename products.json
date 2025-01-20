@@ -494,5 +494,180 @@
       "speaker"
     ],
     "id": 35
+  },
+  {
+    "name": "Motorola g45 5G",
+    "description": "Motorola G45 5G (Brilliant Blue, 8GB RAM, 128GB Storage)",
+    "price": 11999,
+    "mrp": 13999,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/413jpOkFR1L._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://fkrt.co/BpJGzo",
+    "keywords": [
+      "mobile",
+      "mobiles",
+      "Motorola g45 5G",
+      "5g mobiles"
+    ],
+    "id": 36
+  },
+  {
+    "name": "POCO C75 5G ",
+    "description": "POCO C75 5G, Silver Stardust (4GB, 64GB)",
+    "price": 7999,
+    "mrp": 10000,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/41S8DJ2pNvL.jpg",
+    "buyLink": "https://fkrt.co/su8pPp",
+    "keywords": [
+      "mobiles",
+      "poco",
+      "poco mobiles",
+      "5g",
+      "mobiles",
+      "smart mobiles",
+      "5g phones"
+    ],
+    "id": 37
+  },
+  {
+    "name": "POCO M7 Pro 5G ",
+    "description": "POCO M7 Pro 5G, Lavender Frost (6GB, 128GB)",
+    "price": 14999,
+    "mrp": 16000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51MI2CEBcUL._SY741_.jpg",
+    "buyLink": "https://fkrt.co/oqMSZQ",
+    "keywords": [
+      "mobiles",
+      "5g",
+      "poco",
+      "poco mobiles"
+    ],
+    "id": 38
+  },
+  {
+    "name": "realme NARZO 70x 5G",
+    "description": "realme NARZO 70x 5G (Ice Blue, 8GB RAM,128GB Storage)|120Hz Ultra Smooth Display|Dimensity 6100+ 6nm 5G|50MP AI Camera|45W Charger in The Box",
+    "price": 11498,
+    "mrp": 12500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/710k6OQvfbL._SX679_.jpg",
+    "buyLink": "https://amzn.to/42pgc4H",
+    "keywords": [
+      "realme narzo 70x 5g",
+      "5g",
+      "realme",
+      "smart mobiles"
+    ],
+    "id": 39
+  },
+  {
+    "name": "Samsung Galaxy M15 5G",
+    "description": "Samsung Galaxy M15 5G Prime Edition (Blue Topaz,4GB RAM,128GB Storage) | Super AMOLED Display| 50MP Triple Cam| 6000mAh Battery| MediaTek Dimensity 6100+ | 4 Gen. OS Upgrade & 5 Year Security Update",
+    "price": 11999,
+    "mrp": 13999,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/81o0TdRrbZL._SX679_.jpg",
+    "buyLink": "https://amzn.to/4jp0IUw",
+    "keywords": [
+      "samsung mobiles",
+      "samsung galaxy",
+      "samsung galaxy m15 5g",
+      "5g"
+    ],
+    "id": 40
+  },
+  {
+    "name": "OnePlus Nord CE4",
+    "description": "OnePlus Nord CE4 (Dark Chrome, 8GB RAM, 128GB Storage)",
+    "price": 21999,
+    "mrp": 23999,
+    "rating": 4.2,
+    "image": "https://m.media-amazon.com/images/I/71rooC1PHHL._SX679_.jpg",
+    "buyLink": "https://amzn.to/4hdNecs",
+    "keywords": [
+      "one plus nord ce4",
+      "oneplus",
+      "mobiles",
+      "smart mobiles",
+      "5g"
+    ],
+    "id": 41
+  },
+  {
+    "name": "iQOO Z9x 5G",
+    "description": "iQOO Z9x 5G (Tornado Green, 6GB RAM, 128GB Storage) | Snapdragon 6 Gen 1 with 560k+ AnTuTu Score | 6000mAh Battery with 7.99mm Slim Design | 44W FlashCharge",
+    "price": 13499,
+    "mrp": 15999,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/71qPPnuz7UL._SX679_.jpg",
+    "buyLink": "https://amzn.to/40qS3rO",
+    "keywords": [
+      "iqoo z9x 5g",
+      "5g",
+      "iqoo mobiles",
+      "mobiles"
+    ],
+    "id": 42
+  },
+  {
+    "name": "Redmi A4 5G ",
+    "description": "Redmi A4 5G (Starry Black, 4GB RAM, 64GB Storage) | Global Debut SD 4s Gen 2 | Segment Largest 6.88in 120Hz | 50MP Dual Camera | 18W Fast Charging",
+    "price": 8499,
+    "mrp": 9000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/81UmRzOmTiL._SX679_.jpg",
+    "buyLink": "https://amzn.to/42fLNpv",
+    "keywords": [
+      "redmi a4 5g",
+      "redmi mobiles",
+      "5g",
+      "mobiles"
+    ],
+    "id": 43
+  },
+  {
+    "name": "Boult Audio W20",
+    "description": "Boult Audio W20 Truly Wireless in Ear Earbuds with 35H Playtime, Zen™ ENC Mic, 45ms Low Latency, 13mm Bass Drivers, Type-C Fast Charging, Made in India, Touch Controls, IPX5 ear buds TWS (Space Black)",
+    "price": 1003,
+    "mrp": 1500,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/G/31/img22/WLA/2025/January/Uber/Boult_Audio_W20._CB553583125_.png",
+    "buyLink": "https://amzn.to/3ChAqTg",
+    "keywords": [
+      "earbuds",
+      "buds"
+    ],
+    "id": 44
+  },
+  {
+    "name": "25W Type C Charger",
+    "description": "Kratos 25W Type C Charger Compatible with Samsung A35/M35/A53/M55/F05/M15, F15/A15/A14/M14/F14/A34/M34/F34/S24 Ultra, S23/S23 fe/S21/Z fold/flip/6/5/4/3, Fast Charger for Phones & Tab Type C Adapter",
+    "price": 597,
+    "mrp": 800,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/71j4kXs9oFL._SX569_.jpg",
+    "buyLink": "https://amzn.to/4holDoI",
+    "keywords": [
+      "charger",
+      "type c",
+      "type-c charger",
+      "charger 25w"
+    ],
+    "id": 45
+  },
+  {
+    "name": "Zebronics 200HB USB 3.0 4 Port hub",
+    "description": "Zebronics 200HB USB 3.0 4 Port hub with Hi Speed Data Transfer, Aluminum + ABS Body, 15cm Cable, Sleek Design and Plug Play Usage",
+    "price": 229,
+    "mrp": 500,
+    "rating": 4,
+    "image": "https://m.media-amazon.com/images/I/31bbOtqFdoL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4jnw1io",
+    "keywords": [
+      "usb"
+    ],
+    "id": 46
   }
 ]
