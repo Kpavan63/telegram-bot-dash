@@ -484,7 +484,7 @@ canvas {
     </head>
     <body>
       <div class="container mt-5">
-        <h1 class="mb-4">Admin Dashboard</h1>
+        <h1 class="mb-4" style="color:black;">Admin Dashboard</h1>
 
         <!-- Dashboard Cards -->
         <div class="row mb-4">
@@ -515,7 +515,7 @@ canvas {
         </div>
 
         <!-- Query Status -->
-        <h2 class="mt-4">Query Status</h2>
+        <h2 class="mt-4" style="color:black;">Query Status</h2>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -532,7 +532,7 @@ canvas {
         </table>
 
         <!-- Chat Window -->
-        <h2 class="mt-4">Chat with User</h2>
+        <h2 class="mt-4" style="color:black;">Chat with User</h2>
         <div class="chat-window" id="chatWindow">
           <!-- Chat messages will be displayed here -->
         </div>
@@ -542,7 +542,7 @@ canvas {
         </div>
 
         <!-- Product Views -->
-        <h2 class="mt-4">Product Views</h2>
+        <h2 class="mt-4" style="color:black;">Product Views</h2>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -556,7 +556,7 @@ canvas {
         </table>
 
         <!-- Realtime Traffic Chart -->
-        <h2 class="mt-4">Realtime Traffic Chart</h2>
+        <h2 class="mt-4" style="color:black;">Realtime Traffic Chart</h2>
         <canvas id="realtimeTrafficChart"></canvas>
 
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
