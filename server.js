@@ -116,7 +116,7 @@ bot.onText(/\/help/, (msg) => {
     <i>Here are the details you need:</i>
 
     <b>📧 Email:</b> gggamer9848@gmail.com
-    <b>🌐 Website:</b> <a href="">Visit Us</a>
+    <b>🌐 Website:</b> <a href="https://kpavan63.github.io/Help-Center/#">Visit Us</a>
   `;
   bot.sendMessage(chatId, helpMessage, { parse_mode: 'HTML' });
 });
