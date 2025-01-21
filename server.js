@@ -592,7 +592,7 @@ canvas {
                 <td>\${query.chatId}</td>
                 <td>\${query.query}</td>
                 <td>\${new Date(query.timestamp).toLocaleString()}</td>
-                <td><span class="badge bg-warning">\${query.status}</span></td>
+                <td><span class="badge bg-success">\${query.status}</span></td>
                 <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
               </tr>
             \`).join('');
