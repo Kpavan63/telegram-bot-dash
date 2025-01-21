@@ -88,7 +88,7 @@ async function writeAnalytics(analytics) {
 // Track user queries and traffic
 async function trackQuery(chatId, query) {
   const analytics = await readAnalytics();
-  analytics.queries.push({ chatId, query, timestamp: new Date(), status: 'Pending' });
+  analytics.queries.push({ chatId, query, timestamp: new Date(), status: 'Success' }); // Change status to 'Success'
   analytics.traffic += 1;
   await writeAnalytics(analytics);
 }
