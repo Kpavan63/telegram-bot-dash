@@ -274,411 +274,395 @@ app.post('/api/send-message', async (req, res) => {
 app.get('/admin', (req, res) => {
   const adminHTML = `
     <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBackground 15s ease infinite;
-            min-height: 100vh;
-            color: #333;
-        }
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Admin Dashboard</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+      <style>
+       /* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradientBackground 15s ease infinite;
+  min-height: 100vh;
+  color: #333;
+}
 
-        @keyframes gradientBackground {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
-        h1, h2 {
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
+h1, h2 {
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-        /* Dashboard Cards */
-        .dashboard-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+/* Dashboard Cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
 
-        .card {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
 
-        .card h3 {
-            margin: 0 0 10px;
-            font-size: 18px;
-            color: #555;
-        }
+.card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #555;
+}
 
-        .card p {
-            margin: 0;
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
+.card p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+}
 
-        /* Query Status Table */
-        .query-status {
-            margin-bottom: 30px;
-        }
+/* Query Status Table */
+.query-status {
+  margin-bottom: 30px;
+}
 
-        .table-wrapper {
-            max-height: 300px;
-            width: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            background: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+.table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+.table {
+  width: 100%;
+  height:300px;
+  border-collapse: collapse;
+}
 
-        .table th, .table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
+.table th, .table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
 
-        .table th {
-            background-color: #2c3e50;
-            color: #fff;
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
+.table th {
+  background-color: #2c3e50;
+  color: #fff;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
 
-        .table tr:hover {
-            background-color: #f9f9f9;
-        }
+.table tr:hover {
+  background-color: #f9f9f9;
+}
 
-        .status {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
+.status {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
 
-        .status.pending {
-            background-color: #ffcc00;
-            color: #000;
-        }
+.status.pending {
+  background-color: #ffcc00;
+  color: #000;
+}
 
-        .status.resolved {
-            background-color: #4caf50;
-            color: #fff;
-        }
+.status.resolved {
+  background-color: #4caf50;
+  color: #fff;
+}
 
-        /* Chat Window */
-        .chat-window {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+/* Chat Window */
+.chat-window {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        .chat-message {
-            margin-bottom: 10px;
-        }
+.chat-message {
+  margin-bottom: 10px;
+}
 
-        .chat-message.admin {
-            text-align: right;
-            color: #007bff;
-        }
+.chat-message.admin {
+  text-align: right;
+  color: #007bff;
+}
 
-        /* Product Views Table */
-        .product-views {
-            margin-bottom: 30px;
-        }
+/* Product Views Table */
+.product-views {
+  margin-bottom: 30px;
+}
 
-        /* Realtime Traffic Chart */
-        .traffic-chart {
-            margin-bottom: 30px;
-        }
+/* Realtime Traffic Chart */
+.traffic-chart {
+  margin-bottom: 30px;
+}
 
-        canvas {
-            max-width: 100%;
-            height: 300px;
-            background: #fff;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+canvas {
+  max-width: 100%;
+  height: 300px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
 
-            h1 {
-                font-size: 24px;
-            }
+  h1 {
+    font-size: 24px;
+  }
 
-            h2 {
-                font-size: 20px;
-            }
+  h2 {
+    font-size: 20px;
+  }
 
-            .dashboard-cards {
-                grid-template-columns: 1fr;
-            }
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
 
-            .card {
-                margin-bottom: 15px;
-            }
+  .card {
+    margin-bottom: 15px;
+  }
 
-            .table-wrapper {
-                max-height: 200px;
-            }
+  .table-wrapper {
+    max-height: 200px;
+  }
 
-            .chat-window {
-                max-height: 200px;
-            }
+  .chat-window {
+    max-height: 200px;
+  }
 
-            canvas {
-                height: 200px;
-            }
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
-</head>
-<body>
-    <div class="container mt-5">
+  canvas {
+    height: 200px;
+  }
+}
+</style>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+    <body>
+      <div class="container mt-5">
         <h1 class="mb-4" style="color:black;">Admin Dashboard</h1>
 
         <!-- Dashboard Cards -->
         <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Products</h5>
-                        <p class="card-text" id="totalProducts">0</p>
-                    </div>
-                </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Total Products</h5>
+                <p class="card-text" id="totalProducts">0</p>
+              </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Most Viewed Product</h5>
-                        <p class="card-text" id="mostViewedProduct">N/A</p>
-                    </div>
-                </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Most Viewed Product</h5>
+                <p class="card-text" id="mostViewedProduct">N/A</p>
+              </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Realtime Traffic</h5>
-                        <p class="card-text" id="realtimeTraffic">0</p>
-                    </div>
-                </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Realtime Traffic</h5>
+                <p class="card-text" id="realtimeTraffic">0</p>
+              </div>
             </div>
+          </div>
         </div>
 
         <!-- Query Status -->
         <h2 class="mt-4" style="color:black;">Query Status</h2>
-        <div class="table-wrapper">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Chat ID</th>
-                        <th>Query</th>
-                        <th>Timestamp</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="queryTable">
-                    <!-- Queries will be populated here -->
-                </tbody>
-            </table>
-        </div>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Chat ID</th>
+              <th>Query</th>
+              <th>Timestamp</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="queryTable">
+            <!-- Queries will be populated here -->
+          </tbody>
+        </table>
 
         <!-- Chat Window -->
         <h2 class="mt-4" style="color:black;">Chat with User</h2>
         <div class="chat-window" id="chatWindow">
-            <!-- Chat messages will be displayed here -->
+          <!-- Chat messages will be displayed here -->
         </div>
         <div class="input-group mt-3">
-            <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
-            <button class="btn btn-primary" id="sendMessageBtn">Send</button>
+          <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
+          <button class="btn btn-primary" id="sendMessageBtn">Send</button>
         </div>
 
         <!-- Product Views -->
         <h2 class="mt-4" style="color:black;">Product Views</h2>
-        <div class="table-wrapper">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Views</th>
-                    </tr>
-                </thead>
-                <tbody id="productViewsTable">
-                    <!-- Product views will be populated here -->
-                </tbody>
-            </table>
-        </div>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Views</th>
+            </tr>
+          </thead>
+          <tbody id="productViewsTable">
+            <!-- Product views will be populated here -->
+          </tbody>
+        </table>
 
         <!-- Realtime Traffic Chart -->
         <h2 class="mt-4" style="color:black;">Realtime Traffic Chart</h2>
         <canvas id="realtimeTrafficChart"></canvas>
 
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
-    </div>
+      </div>
 
-    <script>
+      <script>
         let currentChatId = null;
 
         // Fetch analytics data
         async function fetchAnalytics() {
-            try {
-                const response = await axios.get('/api/analytics');
-                const analytics = response.data;
+          try {
+            const response = await axios.get('/api/analytics');
+            const analytics = response.data;
 
-                // Update total products
-                const productsResponse = await axios.get('/api/products');
-                document.getElementById('totalProducts').textContent = productsResponse.data.length;
+            // Update total products
+            const productsResponse = await axios.get('/api/products');
+            document.getElementById('totalProducts').textContent = productsResponse.data.length;
 
-                // Update most viewed product
-                const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) =>
-                    analytics.productViews[a] > analytics.productViews[b] ? a : b
-                );
-                const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
-                document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
+            // Update most viewed product
+            const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
+              analytics.productViews[a] > analytics.productViews[b] ? a : b
+            );
+            const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
+            document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
 
-                // Update realtime traffic
-                document.getElementById('realtimeTraffic').textContent = analytics.traffic;
+            // Update realtime traffic
+            document.getElementById('realtimeTraffic').textContent = analytics.traffic;
 
-                // Update query status table
-                const queryTable = document.getElementById('queryTable');
-                queryTable.innerHTML = analytics.queries.map(query => \`
-                    <tr>
-                        <td>\${query.chatId}</td>
-                        <td>\${query.query}</td>
-                        <td>\${new Date(query.timestamp).toLocaleString()}</td>
-                        <td><span class="badge bg-success">\${query.status}</span></td>
-                        <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
-                    </tr>
-                \`).join('');
+            // Update query status table
+            const queryTable = document.getElementById('queryTable');
+            queryTable.innerHTML = analytics.queries.map(query => \`
+              <tr>
+                <td>\${query.chatId}</td>
+                <td>\${query.query}</td>
+                <td>\${new Date(query.timestamp).toLocaleString()}</td>
+                <td><span class="badge bg-success">\${query.status}</span></td>
+                <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
+              </tr>
+            \`).join('');
 
-                // Update product views table
-                const productViewsTable = document.getElementById('productViewsTable');
-                productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
-                    <tr>
-                        <td>\${id}</td>
-                        <td><i class="fas fa-eye"></i> \${views}</td>
-                    </tr>
-                \`).join('');
+            // Update product views table
+            const productViewsTable = document.getElementById('productViewsTable');
+            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
+              <tr>
+                <td>\${id}</td>
+                <td><i class="fas fa-eye"></i> \${views}</td>
+              </tr>
+            \`).join('');
 
-                // Update realtime traffic chart
-                const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
-                const trafficChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
-                        datasets: [{
-                            label: 'Traffic',
-                            data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            fill: false
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('Error fetching analytics:', error);
-            }
+            // Update realtime traffic chart
+            const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
+            const trafficChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
+                datasets: [{
+                  label: 'Traffic',
+                  data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  fill: false
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          } catch (error) {
+            console.error('Error fetching analytics:', error);
+          }
         }
 
         // Open chat with a user
         function openChat(chatId) {
-            currentChatId = chatId;
-            document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
+          currentChatId = chatId;
+          document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
         }
 
         // Send message to user
         document.getElementById('sendMessageBtn').addEventListener('click', async () => {
-            const message = document.getElementById('chatInput').value;
-            if (!message || !currentChatId) return;
+          const message = document.getElementById('chatInput').value;
+          if (!message || !currentChatId) return;
 
-            try {
-                const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
-                if (response.data.success) {
-                    const chatWindow = document.getElementById('chatWindow');
-                    chatWindow.innerHTML += \`<div class="chat-message admin">\${message}</div>\`;
-                    document.getElementById('chatInput').value = '';
-                }
-            } catch (error) {
-                console.error('Error sending message:', error);
+          try {
+            const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
+            if (response.data.success) {
+              const chatWindow = document.getElementById('chatWindow');
+              chatWindow.innerHTML += \`<div class="chat-message admin">\${message}</div>\`;
+              document.getElementById('chatInput').value = '';
             }
+          } catch (error) {
+            console.error('Error sending message:', error);
+          }
         });
 
         // Fetch analytics data every 5 seconds
         fetchAnalytics();
         setInterval(fetchAnalytics, 5000);
-
-        // Initialize Hammer.js for swipe functionality
-        const queryTableWrapper = document.querySelector('.table-wrapper');
-        const hammer = new Hammer(queryTableWrapper);
-        hammer.on('swipeleft swiperight', function(ev) {
-            if (ev.type === 'swipeleft') {
-                queryTableWrapper.scrollLeft += 100;
-            } else if (ev.type === 'swiperight') {
-                queryTableWrapper.scrollLeft -= 100;
-            }
-        });
-    </script>
-</body>
-</html>
+      </script>
+    </body>
+    </html>
   `;
   res.send(adminHTML);
 });
