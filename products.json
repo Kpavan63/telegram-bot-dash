@@ -9,7 +9,8 @@
     "buyLink": "https://amzn.to/40HUpnO",
     "keywords": [
       "eggs boiler",
-      "boiler"
+      "boiler",
+      "stove"
     ],
     "id": 1
   },
@@ -24,7 +25,8 @@
     "keywords": [
       "cooker",
       "kettle",
-      "stove"
+      "stove",
+      "electric kettle"
     ],
     "id": 2
   },
@@ -39,7 +41,7 @@
     "keywords": [
       "buds",
       "earbuds",
-      "earphones"
+      "earphones.ptron buds"
     ],
     "id": 3
   },
@@ -669,5 +671,261 @@
       "usb"
     ],
     "id": 46
+  },
+  {
+    "name": "Cooling Fan for i3/i5/i7 LGA115x CPU",
+    "description": "1Goal™ Processor Cooling Fan for i3/i5/i7 LGA115x CPU Fan E97379 003 Core i3 i5 i7 Socket 1150 1155 1156 4-Pin Connector CPU Cooler with Aluminium Heatsink and 3.5-Inch Fan for Computer",
+    "price": 315,
+    "mrp": 999,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51Nhy4Nrn9L._SY445_SX342_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3PJ4uu2",
+    "keywords": [
+      "cooling fan",
+      "fan",
+      "cpu"
+    ],
+    "id": 47
+  },
+  {
+    "name": "Oneplus Bullets Z2 Bluetooth Wireless",
+    "description": "Oneplus Bullets Z2 Bluetooth Wireless in Ear Earphones with Mic, Bombastic Bass - 12.4 mm Drivers, 10 Mins Charge - 20 Hrs Music, 30 Hrs Battery Life, IP55 Dust and Water Resistant (Magico Black)",
+    "price": 1299,
+    "mrp": 1799,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/51UhwaQXCpL._SY450_.jpg",
+    "buyLink": "https://amzn.to/3E6YDfN",
+    "keywords": [
+      "buds",
+      "earbuds",
+      "earphones",
+      "oneplus",
+      "oneplus buds"
+    ],
+    "id": 48
+  },
+  {
+    "name": "boAt Bassheads 100",
+    "description": "boAt Bassheads 100 in Ear Wired Earphones with Mic(Black)",
+    "price": 339,
+    "mrp": 500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/313U7Xx9b4L._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/40qJCNd",
+    "keywords": [
+      "buds",
+      "earbuds",
+      "boat buds"
+    ],
+    "id": 49
+  },
+  {
+    "name": "boAt Airdopes 91 Prime",
+    "description": "boAt Airdopes 91 Prime, 45HRS Battery, 13mm Drivers, Metallic Finish, Low Latency,ENx Tech, Fast Charge, v5.3 Bluetooth Earbuds, TWS Ear Buds Wireless Earphones with mic (Midnight Black)",
+    "price": 799,
+    "mrp": 1500,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/41549pixTSL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3Wp3u2b",
+    "keywords": [
+      "low price buds",
+      "buds",
+      "ear phones",
+      "boat buds"
+    ],
+    "id": 50
+  },
+  {
+    "name": "Type C Cable for Smartphones",
+    "description": "Ambrane Unbreakable 3A Fast Charging 1.5m Braided Type C Cable for Smartphones, Tablets & other Type C devices, 480Mbps Data Sync, Quick Charge 3.0 (RCT15A, Black)",
+    "price": 129,
+    "mrp": 150,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41kvOAo9rQL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4hrXzBh",
+    "keywords": [
+      "type c",
+      "charger wire",
+      "wire",
+      "charger"
+    ],
+    "id": 51
+  },
+  {
+    "name": "Extension Board with 4 Universal Sockets",
+    "description": "Portronics Power Plate 10 Extension Board with 4 Universal Sockets, 3 Meter Long Cord, 1500 Watts, 6 Amp Multi Plug for Office & Home Appliances (Black)",
+    "price": 309,
+    "mrp": 550,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/31ISRGlx3hL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3EhZeuU",
+    "keywords": [
+      "sockets",
+      "current board",
+      "board",
+      "universal socket board"
+    ],
+    "id": 52
+  },
+  {
+    "name": "Dish Wash Cloth",
+    "description": "MIP INTERNATIONAL® (15 Pack) Non-Scratch Dish Wash Cloth, Steel Wire Dish Cloth, Wire Dishwashing Rags Stainless Steel Scrubber Non-Scratch Wire Dishcloth for Washing Dishes Sinks Counters",
+    "price": 179,
+    "mrp": 250,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51wPPtx4HxL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3WsZf5G",
+    "keywords": [
+      "Dish Wash Cloth",
+      "cloth"
+    ],
+    "id": 53
+  },
+  {
+    "name": "Multi Plug Socket",
+    "description": "ANCHOR 6A 3 Pin Multi Plug Socket Travel Adapter with Universal Socket, 3 Pin Multi Plug Extension Socket (White)",
+    "price": 128,
+    "mrp": 200,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/31aYAAPuJML._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3PJ4Wse",
+    "keywords": [
+      "Multi Plug Socket",
+      "board",
+      "socket"
+    ],
+    "id": 54
+  },
+  {
+    "name": "Aloe Vera Coated Gloves",
+    "description": "Scotch-Brite Latex Aloe Vera Coated Gloves,Keeps Hands Cool&Comfortable,Extra Thick,Beaded Cuffs,Anti-Slip Diamond Pattern. For Dishwashing,Gardening&Kitchen Cleaning(1 Pair)",
+    "price": 178,
+    "mrp": 250,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/516IL3HP6wL._SX569_.jpg",
+    "buyLink": "https://amzn.to/4h7qsDo",
+    "keywords": [
+      "gloves"
+    ],
+    "id": 55
+  },
+  {
+    "name": "Cloth Storage",
+    "description": "HomeStrap Set Of 6 Non-Woven Printed Saree Cover/Cloth Storage/Wardrobe Organizer For Clothes With Transparent Window(Grey)(Shark Tank Featured),45 Cm,22 Cm",
+    "price": 349,
+    "mrp": 500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51C4e6ipLrL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3PImmFw",
+    "keywords": [
+      "storage",
+      "cloth",
+      "cloth storages"
+    ],
+    "id": 56
+  },
+  {
+    "name": "Skybags",
+    "description": "Skybags Casual Backpack 28L, 2 Main Compartments, Bottle Pocket, Front Pocket, Padded Shoulder Strap",
+    "price": 420,
+    "mrp": 700,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/810s53kR8tL._SY679_.jpg",
+    "buyLink": "https://amzn.to/40HWIXM",
+    "keywords": [
+      "bags",
+      "skybags",
+      "sky"
+    ],
+    "id": 57
+  },
+  {
+    "name": "Travel Duffle Bags",
+    "description": "Gear Cross Polyester Training 26L Medium Water Resistant Travel Duffle Bag/Gym Bag/Sports Duffle For Men/Women (Black-Grey)",
+    "price": 360,
+    "mrp": 800,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/31ski4VhySS._SY300_SX300_DpWeblab_.jpg",
+    "buyLink": "https://amzn.to/40J0yjm",
+    "keywords": [
+      "bags",
+      "bag"
+    ],
+    "id": 58
+  },
+  {
+    "name": "Philips Nova Lint Remover for Clothes",
+    "description": "Philips Nova Lint Remover for Clothes | Lint Remover | Lint Roller for Clothes | RUA Remover Machine | Electric Lint Remover | 1 Year Warranty (New & Improved)",
+    "price": 349,
+    "mrp": 800,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41rigTi8cQL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3E6yihM",
+    "keywords": [
+      "clothes",
+      "Philips Nova Lint Remover for Clothes",
+      "philips",
+      "cloth remover"
+    ],
+    "id": 59
+  },
+  {
+    "name": "2 Pcs Kitchen Mats",
+    "description": "2 Pcs Kitchen Mats, Waterproof Memory Foam Kitchen Rugs, Standing Desk Mat Floor Mats, Comfort Runner Rug Carpets for Kitchen Floor, Sink (c)",
+    "price": 548,
+    "mrp": 1000,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/51dTn-aH1PL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/40pEvgj",
+    "keywords": [
+      "mats",
+      "Kitchen Mats"
+    ],
+    "id": 60
+  },
+  {
+    "name": "Home-Secure Mosquito Lamp",
+    "description": "Home-Secure Mosquito Lamp Bug Zapper Eco Friendly Electric Mosquito Lamp Dual Mosquito Zapper Lamp Indoor Insect Trap Portable Mosquito Killer Zapper",
+    "price": 390,
+    "mrp": 700,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/I/41XZ-qqGiXL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3Wp453V",
+    "keywords": [
+      "Mosquito Lamp",
+      "lights"
+    ],
+    "id": 61
+  },
+  {
+    "name": "TEQO Mosquito Bat",
+    "description": "TEQO Mosquito Bat with Torch Light| Mosquito Killer Racket | Rechargeable Mosquito Swatter with Long Life Battery| Fast Charging, 6 Month Warranty, Made in India (Multicolor)",
+    "price": 499,
+    "mrp": 1000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51N+G3Fgy2L._SY300_SX300_DpWeblab_.jpg",
+    "buyLink": "https://amzn.to/3CeQ9Th",
+    "keywords": [
+      "Mosquito Bat",
+      "bat"
+    ],
+    "id": 62
+  },
+  {
+    "name": "Samsung Galaxy M05 ",
+    "description": "Samsung Galaxy M05 (Mint Green, 4GB RAM, 64 GB Storage) | 50MP Dual Camera | Bigger 6.7\" HD+ Display | 5000mAh Battery | 25W Fast Charging | 2 Gen OS Upgrade & 4 Year Security Update | Without Charger",
+    "price": 6499,
+    "mrp": 8000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/811iAYTobjL._SX679_.jpg",
+    "buyLink": "https://amzn.to/40EG4Z8",
+    "keywords": [
+      "samsung",
+      "samsung galaxy",
+      "galaxy",
+      "Samsung Galaxy M05",
+      "mobiles"
+    ],
+    "id": 63
   }
 ]
