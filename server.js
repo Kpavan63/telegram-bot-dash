@@ -365,6 +365,7 @@ h1, h2 {
 
 .table {
   width: 100%;
+  height:300px;
   border-collapse: collapse;
 }
 
