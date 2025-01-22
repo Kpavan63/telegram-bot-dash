@@ -927,5 +927,100 @@
       "mobiles"
     ],
     "id": 63
+  },
+  {
+    "name": "Mini Sealing Machine",
+    "description": "Seznik Portable Mini Sealing Machine, Handheld Packet Sealer for Food, Snacks, Chips, Fresh Storage, Plastic Bags Sealing Machine, 1 YEAR Warranty (White)",
+    "price": 349,
+    "mrp": 500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/71aRgGvQcUL._SX679_.jpg",
+    "buyLink": "https://amzn.to/4gYCHBY",
+    "keywords": [
+      "Mini Sealing Machine",
+      "sealing machine",
+      "machine"
+    ],
+    "id": 64
+  },
+  {
+    "name": "HP Victus",
+    "description": "HP Victus, AMD Ryzen 5 5600H, NVIDIA RTX 3050, 16GB DDR4, 512GB SSD (Win11, Office21, Blue, 2.37kg) 144Hz, 9MS, IPS, 15.6-inch(39.6cm) Gaming Laptop, Backlit kb, Enhanced Cooling, fb0106AX/Fb0112AX",
+    "price": 57990,
+    "mrp": 60000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/711DWxBrdZL._SX679_.jpg",
+    "buyLink": "https://amzn.to/3Efvqz6",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 65
+  },
+  {
+    "name": "Acer Aspire Lite AMD Ryzen 5-5625U",
+    "description": "Acer Aspire Lite AMD Ryzen 5-5625U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home) AL15-41, 39.62 cm (15.6\") Full HD Display, Metal Body, Steel Gray, 1.59 KG",
+    "price": 33490,
+    "mrp": 38000,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/I/41Bmui2T3TL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/40jdAmk",
+    "keywords": [
+      "laptops"
+    ],
+    "id": 66
+  },
+  {
+    "name": "Lenovo V14 G3 Intel Core i5 12th Gen 1235U",
+    "description": "Lenovo V14 G3 Intel Core i5 12th Gen 1235U /16GB/512GB SSD/Intel UHD Graphics/Windows 11/ Thin and Light Business Laptop/14.0\" FHD Display/Iron Grey/1.57 kg",
+    "price": 35990,
+    "mrp": 38000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/413Wxi5WPcL._SX450_.jpg",
+    "buyLink": "https://amzn.to/42iIAWd",
+    "keywords": [
+      "laptops"
+    ],
+    "id": 67
+  },
+  {
+    "name": "ASUS Vivobook Go 14",
+    "description": "ASUS Vivobook Go 14, AMD Ryzen 3 7320U, Thin and Light Laptop, 14\" (35.56 cm) FHD, (8 GB RAM/512GB SSD/Windows 11/Office 2021/42WHr /Black/1.38 kg), E1404FA-NK325WS",
+    "price": 29990,
+    "mrp": 35000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41hnYMKrADL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/42kBUXH",
+    "keywords": [
+      "laptops"
+    ],
+    "id": 68
+  },
+  {
+    "name": "HP Laptop 255 G9 ",
+    "description": "HP Laptop 255 G9 (2024), AMD Ryzen 5 5625U Hexa Core - (8GB/512GB SSD/AMD Radeon Graphics) Thin and Light Business Laptop/15.6\" (39.62cm)/Silver/1.47 kg",
+    "price": 29999,
+    "mrp": 35000,
+    "rating": 4.2,
+    "image": "https://m.media-amazon.com/images/I/418FUNaqFYL._SY300_SX300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4hsi80r",
+    "keywords": [
+      "laptops"
+    ],
+    "id": 69
+  },
+  {
+    "name": "ASUS TUF F17 Gaming Laptop",
+    "description": "ASUS TUF F17 Gaming Laptop, Intel Core i5-11400H 11Th Gen, 17.3-Inch (43.94 Cm) 144Hz, (8GB RAM/512GB SSD/4GB NVIDIA Geforce RTX 2050/Windows 11/ RGB Backlit KB/Black/2.30 Kg), FX706HF-HX018W",
+    "price": 53230,
+    "mrp": 56230,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41ZYM0UMeHL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4auB50c",
+    "keywords": [
+      "gaming laptop",
+      "laptop"
+    ],
+    "id": 70
   }
 ]
