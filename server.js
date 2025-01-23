@@ -106,26 +106,13 @@ async function trackProductView(productId) {
 }
 
 // Telegram Bot Handlers
-bot.onText(/\/start/, async (msg) => {
+bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const userName = msg.from.first_name; // Fetch the user's first name
 
-  try {
-    // Read the JSON file
-    const data = await fs.readFile('topItems.json', 'utf8');
-    const products = JSON.parse(data);
-
-    // Get the top 5 products
-    const top5Products = products.slice(0, 5);
-
-    // Format the message
-    const message = `
-👋 Welcome, ${userName}! Here are today's top 5 deals:
-
-${top5Products.map((product, index) => `${index + 1}. ${product.name} - ₹${product.price} (MRP: ₹${product.mrp})`).join('\n')}
-
-Enter the product name to search.
-    `;
+  // Send a personalized welcome message
+  bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
+});
 
     // Send the message
     bot.sendMessage(chatId, message);
