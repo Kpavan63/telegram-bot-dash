@@ -322,6 +322,140 @@ app.get('/api/user-profile/:chatId', async (req, res) => {
   }
 });
 
+// Serve Chat ID Input Page
+app.get('/user-profile', (req, res) => {
+  const chatIdInputPage = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Enter Chat ID</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+          background-size: 400% 400%;
+          animation: gradientBackground 15s ease infinite;
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        @keyframes gradientBackground {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .container {
+          background: rgba(255, 255, 255, 0.9);
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          max-width: 400px;
+          width: 100%;
+          text-align: center;
+        }
+
+        h1 {
+          color: #333;
+          margin-bottom: 20px;
+        }
+
+        input {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+
+        button {
+          padding: 10px 20px;
+          background-color: #28a745;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background-color: #218838;
+        }
+
+        .profile-card {
+          margin-top: 20px;
+          padding: 20px;
+          background: #fff;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-card img {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          margin-bottom: 10px;
+        }
+
+        .profile-card p {
+          margin: 5px 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Enter Chat ID</h1>
+        <input type="text" id="chatIdInput" placeholder="Enter Chat ID">
+        <button onclick="fetchUserProfile()">View Profile</button>
+
+        <!-- User Profile Display -->
+        <div id="profileDisplay" class="profile-card" style="display: none;">
+          <img id="profilePhoto" src="" alt="Profile Photo">
+          <p><strong>ID:</strong> <span id="userId"></span></p>
+          <p><strong>Name:</strong> <span id="userName"></span></p>
+          <p><strong>Username:</strong> <span id="userUsername"></span></p>
+        </div>
+      </div>
+
+      <script>
+        async function fetchUserProfile() {
+          const chatId = document.getElementById('chatIdInput').value;
+          if (!chatId) {
+            alert('Please enter a valid Chat ID.');
+            return;
+          }
+
+          try {
+            const response = await fetch(\`/api/user-profile/\${chatId}\`);
+            const user = await response.json();
+
+            if (response.ok) {
+              // Display user profile
+              document.getElementById('profileDisplay').style.display = 'block';
+              document.getElementById('profilePhoto').src = user.photo_url || 'https://via.placeholder.com/100';
+              document.getElementById('userId').textContent = user.id;
+              document.getElementById('userName').textContent = \`\${user.first_name} \${user.last_name || ''}\`;
+              document.getElementById('userUsername').textContent = user.username || 'N/A';
+            } else {
+              alert(user.error || 'Failed to fetch user profile.');
+            }
+          } catch (error) {
+            console.error('Error fetching user profile:', error);
+            alert('An error occurred. Please try again.');
+          }
+        }
+      </script>
+    </body>
+    </html>
+  `;
+  res.send(chatIdInputPage);
+});
+
 // Serve Admin Panel HTML
 app.get('/admin', (req, res) => {
   const adminHTML = `
@@ -366,42 +500,165 @@ app.get('/admin', (req, res) => {
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Tooltip Styles */
-        .tooltip {
-          position: relative;
-          display: inline-block;
-          cursor: pointer;
+        /* Dashboard Cards */
+        .dashboard-cards {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 20px;
+          margin-bottom: 30px;
         }
 
-        .tooltip .tooltip-content {
-          visibility: hidden;
-          width: 200px;
-          background-color: #333;
-          color: #fff;
+        .card {
+          background: #fff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           text-align: center;
-          border-radius: 5px;
-          padding: 10px;
-          position: absolute;
+        }
+
+        .card h3 {
+          margin: 0 0 10px;
+          font-size: 18px;
+          color: #555;
+        }
+
+        .card p {
+          margin: 0;
+          font-size: 24px;
+          font-weight: bold;
+          color: #2c3e50;
+        }
+
+        /* Query Status Table */
+        .query-status {
+          margin-bottom: 30px;
+        }
+
+        .table-wrapper {
+          max-height: 300px;
+          overflow-y: auto;
+          border: 1px solid #ddd;
+          border-radius: 10px;
+          background: #fff;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+
+        .table th, .table td {
+          padding: 12px 15px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+          background-color: #2c3e50;
+          color: #fff;
+          font-weight: bold;
+          position: sticky;
+          top: 0;
           z-index: 1;
-          bottom: 125%;
-          left: 50%;
-          margin-left: -100px;
-          opacity: 0;
-          transition: opacity 0.3s;
         }
 
-        .tooltip:hover .tooltip-content {
-          visibility: visible;
-          opacity: 1;
+        .table tr:hover {
+          background-color: #f9f9f9;
         }
 
-        .tooltip .tooltip-content img {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
+        .status {
+          padding: 5px 10px;
+          border-radius: 4px;
+          font-size: 14px;
+        }
+
+        .status.pending {
+          background-color: #ffcc00;
+          color: #000;
+        }
+
+        .status.resolved {
+          background-color: #4caf50;
+          color: #fff;
+        }
+
+        /* Chat Window */
+        .chat-window {
+          border: 1px solid #ddd;
+          padding: 10px;
+          margin-top: 20px;
+          max-height: 300px;
+          overflow-y: auto;
+          background: #fff;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-message {
           margin-bottom: 10px;
         }
+
+        .chat-message.admin {
+          text-align: right;
+          color: #007bff;
+        }
+
+        /* Product Views Table */
+        .product-views {
+          margin-bottom: 30px;
+        }
+
+        /* Realtime Traffic Chart */
+        .traffic-chart {
+          margin-bottom: 30px;
+        }
+
+        canvas {
+          max-width: 100%;
+          height: 300px;
+          background: #fff;
+          border-radius: 10px;
+          padding: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          body {
+            padding: 10px;
+          }
+
+          h1 {
+            font-size: 24px;
+          }
+
+          h2 {
+            font-size: 20px;
+          }
+
+          .dashboard-cards {
+            grid-template-columns: 1fr;
+          }
+
+          .card {
+            margin-bottom: 15px;
+          }
+
+          .table-wrapper {
+            max-height: 200px;
+          }
+
+          .chat-window {
+            max-height: 200px;
+          }
+
+          canvas {
+            height: 200px;
+          }
+        }
       </style>
+
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
@@ -483,6 +740,7 @@ app.get('/admin', (req, res) => {
         <canvas id="realtimeTrafficChart"></canvas>
 
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
+        <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
       </div>
 
       <script>
@@ -512,9 +770,7 @@ app.get('/admin', (req, res) => {
             const queryTable = document.getElementById('queryTable');
             queryTable.innerHTML = analytics.queries.map(query => \`
               <tr>
-                <td>
-                  <span class="tooltip chat-id" data-chat-id="\${query.chatId}">\${query.chatId}</span>
-                </td>
+                <td>\${query.chatId}</td>
                 <td>\${query.query}</td>
                 <td>\${new Date(query.timestamp).toLocaleString()}</td>
                 <td><span class="badge bg-success">\${query.status}</span></td>
@@ -557,45 +813,6 @@ app.get('/admin', (req, res) => {
             console.error('Error fetching analytics:', error);
           }
         }
-
-        // Function to fetch and display user profile in tooltip
-        async function showUserProfile(chatId) {
-          try {
-            const response = await axios.get(\`/api/user-profile/\${chatId}\`);
-            const user = response.data;
-
-            // Create tooltip content
-            const tooltipContent = \`
-              <div class="tooltip-content">
-                \${user.photo_url ? \`<img src="\${user.photo_url}" alt="Profile Photo">\` : '<div>No Photo</div>'}
-                <div><strong>ID:</strong> \${user.id}</div>
-                <div><strong>Name:</strong> \${user.first_name} \${user.last_name}</div>
-                <div><strong>Username:</strong> \${user.username || 'N/A'}</div>
-              </div>
-            \`;
-
-            // Display tooltip
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.innerHTML = tooltipContent;
-            document.body.appendChild(tooltip);
-
-            // Remove tooltip on mouse leave
-            tooltip.addEventListener('mouseleave', () => {
-              tooltip.remove();
-            });
-          } catch (error) {
-            console.error('Error fetching user profile:', error);
-          }
-        }
-
-        // Attach tooltip to chat IDs in the query table
-        document.querySelectorAll('.queryTable .chat-id').forEach((element) => {
-          element.addEventListener('click', () => {
-            const chatId = element.dataset.chatId;
-            showUserProfile(chatId);
-          });
-        });
 
         // Open chat with a user
         function openChat(chatId) {
