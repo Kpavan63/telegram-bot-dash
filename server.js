@@ -4,6 +4,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.post('/webhook', (req, res) => {
   bot.processUpdate(req.body); // Process the update
   res.sendStatus(200); // Acknowledge receipt
 });
+
 // Root endpoint for UptimeRobot
 app.get('/', (req, res) => {
   res.send('Bot is running!');
@@ -120,6 +122,7 @@ bot.onText(/\/help/, (msg) => {
   `;
   bot.sendMessage(chatId, helpMessage, { parse_mode: 'HTML' });
 });
+
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
   const userInput = msg.text;
@@ -147,7 +150,6 @@ bot.on('message', async (msg) => {
   }
 });
 
-      
 bot.on('callback_query', async (callbackQuery) => {
   const chatId = callbackQuery.message.chat.id;
   const productId = callbackQuery.data;
@@ -270,6 +272,56 @@ app.post('/api/send-message', async (req, res) => {
   }
 });
 
+// New endpoint to fetch user profile
+app.get('/api/user-profile/:chatId', async (req, res) => {
+  const chatId = req.params.chatId;
+
+  try {
+    // Fetch user info
+    const userInfoResponse = await axios.get(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getChat`,
+      { params: { chat_id: chatId } }
+    );
+
+    if (!userInfoResponse.data.ok) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const userInfo = userInfoResponse.data.result;
+
+    // Fetch user profile photo
+    let photoUrl = null;
+    const photosResponse = await axios.get(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getUserProfilePhotos`,
+      { params: { user_id: chatId, limit: 1 } }
+    );
+
+    if (photosResponse.data.ok && photosResponse.data.result.total_count > 0) {
+      const fileId = photosResponse.data.result.photos[0][0].file_id;
+      const fileResponse = await axios.get(
+        `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getFile`,
+        { params: { file_id: fileId } }
+      );
+
+      if (fileResponse.data.ok) {
+        photoUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${fileResponse.data.result.file_path}`;
+      }
+    }
+
+    // Return user profile data
+    res.json({
+      id: userInfo.id,
+      first_name: userInfo.first_name,
+      last_name: userInfo.last_name || '',
+      username: userInfo.username || '',
+      photo_url: photoUrl,
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ error: 'Failed to fetch user profile' });
+  }
+});
+
 // Serve Admin Panel HTML
 app.get('/admin', (req, res) => {
   const adminHTML = `
@@ -282,204 +334,74 @@ app.get('/admin', (req, res) => {
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
       <style>
-       /* General Styles */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-  background-size: 400% 400%;
-  animation: gradientBackground 15s ease infinite;
-  min-height: 100vh;
-  color: #333;
-}
+        /* General Styles */
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 20px;
+          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+          background-size: 400% 400%;
+          animation: gradientBackground 15s ease infinite;
+          min-height: 100vh;
+          color: #333;
+        }
 
-@keyframes gradientBackground {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
+        @keyframes gradientBackground {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
 
-h1, h2 {
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
+        h1, h2 {
+          color: #fff;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
 
-/* Dashboard Cards */
-.dashboard-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
+        /* Tooltip Styles */
+        .tooltip {
+          position: relative;
+          display: inline-block;
+          cursor: pointer;
+        }
 
-.card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
+        .tooltip .tooltip-content {
+          visibility: hidden;
+          width: 200px;
+          background-color: #333;
+          color: #fff;
+          text-align: center;
+          border-radius: 5px;
+          padding: 10px;
+          position: absolute;
+          z-index: 1;
+          bottom: 125%;
+          left: 50%;
+          margin-left: -100px;
+          opacity: 0;
+          transition: opacity 0.3s;
+        }
 
-.card h3 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  color: #555;
-}
+        .tooltip:hover .tooltip-content {
+          visibility: visible;
+          opacity: 1;
+        }
 
-.card p {
-  margin: 0;
-  font-size: 24px;
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-/* Query Status Table */
-.query-status {
-  margin-bottom: 30px;
-}
-
-.table-wrapper {
-  max-height: 300px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.table {
-  width: 100%;
-  height:300px;
-  border-collapse: collapse;
-}
-
-.table th, .table td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.table th {
-  background-color: #2c3e50;
-  color: #fff;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-.table tr:hover {
-  background-color: #f9f9f9;
-}
-
-.status {
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.status.pending {
-  background-color: #ffcc00;
-  color: #000;
-}
-
-.status.resolved {
-  background-color: #4caf50;
-  color: #fff;
-}
-
-/* Chat Window */
-.chat-window {
-  border: 1px solid #ddd;
-  padding: 10px;
-  margin-top: 20px;
-  max-height: 300px;
-  overflow-y: auto;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.chat-message {
-  margin-bottom: 10px;
-}
-
-.chat-message.admin {
-  text-align: right;
-  color: #007bff;
-}
-
-/* Product Views Table */
-.product-views {
-  margin-bottom: 30px;
-}
-
-/* Realtime Traffic Chart */
-.traffic-chart {
-  margin-bottom: 30px;
-}
-
-canvas {
-  max-width: 100%;
-  height: 300px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  body {
-    padding: 10px;
-  }
-
-  h1 {
-    font-size: 24px;
-  }
-
-  h2 {
-    font-size: 20px;
-  }
-
-  .dashboard-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .card {
-    margin-bottom: 15px;
-  }
-
-  .table-wrapper {
-    max-height: 200px;
-  }
-
-  .chat-window {
-    max-height: 200px;
-  }
-
-  canvas {
-    height: 200px;
-  }
-}
-</style>
-
+        .tooltip .tooltip-content img {
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          margin-bottom: 10px;
+        }
+      </style>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
@@ -590,7 +512,9 @@ canvas {
             const queryTable = document.getElementById('queryTable');
             queryTable.innerHTML = analytics.queries.map(query => \`
               <tr>
-                <td>\${query.chatId}</td>
+                <td>
+                  <span class="tooltip chat-id" data-chat-id="\${query.chatId}">\${query.chatId}</span>
+                </td>
                 <td>\${query.query}</td>
                 <td>\${new Date(query.timestamp).toLocaleString()}</td>
                 <td><span class="badge bg-success">\${query.status}</span></td>
@@ -633,6 +557,45 @@ canvas {
             console.error('Error fetching analytics:', error);
           }
         }
+
+        // Function to fetch and display user profile in tooltip
+        async function showUserProfile(chatId) {
+          try {
+            const response = await axios.get(\`/api/user-profile/\${chatId}\`);
+            const user = response.data;
+
+            // Create tooltip content
+            const tooltipContent = \`
+              <div class="tooltip-content">
+                \${user.photo_url ? \`<img src="\${user.photo_url}" alt="Profile Photo">\` : '<div>No Photo</div>'}
+                <div><strong>ID:</strong> \${user.id}</div>
+                <div><strong>Name:</strong> \${user.first_name} \${user.last_name}</div>
+                <div><strong>Username:</strong> \${user.username || 'N/A'}</div>
+              </div>
+            \`;
+
+            // Display tooltip
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.innerHTML = tooltipContent;
+            document.body.appendChild(tooltip);
+
+            // Remove tooltip on mouse leave
+            tooltip.addEventListener('mouseleave', () => {
+              tooltip.remove();
+            });
+          } catch (error) {
+            console.error('Error fetching user profile:', error);
+          }
+        }
+
+        // Attach tooltip to chat IDs in the query table
+        document.querySelectorAll('.queryTable .chat-id').forEach((element) => {
+          element.addEventListener('click', () => {
+            const chatId = element.dataset.chatId;
+            showUserProfile(chatId);
+          });
+        });
 
         // Open chat with a user
         function openChat(chatId) {
