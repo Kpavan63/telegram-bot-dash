@@ -325,8 +325,6 @@ app.get('/api/user-profile/:chatId', async (req, res) => {
 // Serve Chat ID Input Page
 app.get('/user-profile', (req, res) => {
   const chatIdInputPage = `
-   app.get('/user-profile', (req, res) => {
-  const chatIdInputPage = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -407,23 +405,6 @@ app.get('/user-profile', (req, res) => {
         .profile-card p {
           margin: 5px 0;
         }
-
-        /* Loader Animation */
-        .loader {
-          border: 4px solid #f3f3f3; /* Light grey */
-          border-top: 4px solid #3498db; /* Blue */
-          border-radius: 50%;
-          width: 30px;
-          height: 30px;
-          animation: spin 1s linear infinite;
-          margin: 20px auto;
-          display: none; /* Hidden by default */
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
       </style>
     </head>
     <body>
@@ -431,9 +412,6 @@ app.get('/user-profile', (req, res) => {
         <h1>Enter Chat ID</h1>
         <input type="text" id="chatIdInput" placeholder="Enter Chat ID">
         <button onclick="fetchUserProfile()">View Profile</button>
-
-        <!-- Loader -->
-        <div class="loader" id="loader"></div>
 
         <!-- User Profile Display -->
         <div id="profileDisplay" class="profile-card" style="display: none;">
@@ -452,12 +430,8 @@ app.get('/user-profile', (req, res) => {
             return;
           }
 
-          // Show loader
-          document.getElementById('loader').style.display = 'block';
-          document.getElementById('profileDisplay').style.display = 'none';
-
           try {
-            const response = await fetch('/api/user-profile/' + chatId);
+            const response = await fetch(\`/api/user-profile/\${chatId}\`);
             const user = await response.json();
 
             if (response.ok) {
@@ -465,7 +439,7 @@ app.get('/user-profile', (req, res) => {
               document.getElementById('profileDisplay').style.display = 'block';
               document.getElementById('profilePhoto').src = user.photo_url || 'https://via.placeholder.com/100';
               document.getElementById('userId').textContent = user.id;
-              document.getElementById('userName').textContent = user.first_name + ' ' + (user.last_name || '');
+              document.getElementById('userName').textContent = \`\${user.first_name} \${user.last_name || ''}\`;
               document.getElementById('userUsername').textContent = user.username || 'N/A';
             } else {
               alert(user.error || 'Failed to fetch user profile.');
@@ -473,9 +447,6 @@ app.get('/user-profile', (req, res) => {
           } catch (error) {
             console.error('Error fetching user profile:', error);
             alert('An error occurred. Please try again.');
-          } finally {
-            // Hide loader
-            document.getElementById('loader').style.display = 'none';
           }
         }
       </script>
