@@ -106,12 +106,33 @@ async function trackProductView(productId) {
 }
 
 // Telegram Bot Handlers
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const userName = msg.from.first_name; // Fetch the user's first name
 
-  // Send a personalized welcome message
-  bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
+  try {
+    // Read the JSON file
+    const data = await fs.readFile('topItems.json', 'utf8');
+    const products = JSON.parse(data);
+
+    // Get the top 5 products
+    const top5Products = products.slice(0, 5);
+
+    // Format the message
+    const message = `
+👋 Welcome, ${userName}! Here are today's top 5 deals:
+
+${top5Products.map((product, index) => `${index + 1}. ${product.name} - ₹${product.price} (MRP: ₹${product.mrp})`).join('\n')}
+
+Enter the product name to search.
+    `;
+
+    // Send the message
+    bot.sendMessage(chatId, message);
+  } catch (error) {
+    console.error('Error fetching top deals:', error);
+    bot.sendMessage(chatId, 'An error occurred while fetching top deals. Please try again later.');
+  }
 });
 
 bot.onText(/\/help/, (msg) => {
