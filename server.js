@@ -108,7 +108,10 @@ async function trackProductView(productId) {
 // Telegram Bot Handlers
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Welcome! Please enter a product name to search.');
+  const userName = msg.from.first_name; // Fetch the user's first name
+
+  // Send a personalized welcome message
+  bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
 });
 
 bot.onText(/\/help/, (msg) => {
