@@ -457,7 +457,7 @@ app.get('/user-profile', (req, res) => {
           document.getElementById('profileDisplay').style.display = 'none';
 
           try {
-            const response = await fetch(\`/api/user-profile/\${chatId}\`);
+            const response = await fetch('/api/user-profile/' + chatId);
             const user = await response.json();
 
             if (response.ok) {
@@ -465,7 +465,7 @@ app.get('/user-profile', (req, res) => {
               document.getElementById('profileDisplay').style.display = 'block';
               document.getElementById('profilePhoto').src = user.photo_url || 'https://via.placeholder.com/100';
               document.getElementById('userId').textContent = user.id;
-              document.getElementById('userName').textContent = \`\${user.first_name} \${user.last_name || ''}\`;
+              document.getElementById('userName').textContent = user.first_name + ' ' + (user.last_name || '');
               document.getElementById('userUsername').textContent = user.username || 'N/A';
             } else {
               alert(user.error || 'Failed to fetch user profile.');
