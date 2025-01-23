@@ -325,7 +325,7 @@ app.get('/api/user-profile/:chatId', async (req, res) => {
 // Serve Chat ID Input Page
 app.get('/user-profile', (req, res) => {
   const chatIdInputPage = `
-    app.get('/user-profile', (req, res) => {
+   app.get('/user-profile', (req, res) => {
   const chatIdInputPage = `
     <!DOCTYPE html>
     <html lang="en">
@@ -481,9 +481,6 @@ app.get('/user-profile', (req, res) => {
       </script>
     </body>
     </html>
-  `;
-  res.send(chatIdInputPage);
-});
   `;
   res.send(chatIdInputPage);
 });
