@@ -113,15 +113,7 @@ bot.onText(/\/start/, (msg) => {
   // Send a personalized welcome message
   bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
 });
-
-    // Send the message
-    bot.sendMessage(chatId, message);
-  } catch (error) {
-    console.error('Error fetching top deals:', error);
-    bot.sendMessage(chatId, 'An error occurred while fetching top deals. Please try again later.');
-  }
-});
-
+// telegram bot to help handler
 bot.onText(/\/help/, (msg) => {
   const chatId = msg.chat.id;
   const helpMessage = `
