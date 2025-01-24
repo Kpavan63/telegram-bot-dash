@@ -488,6 +488,7 @@ app.get('/user-profile', (req, res) => {
 
 // Serve Admin Panel HTML
 // Serve Admin Panel HTML with PIN Authentication
+// Serve Admin Panel HTML with PIN Authentication
 app.get('/admin', (req, res) => {
   const adminHTML = `
     <!DOCTYPE html>
@@ -550,19 +551,30 @@ app.get('/admin', (req, res) => {
           color: #333;
         }
 
-        .pin-popup input {
-          width: 100%;
-          padding: 10px;
-          margin-bottom: 10px;
-          border: 2px solid #007bff; /* Blue border */
-          border-radius: 5px;
-          font-size: 16px;
+        .pin-input-container {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+
+        .pin-input-container input {
+          width: 50px;
+          height: 50px;
           text-align: center;
+          font-size: 20px;
+          border: 2px solid #007bff;
+          border-radius: 5px;
+        }
+
+        .pin-input-container input:focus {
+          outline: none;
+          border-color: #0056b3;
         }
 
         .pin-popup button {
           padding: 10px 20px;
-          background-color: #007bff; /* Blue button */
+          background-color: #007bff;
           color: white;
           border: none;
           border-radius: 5px;
@@ -571,7 +583,7 @@ app.get('/admin', (req, res) => {
         }
 
         .pin-popup button:hover {
-          background-color: #0056b3; /* Darker blue on hover */
+          background-color: #0056b3;
         }
 
         .pin-error {
@@ -583,164 +595,6 @@ app.get('/admin', (req, res) => {
         #adminFeatures {
           display: none;
         }
-
-        /* Dashboard Cards */
-        .dashboard-cards {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 20px;
-          margin-bottom: 30px;
-        }
-
-        .card {
-          background: #fff;
-          padding: 20px;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          text-align: center;
-        }
-
-        .card h3 {
-          margin: 0 0 10px;
-          font-size: 18px;
-          color: #555;
-        }
-
-        .card p {
-          margin: 0;
-          font-size: 24px;
-          font-weight: bold;
-          color: #2c3e50;
-        }
-
-        /* Query Status Table */
-        .query-status {
-          margin-bottom: 30px;
-        }
-
-        .table-wrapper {
-          max-height: 300px;
-          overflow-y: auto;
-          border: 1px solid #ddd;
-          border-radius: 10px;
-          background: #fff;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-
-        .table th, .table td {
-          padding: 12px 15px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-
-        .table th {
-          background-color: #2c3e50;
-          color: #fff;
-          font-weight: bold;
-          position: sticky;
-          top: 0;
-          z-index: 1;
-        }
-
-        .table tr:hover {
-          background-color: #f9f9f9;
-        }
-
-        .status {
-          padding: 5px 10px;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-
-        .status.pending {
-          background-color: #ffcc00;
-          color: #000;
-        }
-
-        .status.resolved {
-          background-color: #4caf50;
-          color: #fff;
-        }
-
-        /* Chat Window */
-        .chat-window {
-          border: 1px solid #ddd;
-          padding: 10px;
-          margin-top: 20px;
-          max-height: 300px;
-          overflow-y: auto;
-          background: #fff;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .chat-message {
-          margin-bottom: 10px;
-        }
-
-        .chat-message.admin {
-          text-align: right;
-          color: #007bff;
-        }
-
-        /* Product Views Table */
-        .product-views {
-          margin-bottom: 30px;
-        }
-
-        /* Realtime Traffic Chart */
-        .traffic-chart {
-          margin-bottom: 30px;
-        }
-
-        canvas {
-          max-width: 100%;
-          height: 300px;
-          background: #fff;
-          border-radius: 10px;
-          padding: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-          body {
-            padding: 10px;
-          }
-
-          h1 {
-            font-size: 24px;
-          }
-
-          h2 {
-            font-size: 20px;
-          }
-
-          .dashboard-cards {
-            grid-template-columns: 1fr;
-          }
-
-          .card {
-            margin-bottom: 15px;
-          }
-
-          .table-wrapper {
-            max-height: 200px;
-          }
-
-          .chat-window {
-            max-height: 200px;
-          }
-
-          canvas {
-            height: 200px;
-          }
-        }
       </style>
 
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -750,7 +604,12 @@ app.get('/admin', (req, res) => {
       <!-- PIN Popup Card -->
       <div class="pin-popup" id="pinPopup">
         <h2>Enter PIN to Access Admin Panel</h2>
-        <input type="password" id="pinInput" placeholder="Enter PIN">
+        <div class="pin-input-container">
+          <input type="text" id="pin1" maxlength="1" oninput="moveToNext(1)" />
+          <input type="text" id="pin2" maxlength="1" oninput="moveToNext(2)" />
+          <input type="text" id="pin3" maxlength="1" oninput="moveToNext(3)" />
+          <input type="text" id="pin4" maxlength="1" oninput="moveToNext(4)" />
+        </div>
         <button onclick="verifyPin()">Submit</button>
         <div id="pinError" class="pin-error"></div>
       </div>
@@ -837,15 +696,29 @@ app.get('/admin', (req, res) => {
       </div>
 
       <script>
-        const correctPin = '${process.env.ADMIN_PIN || '1234'}'; // Fetch PIN from environment variable or use default
+        const correctPin = '${process.env.ADMIN_PIN || '6300'}'; // Fetch PIN from environment variable or use default
 
+        // Function to move to the next input box
+        function moveToNext(currentInput) {
+          const nextInput = document.getElementById(\`pin\${currentInput + 1}\`);
+          if (nextInput && document.getElementById(\`pin\${currentInput}\`).value) {
+            nextInput.focus();
+          }
+        }
+
+        // Function to verify the PIN
         function verifyPin() {
-          const pinInput = document.getElementById('pinInput').value;
+          const pin1 = document.getElementById('pin1').value;
+          const pin2 = document.getElementById('pin2').value;
+          const pin3 = document.getElementById('pin3').value;
+          const pin4 = document.getElementById('pin4').value;
+          const enteredPin = pin1 + pin2 + pin3 + pin4;
+
           const pinError = document.getElementById('pinError');
           const adminFeatures = document.getElementById('adminFeatures');
           const pinPopup = document.getElementById('pinPopup');
 
-          if (pinInput === correctPin) {
+          if (enteredPin === correctPin) {
             // Hide the PIN popup and show the admin features
             pinPopup.style.display = 'none';
             adminFeatures.style.display = 'block';
