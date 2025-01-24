@@ -487,6 +487,7 @@ app.get('/user-profile', (req, res) => {
 });
 
 // Serve Admin Panel HTML
+// Serve Admin Panel HTML with PIN Authentication
 app.get('/admin', (req, res) => {
   const adminHTML = `
     <!DOCTYPE html>
@@ -528,6 +529,59 @@ app.get('/admin', (req, res) => {
           background: rgba(255, 255, 255, 0.9);
           border-radius: 10px;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* PIN Popup Card */
+        .pin-popup {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: rgba(255, 255, 255, 0.95);
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+          z-index: 1000;
+          text-align: center;
+        }
+
+        .pin-popup h2 {
+          margin-bottom: 20px;
+          color: #333;
+        }
+
+        .pin-popup input {
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 10px;
+          border: 2px solid #007bff; /* Blue border */
+          border-radius: 5px;
+          font-size: 16px;
+          text-align: center;
+        }
+
+        .pin-popup button {
+          padding: 10px 20px;
+          background-color: #007bff; /* Blue button */
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 16px;
+        }
+
+        .pin-popup button:hover {
+          background-color: #0056b3; /* Darker blue on hover */
+        }
+
+        .pin-error {
+          color: red;
+          margin-top: 10px;
+        }
+
+        /* Hide admin features by default */
+        #adminFeatures {
+          display: none;
         }
 
         /* Dashboard Cards */
@@ -693,7 +747,16 @@ app.get('/admin', (req, res) => {
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>
-      <div class="container mt-5">
+      <!-- PIN Popup Card -->
+      <div class="pin-popup" id="pinPopup">
+        <h2>Enter PIN to Access Admin Panel</h2>
+        <input type="password" id="pinInput" placeholder="Enter PIN">
+        <button onclick="verifyPin()">Submit</button>
+        <div id="pinError" class="pin-error"></div>
+      </div>
+
+      <!-- Admin Features (hidden by default) -->
+      <div class="container mt-5" id="adminFeatures">
         <h1 class="mb-4" style="color:black;">Admin Dashboard</h1>
 
         <!-- Dashboard Cards -->
@@ -774,6 +837,24 @@ app.get('/admin', (req, res) => {
       </div>
 
       <script>
+        const correctPin = '${process.env.ADMIN_PIN || '1234'}'; // Fetch PIN from environment variable or use default
+
+        function verifyPin() {
+          const pinInput = document.getElementById('pinInput').value;
+          const pinError = document.getElementById('pinError');
+          const adminFeatures = document.getElementById('adminFeatures');
+          const pinPopup = document.getElementById('pinPopup');
+
+          if (pinInput === correctPin) {
+            // Hide the PIN popup and show the admin features
+            pinPopup.style.display = 'none';
+            adminFeatures.style.display = 'block';
+          } else {
+            // Show an error message
+            pinError.textContent = 'Invalid PIN. Please try again.';
+          }
+        }
+
         let currentChatId = null;
 
         // Fetch analytics data
