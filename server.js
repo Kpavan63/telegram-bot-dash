@@ -489,6 +489,7 @@ app.get('/user-profile', (req, res) => {
 // Serve Admin Panel HTML
 // Serve Admin Panel HTML with PIN Authentication
 // Serve Admin Panel HTML with PIN Authentication
+// Serve Admin Panel HTML with PIN Authentication
 app.get('/admin', (req, res) => {
   const adminHTML = `
     <!DOCTYPE html>
@@ -696,7 +697,16 @@ app.get('/admin', (req, res) => {
       </div>
 
       <script>
-        const correctPin = '${process.env.ADMIN_PIN || '6300'}'; // Fetch PIN from environment variable or use default
+        const correctPin = '${process.env.ADMIN_PIN || '1234'}'; // Fetch PIN from environment variable or use default
+
+        // Check if the PIN has already been verified
+        const isPinVerified = localStorage.getItem('pinVerified') === 'true';
+
+        if (isPinVerified) {
+          // Hide the PIN popup and show the admin features
+          document.getElementById('pinPopup').style.display = 'none';
+          document.getElementById('adminFeatures').style.display = 'block';
+        }
 
         // Function to move to the next input box
         function moveToNext(currentInput) {
@@ -722,6 +732,9 @@ app.get('/admin', (req, res) => {
             // Hide the PIN popup and show the admin features
             pinPopup.style.display = 'none';
             adminFeatures.style.display = 'block';
+
+            // Store the PIN verification state in local storage
+            localStorage.setItem('pinVerified', 'true');
           } else {
             // Show an error message
             pinError.textContent = 'Invalid PIN. Please try again.';
