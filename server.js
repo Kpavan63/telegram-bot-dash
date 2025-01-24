@@ -113,7 +113,7 @@ bot.onText(/\/start/, (msg) => {
   // Send a personalized welcome message
   bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
 });
-
+// telegram bot to help handler
 bot.onText(/\/help/, (msg) => {
   const chatId = msg.chat.id;
   const helpMessage = `
@@ -486,207 +486,395 @@ app.get('/user-profile', (req, res) => {
   res.send(chatIdInputPage);
 });
 
-// Serve Admin Panel HTML with PIN Authentication
+// Serve Admin Panel HTML
 app.get('/admin', (req, res) => {
-  const adminLoginHTML = `
+  const adminHTML = `
     <!DOCTYPE html>
     <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Admin Login</title>
+      <title>Admin Dashboard</title>
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
       <style>
+        /* General Styles */
         body {
           font-family: Arial, sans-serif;
           margin: 0;
-          padding: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-          background: linear-gradient(135deg, #6a11cb, #2575fc);
+          padding: 20px;
+          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+          background-size: 400% 400%;
+          animation: gradientBackground 15s ease infinite;
+          min-height: 100vh;
+          color: #333;
+        }
+
+        @keyframes gradientBackground {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        h1, h2 {
           color: #fff;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
-        .login-container {
-          background: rgba(255, 255, 255, 0.1);
-          padding: 40px;
-          border-radius: 20px;
-          box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-          backdrop-filter: blur(10px);
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 20px;
+          margin-bottom: 30px;
+        }
+
+        .card {
+          background: #fff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           text-align: center;
-          width: 350px;
         }
 
-        .login-container h2 {
-          margin-bottom: 20px;
+        .card h3 {
+          margin: 0 0 10px;
+          font-size: 18px;
+          color: #555;
+        }
+
+        .card p {
+          margin: 0;
           font-size: 24px;
-          color: #fff;
+          font-weight: bold;
+          color: #2c3e50;
         }
 
-        .pin-input {
-          display: flex;
-          justify-content: center;
-          gap: 10px;
-          margin-bottom: 20px;
+        /* Query Status Table */
+        .query-status {
+          margin-bottom: 30px;
         }
 
-        .pin-input input {
-          width: 50px;
-          height: 50px;
-          text-align: center;
-          font-size: 20px;
-          border: 2px solid rgba(255, 255, 255, 0.3);
+        .table-wrapper {
+          max-height: 300px;
+          overflow-y: auto;
+          border: 1px solid #ddd;
           border-radius: 10px;
-          background: rgba(255, 255, 255, 0.1);
-          color: #fff;
-          outline: none;
-          transition: border-color 0.3s ease;
+          background: #fff;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .pin-input input:focus {
-          border-color: #fff;
-        }
-
-        .submit-btn {
+        .table {
           width: 100%;
-          padding: 15px;
-          background: linear-gradient(135deg, #6a11cb, #2575fc);
-          border: none;
-          border-radius: 10px;
+          border-collapse: collapse;
+        }
+
+        .table th, .table td {
+          padding: 12px 15px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+          background-color: #2c3e50;
           color: #fff;
-          font-size: 16px;
-          cursor: pointer;
-          transition: background 0.3s ease;
+          font-weight: bold;
+          position: sticky;
+          top: 0;
+          z-index: 1;
         }
 
-        .submit-btn:hover {
-          background: linear-gradient(135deg, #2575fc, #6a11cb);
+        .table tr:hover {
+          background-color: #f9f9f9;
         }
 
-        .error-message {
-          color: #ff6b6b;
-          margin-top: 10px;
+        .status {
+          padding: 5px 10px;
+          border-radius: 4px;
           font-size: 14px;
-          display: none;
         }
 
-        /* Animations */
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-10px); }
-          50% { transform: translateX(10px); }
-          75% { transform: translateX(-10px); }
+        .status.pending {
+          background-color: #ffcc00;
+          color: #000;
         }
 
-        .shake {
-          animation: shake 0.5s ease-in-out;
+        .status.resolved {
+          background-color: #4caf50;
+          color: #fff;
+        }
+
+        /* Chat Window */
+        .chat-window {
+          border: 1px solid #ddd;
+          padding: 10px;
+          margin-top: 20px;
+          max-height: 300px;
+          overflow-y: auto;
+          background: #fff;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-message {
+          margin-bottom: 10px;
+        }
+
+        .chat-message.admin {
+          text-align: right;
+          color: #007bff;
+        }
+
+        /* Product Views Table */
+        .product-views {
+          margin-bottom: 30px;
+        }
+
+        /* Realtime Traffic Chart */
+        .traffic-chart {
+          margin-bottom: 30px;
+        }
+
+        canvas {
+          max-width: 100%;
+          height: 300px;
+          background: #fff;
+          border-radius: 10px;
+          padding: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+          body {
+            padding: 10px;
+          }
+
+          h1 {
+            font-size: 24px;
+          }
+
+          h2 {
+            font-size: 20px;
+          }
+
+          .dashboard-cards {
+            grid-template-columns: 1fr;
+          }
+
+          .card {
+            margin-bottom: 15px;
+          }
+
+          .table-wrapper {
+            max-height: 200px;
+          }
+
+          .chat-window {
+            max-height: 200px;
+          }
+
+          canvas {
+            height: 200px;
+          }
         }
       </style>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>
-      <div class="login-container">
-        <h2>Enter Admin PIN</h2>
-        <form action="/admin/dashboard" method="POST" onsubmit="return validatePin()">
-          <div class="pin-input">
-            <input type="password" name="pin1" maxlength="1" required>
-            <input type="password" name="pin2" maxlength="1" required>
-            <input type="password" name="pin3" maxlength="1" required>
-            <input type="password" name="pin4" maxlength="1" required>
+      <div class="container mt-5">
+        <h1 class="mb-4" style="color:black;">Admin Dashboard</h1>
+
+        <!-- Dashboard Cards -->
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Total Products</h5>
+                <p class="card-text" id="totalProducts">0</p>
+              </div>
+            </div>
           </div>
-          <button type="submit" class="submit-btn">Submit</button>
-          <div class="error-message" id="error-message">Invalid PIN. Please try again.</div>
-        </form>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Most Viewed Product</h5>
+                <p class="card-text" id="mostViewedProduct">N/A</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Realtime Traffic</h5>
+                <p class="card-text" id="realtimeTraffic">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Query Status -->
+        <h2 class="mt-4" style="color:black;">Query Status</h2>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Chat ID</th>
+              <th>Query</th>
+              <th>Timestamp</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="queryTable">
+            <!-- Queries will be populated here -->
+          </tbody>
+        </table>
+
+        <!-- Chat Window -->
+        <h2 class="mt-4" style="color:black;">Chat with User</h2>
+        <div class="chat-window" id="chatWindow">
+          <!-- Chat messages will be displayed here -->
+        </div>
+        <div class="input-group mt-3">
+          <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
+          <button class="btn btn-primary" id="sendMessageBtn">Send</button>
+        </div>
+
+        <!-- Product Views -->
+        <h2 class="mt-4" style="color:black;">Product Views</h2>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Views</th>
+            </tr>
+          </thead>
+          <tbody id="productViewsTable">
+            <!-- Product views will be populated here -->
+          </tbody>
+        </table>
+
+        <!-- Realtime Traffic Chart -->
+        <h2 class="mt-4" style="color:black;">Realtime Traffic Chart</h2>
+        <canvas id="realtimeTrafficChart"></canvas>
+
+        <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
+        <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
       </div>
 
       <script>
-        function validatePin() {
-          const pin1 = document.querySelector('input[name="pin1"]').value;
-          const pin2 = document.querySelector('input[name="pin2"]').value;
-          const pin3 = document.querySelector('input[name="pin3"]').value;
-          const pin4 = document.querySelector('input[name="pin4"]').value;
-          const enteredPin = pin1 + pin2 + pin3 + pin4;
+        let currentChatId = null;
 
-          if (enteredPin !== '${process.env.ADMIN_PIN}') {
-            document.getElementById('error-message').style.display = 'block';
-            document.querySelector('.pin-input').classList.add('shake');
-            setTimeout(() => {
-              document.querySelector('.pin-input').classList.remove('shake');
-            }, 500);
-            return false;
+        // Fetch analytics data
+        async function fetchAnalytics() {
+          try {
+            const response = await axios.get('/api/analytics');
+            const analytics = response.data;
+
+            // Update total products
+            const productsResponse = await axios.get('/api/products');
+            document.getElementById('totalProducts').textContent = productsResponse.data.length;
+
+            // Update most viewed product
+            const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
+              analytics.productViews[a] > analytics.productViews[b] ? a : b
+            );
+            const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
+            document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
+
+            // Update realtime traffic
+            document.getElementById('realtimeTraffic').textContent = analytics.traffic;
+
+            // Update query status table
+            const queryTable = document.getElementById('queryTable');
+            queryTable.innerHTML = analytics.queries.map(query => \`
+              <tr>
+                <td>\${query.chatId}</td>
+                <td>\${query.query}</td>
+                <td>\${new Date(query.timestamp).toLocaleString()}</td>
+                <td><span class="badge bg-success">\${query.status}</span></td>
+                <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
+              </tr>
+            \`).join('');
+
+            // Update product views table
+            const productViewsTable = document.getElementById('productViewsTable');
+            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
+              <tr>
+                <td>\${id}</td>
+                <td><i class="fas fa-eye"></i> \${views}</td>
+              </tr>
+            \`).join('');
+
+            // Update realtime traffic chart
+            const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
+            const trafficChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
+                datasets: [{
+                  label: 'Traffic',
+                  data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  fill: false
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          } catch (error) {
+            console.error('Error fetching analytics:', error);
           }
-          return true;
         }
+
+        // Open chat with a user
+        function openChat(chatId) {
+          currentChatId = chatId;
+          document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
+        }
+
+        // Send message to user
+        document.getElementById('sendMessageBtn').addEventListener('click', async () => {
+          const message = document.getElementById('chatInput').value;
+          if (!message || !currentChatId) return;
+
+          try {
+            const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
+            if (response.data.success) {
+              const chatWindow = document.getElementById('chatWindow');
+              chatWindow.innerHTML += \`<div class="chat-message admin">\${message}</div>\`;
+              document.getElementById('chatInput').value = '';
+            }
+          } catch (error) {
+            console.error('Error sending message:', error);
+          }
+        });
+
+        // Fetch analytics data every 5 seconds
+        fetchAnalytics();
+        setInterval(fetchAnalytics, 5000);
       </script>
     </body>
     </html>
   `;
-  res.send(adminLoginHTML);
-});
-
-// Serve Admin Dashboard (protected route)
-app.post('/admin/dashboard', (req, res) => {
-  const { pin1, pin2, pin3, pin4 } = req.body;
-  const enteredPin = pin1 + pin2 + pin3 + pin4;
-
-  // Validate the PIN
-  if (enteredPin === process.env.ADMIN_PIN) {
-    // Serve the admin dashboard
-    res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin Dashboard</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: #fff;
-          }
-          .admin-panel {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            text-align: center;
-            width: 350px;
-          }
-          .admin-panel h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #fff;
-          }
-          .admin-panel a {
-            color: #007bff;
-            text-decoration: none;
-          }
-          .admin-panel a:hover {
-            text-decoration: underline;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="admin-panel">
-          <h1>Welcome to the Admin Dashboard!</h1>
-          <p><a href="/">Go Back</a></p>
-        </div>
-      </body>
-      </html>
-    `);
-  } else {
-    res.send('Invalid PIN. <a href="/admin">Try again</a>');
-  }
+  res.send(adminHTML);
 });
 
 // Serve Add Product HTML
