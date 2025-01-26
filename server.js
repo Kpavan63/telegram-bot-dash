@@ -149,14 +149,26 @@ async function readUsers() {
 
 // Function to write users
 async function writeUsers(chatId) {
-  try {
-    await dbClient.query(
-      'INSERT INTO users (chat_id) VALUES ($1) ON CONFLICT (chat_id) DO NOTHING',
-      [chatId]
-    );
-  } catch (error) {
-    console.error('Error writing user:', error);
-  }
+    try {
+        // Ensure chatId is a valid number
+        if (typeof chatId === 'string' && chatId.startsWith('{')) {
+            // Parse JSON-like string if required
+            chatId = JSON.parse(chatId);
+        }
+        chatId = Number(chatId); // Convert to a plain number
+
+        if (isNaN(chatId)) {
+            throw new Error(`Invalid chatId: ${chatId}`);
+        }
+
+        // Insert into database
+        await dbClient.query(
+            'INSERT INTO users (chat_id) VALUES ($1) ON CONFLICT (chat_id) DO NOTHING',
+            [chatId]
+        );
+    } catch (error) {
+        console.error('Error writing user:', error);
+    }
 }
 
 // Serve static files from the "public" folder
@@ -203,23 +215,33 @@ app.post('/admin/send-notification', async (req, res) => {
 
 // Telegram Bot Handlers
 bot.onText(/\/start/, async (msg) => {
-  const chatId = msg.chat.id;
-  const userName = msg.from.first_name; // Fetch the user's first name
+    let chatId = msg.chat.id;
+    const userName = msg.from.first_name; // Fetch the user's first name
 
-  try {
-    const users = await readUsers();
+    try {
+        // Convert and validate chatId
+        if (typeof chatId === 'string' && chatId.startsWith('{')) {
+            chatId = JSON.parse(chatId);
+        }
+        chatId = Number(chatId);
 
-    // Add the chat ID if it doesn't already exist
-    if (!users.includes(chatId)) {
-      users.push(chatId);
-      await writeUsers(users);
+        if (isNaN(chatId)) {
+            console.error('Invalid chatId:', chatId);
+            return;
+        }
+
+        const users = await readUsers();
+
+        // Add the chat ID if it doesn't already exist
+        if (!users.includes(chatId)) {
+            await writeUsers(chatId);
+        }
+
+        // Send a personalized welcome message
+        bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
+    } catch (error) {
+        console.error('Error handling /start command:', error);
     }
-
-    // Send a personalized welcome message
-    bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
-  } catch (error) {
-    console.error('Error handling /start command:', error);
-  }
 });
 // telegram bot to help handler
 bot.onText(/\/help/, (msg) => {
