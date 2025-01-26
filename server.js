@@ -167,19 +167,24 @@ async function writeUsers(users) {
 }
 
 // Telegram Bot Handlers
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const userName = msg.from.first_name; // Fetch the user's first name
-  const users = await readUsers();
 
-  // Add the chat ID if it doesn't already exist
-  if (!users.includes(chatId)) {
-    users.push(chatId);
-    await writeUsers(users);
+  try {
+    const users = await readUsers();
+
+    // Add the chat ID if it doesn't already exist
+    if (!users.includes(chatId)) {
+      users.push(chatId);
+      await writeUsers(users);
+    }
+
+    // Send a personalized welcome message
+    bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
+  } catch (error) {
+    console.error('Error handling /start command:', error);
   }
-
-  // Send a personalized welcome message
-  bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
 });
 // telegram bot to help handler
 bot.onText(/\/help/, (msg) => {
