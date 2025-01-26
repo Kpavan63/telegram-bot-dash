@@ -105,10 +105,78 @@ async function trackProductView(productId) {
   await writeAnalytics(analytics);
 }
 
+// Serve static files from the "public" folder
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Route to serve the admin notification panel
+app.get('/admin/notify', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-notify.html'));
+});
+
+// API to send notifications
+app.post('/admin/send-notification', async (req, res) => {
+  const { image, text, link } = req.body;
+
+  try {
+    const users = await readUsers();
+
+    // Send notification to each user
+    for (const chatId of users) {
+      try {
+        if (image) {
+          // Send image with caption
+          await bot.sendPhoto(chatId, image, { caption: text });
+        } else {
+          // Send text message
+          await bot.sendMessage(chatId, text);
+        }
+
+        // Send link if provided
+        if (link) {
+          await bot.sendMessage(chatId, `🔗 Link: ${link}`);
+        }
+      } catch (error) {
+        console.error(`Error sending notification to chat ID ${chatId}:`, error);
+      }
+    }
+
+    res.json({ success: true, message: 'Notification sent to all users!' });
+  } catch (error) {
+    console.error('Error sending notifications:', error);
+    res.status(500).json({ success: false, message: 'Failed to send notifications.' });
+  }
+});
+
+// Function to read users
+async function readUsers() {
+  try {
+    const data = await fs.readFile(path.join(__dirname, 'users.json'), 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    return []; // Return an empty array if the file doesn't exist
+  }
+}
+
+// Function to write users
+async function writeUsers(users) {
+  try {
+    await fs.writeFile(path.join(__dirname, 'users.json'), JSON.stringify(users, null, 2));
+  } catch (error) {
+    console.error('Error writing users:', error);
+  }
+}
+
 // Telegram Bot Handlers
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const userName = msg.from.first_name; // Fetch the user's first name
+  const users = await readUsers();
+
+  // Add the chat ID if it doesn't already exist
+  if (!users.includes(chatId)) {
+    users.push(chatId);
+    await writeUsers(users);
+  }
 
   // Send a personalized welcome message
   bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
@@ -694,6 +762,7 @@ app.get('/admin', (req, res) => {
 
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
         <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
+        <a href="/admin/notify" class="btn btn-primary mt-4">Send Notification to All Users</a>
       </div>
 
       <script>
