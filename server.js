@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import pg from 'pg';
 import { Client } from 'pg';
 
 dotenv.config();
