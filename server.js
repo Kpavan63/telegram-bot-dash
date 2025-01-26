@@ -5,8 +5,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import axios from 'axios';
-import pg from 'pg';
-import { Client } from 'pg';
+import pg from 'pg'; // Import pg as default
+const { Client } = pg; // Destructure Client from pg
 
 dotenv.config();
 
