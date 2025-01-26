@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import { Client } from 'pg';
 
 dotenv.config();
 
@@ -105,6 +106,58 @@ async function trackProductView(productId) {
   await writeAnalytics(analytics);
 }
 
+// PostgreSQL client
+const dbClient = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Render's PostgreSQL
+  },
+});
+
+// Connect to the database
+dbClient.connect()
+  .then(() => console.log('Connected to PostgreSQL database'))
+  .catch(err => console.error('Error connecting to PostgreSQL database:', err));
+
+// Initialize the users table
+async function initializeDatabase() {
+  try {
+    await dbClient.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        chat_id BIGINT PRIMARY KEY
+      );
+    `);
+    console.log('Users table initialized.');
+  } catch (error) {
+    console.error('Error initializing database:', error);
+  }
+}
+
+initializeDatabase();
+
+// Function to read users
+async function readUsers() {
+  try {
+    const res = await dbClient.query('SELECT chat_id FROM users');
+    return res.rows.map(row => row.chat_id);
+  } catch (error) {
+    console.error('Error reading users:', error);
+    return [];
+  }
+}
+
+// Function to write users
+async function writeUsers(chatId) {
+  try {
+    await dbClient.query(
+      'INSERT INTO users (chat_id) VALUES ($1) ON CONFLICT (chat_id) DO NOTHING',
+      [chatId]
+    );
+  } catch (error) {
+    console.error('Error writing user:', error);
+  }
+}
+
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -146,25 +199,6 @@ app.post('/admin/send-notification', async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to send notifications.' });
   }
 });
-
-// Function to read users
-async function readUsers() {
-  try {
-    const data = await fs.readFile(path.join(__dirname, 'users.json'), 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    return []; // Return an empty array if the file doesn't exist
-  }
-}
-
-// Function to write users
-async function writeUsers(users) {
-  try {
-    await fs.writeFile(path.join(__dirname, 'users.json'), JSON.stringify(users, null, 2));
-  } catch (error) {
-    console.error('Error writing users:', error);
-  }
-}
 
 // Telegram Bot Handlers
 bot.onText(/\/start/, async (msg) => {
