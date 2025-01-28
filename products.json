@@ -1668,5 +1668,292 @@
       "grainder"
     ],
     "id": 113
+  },
+  {
+    "name": "boAt Airdopes 311 Pro",
+    "description": "boAt Airdopes 311 Pro, 50HRS Battery, Fast Charge, Dual Mics ENx Tech, Transparent LID, Low Latency, IPX4, IWP Tech, v5.3 Bluetooth Earbuds, TWS Ear Buds Wireless Earphones with mic (Active Black)",
+    "price": 899,
+    "mrp": 1000,
+    "rating": 4.5,
+    "image": "https://m.media-amazon.com/images/I/614gbl-O98L._SL1500_.jpg",
+    "buyLink": "https://amzn.to/3EnB3eE",
+    "keywords": [
+      "buds",
+      "boAt Airdopes"
+    ],
+    "id": 114
+  },
+  {
+    "name": "Dell Inspiron 3530",
+    "description": "Dell Inspiron 3530 Thin & Light Laptop, 13th Gen Intel Core i3-1305U/8GB/512GB SSD/15.6\" (39.62cm) 120Hz Refresh Rate on a FHD IPS Display/Windows 11 + MSO'21+McAfee 15 Month/Carbon Black/1.62kg",
+    "price": 38289.99,
+    "mrp": 40000,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/G/31/PC_Laptops/December/Bigbets_Under55k_01._CB540580277_.png",
+    "buyLink": "https://amzn.to/3EdEi8A",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 115
+  },
+  {
+    "name": "Acer Aspire Lite AMD Ryzen 5-5625U ",
+    "description": "Acer Aspire Lite AMD Ryzen 5-5625U Premium Thin and Light Laptop (16 GB RAM/512 GB SSD/Windows 11 Home) AL15-41, 39.62 cm (15.6\") Full HD Display, Metal Body, Steel Gray, 1.59 KG",
+    "price": 38990,
+    "mrp": 40000,
+    "rating": 4,
+    "image": "https://m.media-amazon.com/images/G/31/PC_Laptops/December/Under50k_BB_16th_02._CB539854645_.png",
+    "buyLink": "https://amzn.to/3Eevsrf",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 116
+  },
+  {
+    "name": "Lenovo IdeaPad 3 12th Gen",
+    "description": "Lenovo IdeaPad 3 12th Gen Intel Core i3-1215U 14 Inch (35.5cm) FHD Thin & Light Laptop (8GB/512GB SSD/Win 11/Office 2021/Backlit KB/1Yr ADP Free/3months Game Pass/Arctic Grey/1.43Kg), 82RJ00FKIN",
+    "price": 35990,
+    "mrp": 38990,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/G/31/PC_Laptops/December/Under55K_BB_03._CB539288173_.png",
+    "buyLink": "https://amzn.to/3EgDsrF",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 117
+  },
+  {
+    "name": "ASUS Vivobook 16",
+    "description": "ASUS Vivobook 16\" FHD+ (1920 X 1200), 60Hz 300Nits, Core i5-12500H, (16GB RAM/512GB SSD/Intel Iris X? Graphics/Win 11/Office Home/Fingerprint/42Whr Battery/Transparent Silver/1.88Kg), X1605ZAC-MB541WS",
+    "price": 51990,
+    "mrp": 55990,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/G/31/PC_Laptops/December/Under50k_BB_16th_04._CB539854645_.png",
+    "buyLink": "https://amzn.to/3WBiYQI",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 118
+  },
+  {
+    "name": "MSI Modern 14",
+    "description": "MSI Modern 14, Intel 12th Gen. i7 1255U,36CM Laptop(16GB/512GB NVMe SSD/Windows 11 Home/Iris Xe/Classic Black/1.4Kg), C12MO-1202IN",
+    "price": 47990,
+    "mrp": 55990,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/G/31/PC_Laptops/December/Bigbets_Under55k_08._CB540580277_.png",
+    "buyLink": "https://amzn.to/3Wxszbh",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 119
+  },
+  {
+    "name": "Acer AMD Ryzen 3 5300U",
+    "description": "Acer [Smartchoice Aspire Lite AMD Ryzen 3 5300U Premium Thin and Light Laptop (Windows 11 Home/8 GB RAM/512 GB SSD) AL15-41 with 39.62 cm (15.6\") Full HD Display, Metal Body, Steel Gray, 1.6 KG",
+    "price": 28990,
+    "mrp": 30000,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/G/31/Laptops/May24_Smartchoice-Laptops_Updated/SmartC_Kiosk_01._CB556170933_.png",
+    "buyLink": "https://amzn.to/40OcXCJ",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 120
+  },
+  {
+    "name": "Acer Aspire 5 Gaming Laptop",
+    "description": "Acer Aspire 5 Gaming Laptop 13th Gen Intel Core i5 (Windows 11 Home/ 8 GB RAM/ 512 GB SSD/NVIDIA GeForce RTX 2050), A515-58GM 39.62 cm (15.6\") IPS Full HD Display, Steel Gray, 1.78 KG",
+    "price": 47992,
+    "mrp": 50000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/417Fzm6CApL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4gibNEb",
+    "keywords": [
+      "Gaming laptops",
+      "laptops"
+    ],
+    "id": 121
+  },
+  {
+    "name": "pTron Newly Launched",
+    "description": "pTron Newly Launched Reflect Pro Smartwatch, Bluetooth Calling, 1.85\" Full Touch Display, 600 NITS, Digital Crown, Metal Frame, 100+ Watch Faces, HR, SpO2, Voice Assist, 5 Days Battery Life (Gold)",
+    "price": 849,
+    "mrp": 1500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/G/31/IMG24/Smart_Watches/Nov24/Bigbet_600X800_Budget_10.png",
+    "buyLink": "https://amzn.to/3EbFsS9",
+    "keywords": [
+      "smart watch",
+      "watch",
+      "watches"
+    ],
+    "id": 122
+  },
+  {
+    "name": "Fire-Boltt Rise Smart Watch",
+    "description": "Fire-Boltt Rise Smart Watch, 1.85\" HD Display, Metal Body with Bluetooth Calling, Rotating Crown, AI Voice Assistant, 120 Sports Modes, Neon UI, SpO2 & Heart Rate Monitoring (Black)",
+    "price": 1399,
+    "mrp": 1500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41wiAeSSN0L._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/40rp9Ic",
+    "keywords": [
+      "smart watch",
+      "watch",
+      "watches"
+    ],
+    "id": 123
+  },
+  {
+    "name": "ZEBRONICS  Gaming Mouse",
+    "description": "ZEBRONICS Uzi High Precision Wired Gaming Mouse with 4 Buttons, Rainbow LED Lights, DPI Switch with 800/1200/1600/2400 DPI, Plug & Play, 3 Million clicks, Lightweight Mouse",
+    "price": 199,
+    "mrp": 300,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/G/31/img15/24/apr/GAMAcc/M1_440x550._CB560038203_.png",
+    "buyLink": "https://amzn.to/3WDNzwZ",
+    "keywords": [
+      "mouse",
+      "gaming"
+    ],
+    "id": 124
+  },
+  {
+    "name": "Canon Pixma TS207 ",
+    "description": "Canon Pixma TS207 Single Function Inkjet Printer (Black)",
+    "price": 2100,
+    "mrp": 3000,
+    "rating": 4,
+    "image": "https://m.media-amazon.com/images/I/31MPm1ryIiL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/40BXAvK",
+    "keywords": [
+      "printers",
+      "printer",
+      "low price printer"
+    ],
+    "id": 125
+  },
+  {
+    "name": "Canon Pixma MG2577s",
+    "description": "Canon Pixma MG2577s All-in-One Inkjet Colour Printer (Blue/White)",
+    "price": 3200,
+    "mrp": 5000,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/I/51TgRks3kIL._SY450_.jpg",
+    "buyLink": "https://amzn.to/4hzwA6Y",
+    "keywords": [
+      "printer",
+      "printers"
+    ],
+    "id": 126
+  },
+  {
+    "name": "WiFi Range Extender",
+    "description": "Trenzu WiFi Range Extender for Home/Office | 300Mbps, 1500 SQ FT Coverage, Upto 20 Devices | 2.4GHz Single Band WiFi Signal Booster, Ethernet Port |Plug & Play (Repeater 2)",
+    "price": 987,
+    "mrp": 1500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/71ySU5oyGTL._SY450_.jpg",
+    "buyLink": "https://amzn.to/3EdEUuU",
+    "keywords": [
+      "router",
+      "wifi routers",
+      "wifi extenders"
+    ],
+    "id": 127
+  },
+  {
+    "name": "TP-Link Archer AC1200",
+    "description": "TP-Link Archer AC1200 Archer C6 Wi-Fi Speed Up to 867 Mbps/5 GHz + 400Mbps/2.4 GHz, 5 Gigabit Ports, 4 External Antennas, MU-MIMO, Dual Band, WiFi Coverage with Access Point Mode, Black",
+    "price": 1780,
+    "mrp": 2000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/71Hu0MLbxqL._SX569_.jpg",
+    "buyLink": "https://amzn.to/40QnFZo",
+    "keywords": [
+      "routers",
+      "router",
+      "wifi extenders",
+      "extenders"
+    ],
+    "id": 128
+  },
+  {
+    "name": " 64GB Pen Drive HP",
+    "description": "HP v236w USB 2.0 64GB Pen Drive",
+    "price": 399,
+    "mrp": 500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/31febYa30qL._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4gfZtUH",
+    "keywords": [
+      "pen drive",
+      "drive"
+    ],
+    "id": 129
+  },
+  {
+    "name": "mazon Basics 128 GB Flash Drive",
+    "description": "Amazon Basics 128 GB Flash Drive | USB 3.0 | Upto 150 MB/s | Metallic Silver",
+    "price": 849,
+    "mrp": 1500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/31y-KjNeJ4L._SY300_SX300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4jyZ4iX",
+    "keywords": [
+      "pen drive",
+      "drive",
+      "memory card"
+    ],
+    "id": 130
+  },
+  {
+    "name": "SATA III Hard Drive Adapter Cable",
+    "description": "VOOCME USB 3.0 to SATA III Hard Drive Adapter Cable,USB SATA Adapter Cable Converter 22 pin (7Pin+15Pin) for 2.5/3.5 inch HHD SSD Hard Disk Laptop and DVD,Dual USB 3.0 to SATA with USB 2.0 Power Cble",
+    "price": 399,
+    "mrp": 550,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/31lus8BPrML._SY445_SX342_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/3PUexwM",
+    "keywords": [
+      "USB SATA Adapter Cable Converter",
+      "hard disk"
+    ],
+    "id": 131
+  },
+  {
+    "name": "Crucial SSD",
+    "description": "Crucial BX500 500GB 2.5-inch SATA 3D NAND Internal SSD Upto 550 MB/s",
+    "price": 2550,
+    "mrp": 3000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/31qK09Niu0L._SY300_SX300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4jwbfgF",
+    "keywords": [
+      "sdd",
+      "hard disk"
+    ],
+    "id": 132
+  },
+  {
+    "name": "S950P PRO M.2 SSD 512 GB",
+    "description": "Simmtronics S950P PRO M.2 SSD : Unleash Limitless Speed & Power! Upgrade Now (256)",
+    "price": 1290,
+    "mrp": 1500,
+    "rating": 4.6,
+    "image": "https://m.media-amazon.com/images/I/41DlXTPIcoL.jpg",
+    "buyLink": "https://amzn.to/40BCLRi",
+    "keywords": [
+      "m.2 ssd",
+      "ssd"
+    ],
+    "id": 133
   }
 ]
