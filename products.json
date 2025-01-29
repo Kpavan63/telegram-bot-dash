@@ -12,7 +12,9 @@
       "boiler",
       "stove"
     ],
-    "id": 1
+    "id": 1,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Electric Kettle",
@@ -28,7 +30,9 @@
       "stove",
       "electric kettle"
     ],
-    "id": 2
+    "id": 2,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "pTron Bassbuds",
@@ -43,7 +47,9 @@
       "earbuds",
       "earphones.ptron buds"
     ],
-    "id": 3
+    "id": 3,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "boAt Airdopes",
@@ -56,7 +62,9 @@
     "keywords": [
       "earbuds"
     ],
-    "id": 4
+    "id": 4,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Wireless Mouse",
@@ -71,7 +79,9 @@
       "gaming mouse",
       "wireless mouse"
     ],
-    "id": 5
+    "id": 5,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Gaming Mouse",
@@ -85,7 +95,9 @@
       "gaming mouse",
       "mouse"
     ],
-    "id": 6
+    "id": 6,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Gaming Keyboard",
@@ -100,7 +112,9 @@
       "lowprice keyboard",
       "keyboard"
     ],
-    "id": 7
+    "id": 7,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Keyboard",
@@ -113,7 +127,9 @@
     "keywords": [
       "keyboard"
     ],
-    "id": 8
+    "id": 8,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Gaming Headphones",
@@ -127,7 +143,9 @@
       "Gaming headphones",
       "headphones"
     ],
-    "id": 9
+    "id": 9,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Room Heater",
@@ -141,7 +159,9 @@
       "room heater",
       "heater"
     ],
-    "id": 10
+    "id": 10,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Hot Kettle Boiler",
@@ -154,7 +174,9 @@
     "keywords": [
       "boiler"
     ],
-    "id": 11
+    "id": 11,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Switch Board",
@@ -170,7 +192,9 @@
       "switch",
       "wire"
     ],
-    "id": 12
+    "id": 12,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Bathroom Folding Towel Rack",
@@ -185,7 +209,9 @@
       "towel rack",
       "towel"
     ],
-    "id": 13
+    "id": 13,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Bathroom Shelf",
@@ -200,7 +226,9 @@
       "shelf",
       "kitchen"
     ],
-    "id": 14
+    "id": 14,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Camera CCTV",
@@ -215,7 +243,9 @@
       "cctv camera",
       "camera"
     ],
-    "id": 15
+    "id": 15,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Room Cleaner",
@@ -231,7 +261,9 @@
       "Scotch-Brite",
       "Bucket Spin Mop"
     ],
-    "id": 16
+    "id": 16,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Gloves for Pet Grooming Washing Dishes Bathroom",
@@ -246,7 +278,9 @@
       "Dishwashing",
       "kitchen"
     ],
-    "id": 17
+    "id": 17,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Cleaning Brush",
@@ -260,7 +294,9 @@
       "Cleaning Brush",
       "brush"
     ],
-    "id": 18
+    "id": 18,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Drill Tool Set",
@@ -274,7 +310,9 @@
       "drilling",
       "tools"
     ],
-    "id": 19
+    "id": 19,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Boult Newly Launched Trail Smart Watch",
@@ -288,7 +326,9 @@
       "smart watch",
       "watches"
     ],
-    "id": 20
+    "id": 20,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Track Pants",
@@ -303,7 +343,9 @@
       "pants",
       "mens track pants"
     ],
-    "id": 21
+    "id": 21,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Cap's",
@@ -317,7 +359,9 @@
       "monkey cap",
       "caps"
     ],
-    "id": 22
+    "id": 22,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Shirt",
@@ -330,7 +374,9 @@
     "keywords": [
       "shirts"
     ],
-    "id": 23
+    "id": 23,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Track Pants",
@@ -344,7 +390,9 @@
       "Track pants",
       "pants"
     ],
-    "id": 24
+    "id": 24,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Track Suit",
@@ -357,7 +405,9 @@
     "keywords": [
       "Track"
     ],
-    "id": 25
+    "id": 25,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Shoes",
@@ -370,7 +420,9 @@
     "keywords": [
       "shoes"
     ],
-    "id": 26
+    "id": 26,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Running Shoes",
@@ -384,7 +436,9 @@
       "Shoes",
       "running shoes"
     ],
-    "id": 27
+    "id": 27,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Watch",
@@ -397,7 +451,9 @@
     "keywords": [
       "watch"
     ],
-    "id": 28
+    "id": 28,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Smart Watches",
@@ -412,7 +468,9 @@
       "watches",
       "watch"
     ],
-    "id": 29
+    "id": 29,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Body Spray",
@@ -425,7 +483,9 @@
     "keywords": [
       "spray"
     ],
-    "id": 30
+    "id": 30,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Body Spray 6x10 ml",
@@ -439,7 +499,9 @@
       "body spray",
       "spray"
     ],
-    "id": 31
+    "id": 31,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Bags",
@@ -452,7 +514,9 @@
     "keywords": [
       "bags"
     ],
-    "id": 32
+    "id": 32,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Men Blue Trousers",
@@ -466,7 +530,9 @@
       "Men Blue Trousers",
       "pants"
     ],
-    "id": 33
+    "id": 33,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Socket Extension Boards",
@@ -482,7 +548,9 @@
       "board",
       "current board"
     ],
-    "id": 34
+    "id": 34,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Speaker",
@@ -495,7 +563,9 @@
     "keywords": [
       "speaker"
     ],
-    "id": 35
+    "id": 35,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Motorola g45 5G",
@@ -511,7 +581,9 @@
       "Motorola g45 5G",
       "5g mobiles"
     ],
-    "id": 36
+    "id": 36,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "POCO C75 5G ",
@@ -530,7 +602,9 @@
       "smart mobiles",
       "5g phones"
     ],
-    "id": 37
+    "id": 37,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "POCO M7 Pro 5G ",
@@ -546,7 +620,9 @@
       "poco",
       "poco mobiles"
     ],
-    "id": 38
+    "id": 38,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "realme NARZO 70x 5G",
@@ -562,7 +638,9 @@
       "realme",
       "smart mobiles"
     ],
-    "id": 39
+    "id": 39,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Samsung Galaxy M15 5G",
@@ -578,7 +656,9 @@
       "samsung galaxy m15 5g",
       "5g"
     ],
-    "id": 40
+    "id": 40,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "OnePlus Nord CE4",
@@ -595,7 +675,9 @@
       "smart mobiles",
       "5g"
     ],
-    "id": 41
+    "id": 41,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "iQOO Z9x 5G",
@@ -611,7 +693,9 @@
       "iqoo mobiles",
       "mobiles"
     ],
-    "id": 42
+    "id": 42,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Redmi A4 5G ",
@@ -627,7 +711,9 @@
       "5g",
       "mobiles"
     ],
-    "id": 43
+    "id": 43,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Boult Audio W20",
@@ -641,7 +727,9 @@
       "earbuds",
       "buds"
     ],
-    "id": 44
+    "id": 44,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "25W Type C Charger",
@@ -657,7 +745,9 @@
       "type-c charger",
       "charger 25w"
     ],
-    "id": 45
+    "id": 45,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Zebronics 200HB USB 3.0 4 Port hub",
@@ -670,7 +760,9 @@
     "keywords": [
       "usb"
     ],
-    "id": 46
+    "id": 46,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Cooling Fan for i3/i5/i7 LGA115x CPU",
@@ -685,7 +777,9 @@
       "fan",
       "cpu"
     ],
-    "id": 47
+    "id": 47,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Oneplus Bullets Z2 Bluetooth Wireless",
@@ -702,7 +796,9 @@
       "oneplus",
       "oneplus buds"
     ],
-    "id": 48
+    "id": 48,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "boAt Bassheads 100",
@@ -717,7 +813,9 @@
       "earbuds",
       "boat buds"
     ],
-    "id": 49
+    "id": 49,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "boAt Airdopes 91 Prime",
@@ -733,7 +831,9 @@
       "ear phones",
       "boat buds"
     ],
-    "id": 50
+    "id": 50,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Type C Cable for Smartphones",
@@ -749,7 +849,9 @@
       "wire",
       "charger"
     ],
-    "id": 51
+    "id": 51,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Extension Board with 4 Universal Sockets",
@@ -765,7 +867,9 @@
       "board",
       "universal socket board"
     ],
-    "id": 52
+    "id": 52,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Dish Wash Cloth",
@@ -779,7 +883,9 @@
       "Dish Wash Cloth",
       "cloth"
     ],
-    "id": 53
+    "id": 53,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Multi Plug Socket",
@@ -794,7 +900,9 @@
       "board",
       "socket"
     ],
-    "id": 54
+    "id": 54,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Aloe Vera Coated Gloves",
@@ -807,7 +915,9 @@
     "keywords": [
       "gloves"
     ],
-    "id": 55
+    "id": 55,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Cloth Storage",
@@ -822,7 +932,9 @@
       "cloth",
       "cloth storages"
     ],
-    "id": 56
+    "id": 56,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Skybags",
@@ -837,7 +949,9 @@
       "skybags",
       "sky"
     ],
-    "id": 57
+    "id": 57,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Travel Duffle Bags",
@@ -851,7 +965,9 @@
       "bags",
       "bag"
     ],
-    "id": 58
+    "id": 58,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Philips Nova Lint Remover for Clothes",
@@ -867,7 +983,9 @@
       "philips",
       "cloth remover"
     ],
-    "id": 59
+    "id": 59,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "2 Pcs Kitchen Mats",
@@ -881,7 +999,9 @@
       "mats",
       "Kitchen Mats"
     ],
-    "id": 60
+    "id": 60,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Home-Secure Mosquito Lamp",
@@ -895,7 +1015,9 @@
       "Mosquito Lamp",
       "lights"
     ],
-    "id": 61
+    "id": 61,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "TEQO Mosquito Bat",
@@ -909,7 +1031,9 @@
       "Mosquito Bat",
       "bat"
     ],
-    "id": 62
+    "id": 62,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Samsung Galaxy M05 ",
@@ -926,7 +1050,9 @@
       "Samsung Galaxy M05",
       "mobiles"
     ],
-    "id": 63
+    "id": 63,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Mini Sealing Machine",
@@ -941,7 +1067,9 @@
       "sealing machine",
       "machine"
     ],
-    "id": 64
+    "id": 64,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "HP Victus",
@@ -955,7 +1083,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 65
+    "id": 65,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Acer Aspire Lite AMD Ryzen 5-5625U",
@@ -968,7 +1098,9 @@
     "keywords": [
       "laptops"
     ],
-    "id": 66
+    "id": 66,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Lenovo V14 G3 Intel Core i5 12th Gen 1235U",
@@ -981,7 +1113,9 @@
     "keywords": [
       "laptops"
     ],
-    "id": 67
+    "id": 67,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "ASUS Vivobook Go 14",
@@ -994,7 +1128,9 @@
     "keywords": [
       "laptops"
     ],
-    "id": 68
+    "id": 68,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "HP Laptop 255 G9 ",
@@ -1007,7 +1143,9 @@
     "keywords": [
       "laptops"
     ],
-    "id": 69
+    "id": 69,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "ASUS TUF F17 Gaming Laptop",
@@ -1021,7 +1159,9 @@
       "gaming laptop",
       "laptop"
     ],
-    "id": 70
+    "id": 70,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Cotton Vest Pack",
@@ -1037,7 +1177,9 @@
       "cotton",
       "vest"
     ],
-    "id": 71
+    "id": 71,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Stylish Women Dress, frock,Kurti",
@@ -1053,7 +1195,9 @@
       "frock",
       "Kurti"
     ],
-    "id": 72
+    "id": 72,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Fancy Popcon Shirt For Men",
@@ -1069,7 +1213,9 @@
       "men shirts",
       "shirts"
     ],
-    "id": 73
+    "id": 73,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "olid shirt Men Formal Shirts",
@@ -1085,7 +1231,9 @@
       "formal shirts",
       "cotton"
     ],
-    "id": 74
+    "id": 74,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Men Casual Shirt",
@@ -1100,7 +1248,9 @@
       "shirts",
       "mens shirts"
     ],
-    "id": 75
+    "id": 75,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Cotton Shirts For Men's",
@@ -1114,7 +1264,9 @@
       "shirts",
       "mens shirts"
     ],
-    "id": 76
+    "id": 76,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Ear Cleaner",
@@ -1128,7 +1280,9 @@
       "ear cleaner",
       "cleaner"
     ],
-    "id": 77
+    "id": 77,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Condoms",
@@ -1141,7 +1295,9 @@
     "keywords": [
       "condoms"
     ],
-    "id": 78
+    "id": 78,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Sanitary Pads For Women",
@@ -1156,7 +1312,9 @@
       "Sanitary Pads",
       "pads"
     ],
-    "id": 79
+    "id": 79,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Sanitary Pads Extra Dry & Soft",
@@ -1171,7 +1329,9 @@
       "pads",
       "sanitary pads"
     ],
-    "id": 80
+    "id": 80,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": " Beard Growth Hair Oil",
@@ -1187,7 +1347,9 @@
       "oil",
       "beard oil"
     ],
-    "id": 81
+    "id": 81,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "pillows",
@@ -1201,7 +1363,9 @@
       "pillow",
       "pillows"
     ],
-    "id": 82
+    "id": 82,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "lichi banarsi silk saree",
@@ -1217,7 +1381,9 @@
       "silk sarees",
       "saree"
     ],
-    "id": 83
+    "id": 83,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Black Formal Trousers",
@@ -1231,7 +1397,9 @@
       "formal pants",
       "pants"
     ],
-    "id": 84
+    "id": 84,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Erke Fashionable Modern Men Trousers",
@@ -1245,7 +1413,9 @@
       "formal pants",
       "pants"
     ],
-    "id": 85
+    "id": 85,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Fire-Boltt Ninja Call Pro Max ",
@@ -1260,7 +1430,9 @@
       "watch",
       "watches"
     ],
-    "id": 86
+    "id": 86,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Noise Twist Round dial Smart Watch",
@@ -1275,7 +1447,9 @@
       "watch",
       "watches"
     ],
-    "id": 87
+    "id": 87,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Plastic Gap Cleaning Brush",
@@ -1290,7 +1464,9 @@
       "bathroom brush",
       "clean"
     ],
-    "id": 88
+    "id": 88,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Toilet Brush",
@@ -1305,7 +1481,9 @@
       "brush",
       "toilet"
     ],
-    "id": 89
+    "id": 89,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Smart LED TV",
@@ -1320,7 +1498,9 @@
       "samrt tv",
       "android tv"
     ],
-    "id": 90
+    "id": 90,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "boAt Aavante Bar Orion Plus",
@@ -1336,7 +1516,9 @@
       "boat",
       "earbuds"
     ],
-    "id": 91
+    "id": 91,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Lenovo Tab P12",
@@ -1351,7 +1533,9 @@
       "lenovo tab",
       "phones"
     ],
-    "id": 92
+    "id": 92,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Mouse Mat",
@@ -1365,7 +1549,9 @@
       "mat",
       "mouse mat"
     ],
-    "id": 93
+    "id": 93,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "100% Cotton King Size Bedsheet",
@@ -1380,7 +1566,9 @@
       "Bedsheet",
       "cotton"
     ],
-    "id": 94
+    "id": 94,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Flooring Wall Ceramic 2 x 2 inch Tiles",
@@ -1396,7 +1584,9 @@
       "mats",
       "wall"
     ],
-    "id": 95
+    "id": 95,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": " Pottery Home Decorative Home",
@@ -1412,7 +1602,9 @@
       "walls",
       "hi"
     ],
-    "id": 96
+    "id": 96,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Jamdani Saree",
@@ -1427,7 +1619,9 @@
       "saree",
       "cotton"
     ],
-    "id": 97
+    "id": 97,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Chanderi-janart saree's",
@@ -1443,7 +1637,9 @@
       "saree's",
       "cotton"
     ],
-    "id": 98
+    "id": 98,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Ikat-janart Saree's",
@@ -1458,7 +1654,9 @@
       "saree",
       "cotton"
     ],
-    "id": 99
+    "id": 99,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Sambalpuri Saree's",
@@ -1473,7 +1671,9 @@
       "saree",
       "cotton"
     ],
-    "id": 100
+    "id": 100,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Ganesha 5-Steps Indoor Table Top Fountain",
@@ -1488,7 +1688,9 @@
       "decoration",
       "home decoration"
     ],
-    "id": 101
+    "id": 101,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "LED Desk Lamp with Digital Clock",
@@ -1505,7 +1707,9 @@
       "bulbs",
       "hi"
     ],
-    "id": 102
+    "id": 102,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "3D Galaxy Crystal LED Ball Lamp With Light",
@@ -1521,7 +1725,9 @@
       "home",
       "decoration"
     ],
-    "id": 103
+    "id": 103,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Salted Pistachios",
@@ -1536,7 +1742,9 @@
       "fruits",
       "hi"
     ],
-    "id": 104
+    "id": 104,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Delicious Yellow Raisins",
@@ -1551,7 +1759,9 @@
       "dry fruits",
       "fruit"
     ],
-    "id": 105
+    "id": 105,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Cashew Broken Kaju Nuts",
@@ -1566,7 +1776,9 @@
       "Dry Fruits",
       "nuts"
     ],
-    "id": 106
+    "id": 106,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Leather Penguin Handbags",
@@ -1580,7 +1792,9 @@
       "hand bags",
       "bags"
     ],
-    "id": 107
+    "id": 107,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Leather Diamond Handbags",
@@ -1594,7 +1808,9 @@
       "hand bags",
       "bags"
     ],
-    "id": 108
+    "id": 108,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Boult x Mustang Torq Wireless in Ear Earbuds",
@@ -1607,7 +1823,9 @@
     "keywords": [
       "buds"
     ],
-    "id": 109
+    "id": 109,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "MILTON Premium 3 Burner",
@@ -1622,7 +1840,9 @@
       "gas",
       "stove"
     ],
-    "id": 110
+    "id": 110,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Gas Stove Mini",
@@ -1637,7 +1857,9 @@
       "gas stove",
       "mini"
     ],
-    "id": 111
+    "id": 111,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Butane Gas Canister",
@@ -1652,7 +1874,9 @@
       "gas containers",
       "butane gas"
     ],
-    "id": 112
+    "id": 112,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Juicer Mixer Grinder",
@@ -1667,7 +1891,9 @@
       "juice",
       "grainder"
     ],
-    "id": 113
+    "id": 113,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "boAt Airdopes 311 Pro",
@@ -1681,7 +1907,9 @@
       "buds",
       "boAt Airdopes"
     ],
-    "id": 114
+    "id": 114,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Dell Inspiron 3530",
@@ -1695,7 +1923,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 115
+    "id": 115,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Acer Aspire Lite AMD Ryzen 5-5625U ",
@@ -1709,7 +1939,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 116
+    "id": 116,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Lenovo IdeaPad 3 12th Gen",
@@ -1723,7 +1955,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 117
+    "id": 117,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "ASUS Vivobook 16",
@@ -1737,7 +1971,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 118
+    "id": 118,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "MSI Modern 14",
@@ -1751,7 +1987,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 119
+    "id": 119,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Acer AMD Ryzen 3 5300U",
@@ -1765,7 +2003,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 120
+    "id": 120,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Acer Aspire 5 Gaming Laptop",
@@ -1779,7 +2019,9 @@
       "Gaming laptops",
       "laptops"
     ],
-    "id": 121
+    "id": 121,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "pTron Newly Launched",
@@ -1794,7 +2036,9 @@
       "watch",
       "watches"
     ],
-    "id": 122
+    "id": 122,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Fire-Boltt Rise Smart Watch",
@@ -1809,7 +2053,9 @@
       "watch",
       "watches"
     ],
-    "id": 123
+    "id": 123,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "ZEBRONICS  Gaming Mouse",
@@ -1823,7 +2069,9 @@
       "mouse",
       "gaming"
     ],
-    "id": 124
+    "id": 124,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Canon Pixma TS207 ",
@@ -1838,7 +2086,9 @@
       "printer",
       "low price printer"
     ],
-    "id": 125
+    "id": 125,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Canon Pixma MG2577s",
@@ -1852,7 +2102,9 @@
       "printer",
       "printers"
     ],
-    "id": 126
+    "id": 126,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "WiFi Range Extender",
@@ -1867,7 +2119,9 @@
       "wifi routers",
       "wifi extenders"
     ],
-    "id": 127
+    "id": 127,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "TP-Link Archer AC1200",
@@ -1883,7 +2137,9 @@
       "wifi extenders",
       "extenders"
     ],
-    "id": 128
+    "id": 128,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": " 64GB Pen Drive HP",
@@ -1897,7 +2153,9 @@
       "pen drive",
       "drive"
     ],
-    "id": 129
+    "id": 129,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "mazon Basics 128 GB Flash Drive",
@@ -1912,7 +2170,9 @@
       "drive",
       "memory card"
     ],
-    "id": 130
+    "id": 130,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "SATA III Hard Drive Adapter Cable",
@@ -1926,7 +2186,9 @@
       "USB SATA Adapter Cable Converter",
       "hard disk"
     ],
-    "id": 131
+    "id": 131,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "Crucial SSD",
@@ -1940,7 +2202,9 @@
       "sdd",
       "hard disk"
     ],
-    "id": 132
+    "id": 132,
+    "views": 0,
+    "clicks": 0
   },
   {
     "name": "S950P PRO M.2 SSD 512 GB",
@@ -1952,8 +2216,203 @@
     "buyLink": "https://amzn.to/40BCLRi",
     "keywords": [
       "m.2 ssd",
-      "ssd"
+      "ssd",
+      "hard disk"
     ],
-    "id": 133
+    "id": 133,
+    "views": 1,
+    "clicks": 0
+  },
+  {
+    "name": "amazon basics 128Gb",
+    "description": "amazon basics 128Gb Ultra Fast USB 3.1 Flash Drive 1 Pack",
+    "price": 799,
+    "mrp": 899,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/I/71RhxfozxvL._SX569_.jpg",
+    "buyLink": "https://amzn.to/42A91GW",
+    "keywords": [
+      "pen drive",
+      "memory card",
+      "card"
+    ],
+    "id": 134
+  },
+  {
+    "name": "400W SMPS/Power Supply Unit",
+    "description": "Artis VIP400R+ 400W SMPS/Power Supply Unit",
+    "price": 799,
+    "mrp": 1500,
+    "rating": 4.5,
+    "image": "https://m.media-amazon.com/images/I/719RqN+okzL._SY450_.jpg",
+    "buyLink": "https://amzn.to/4aBCORv",
+    "keywords": [
+      "smps",
+      "power"
+    ],
+    "id": 135
+  },
+  {
+    "name": "Keyboard and Mouse Combo",
+    "description": "Ant Esports KM1610 LED Keyboard and Mouse Combo, 104 Keys Rainbow Backlit Keyboard and 7 Colour RGB Mouse, White Gaming Keyboard and Mouse Combo for PC Laptop Xbox PS4 Gamers and Work",
+    "price": 739,
+    "mrp": 1000,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/61eonV8rcEL._SX679_.jpg",
+    "buyLink": "https://amzn.to/4hd7aMHhttps://amzn.to/4hd7aMH",
+    "keywords": [
+      "gaming",
+      "gaming keyboard",
+      "keyboard"
+    ],
+    "id": 136
+  },
+  {
+    "name": "Buds Screen TWS",
+    "description": "HAMMER Screen TWS, ANC (32dB), Smart Touch Display True Wireless Buds, Type-C Fast Charging, Bv5.4, Find My Earbuds, 4 Mics ENC for Clear Calling, Transparency Mode, EQ Mode (Black)",
+    "price": 1799,
+    "mrp": 2000,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/61OZ72dFHRL._SX679_.jpg",
+    "buyLink": "https://amzn.to/3PWCaEW",
+    "keywords": [
+      "buds",
+      "earbuds",
+      "screen buds"
+    ],
+    "id": 137
+  },
+  {
+    "name": "Wipro Garnet 5W LED Batten for Living Room ",
+    "description": "Wipro Garnet 5W LED Batten for Living Room & Bedroom | Bright & Energy Efficient Tubelight for Home | Cool white (6500K) with 500 lumen|Tubelight for Dressing Table & Mirror |1Feet , Pack of 1",
+    "price": 189,
+    "mrp": 200,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/21klDCYfkfL.jpg",
+    "buyLink": "https://amzn.to/4aB7gLC",
+    "keywords": [
+      "led light",
+      "led",
+      "lights",
+      "room light"
+    ],
+    "id": 138
+  },
+  {
+    "name": "Lock with 3 Keys",
+    "description": "Foora Luggage Lock with 3 Keys - Small Travel Lock for Bags, Boxes, Money Bank - Secure Lock and Key for Trolley Bags, Suitcases Pack of 2",
+    "price": 124,
+    "mrp": 180,
+    "rating": 4.8,
+    "image": "https://m.media-amazon.com/images/I/61uv0un1FOL._SX569_.jpg",
+    "buyLink": "https://amzn.to/4ggkjTZ",
+    "keywords": [
+      "lock",
+      "locks"
+    ],
+    "id": 139
+  },
+  {
+    "name": "3.0A Fast Charger Cord",
+    "description": "Gilary Multi Retractable 3.0A Fast Charger Cord, Multiple Charging Cable 4Ft/1.2m 3-in-1 USB Charge Cord with Phone/Type C/Micro USB for All Android and iOS Smartphones | Multicolour |",
+    "price": 327,
+    "mrp": 500,
+    "rating": 4.9,
+    "image": "https://m.media-amazon.com/images/I/41E2s5goaJL._SX466_.jpg",
+    "buyLink": "https://amzn.to/3PSrOpB",
+    "keywords": [
+      "charger",
+      "wire"
+    ],
+    "id": 140
+  },
+  {
+    "name": " Fruits & vegetables",
+    "description": "\n Amazon fresh Fruits & vegetables",
+    "price": 20,
+    "mrp": 30,
+    "rating": 5,
+    "image": "https://images-eu.ssl-images-amazon.com/images/G/31/img18/Fresh/ExtendedSBC/SBC_TILE_phase_UPDATED_FINEL_live.jpg",
+    "buyLink": "https://amzn.to/40PRsBv",
+    "keywords": [
+      "Fruits",
+      "vegetables"
+    ],
+    "id": 141
+  },
+  {
+    "name": "Rice, Atta & Dal",
+    "description": "Amazon Fresh Rice, Atta & Dal",
+    "price": 300,
+    "mrp": 350,
+    "rating": 5,
+    "image": "https://images-eu.ssl-images-amazon.com/images/G/31/img24/Sep/Jupiter/Slider/V2/V3/rice-atta-dal.jpg",
+    "buyLink": "https://amzn.to/4jy4smC",
+    "keywords": [
+      "Rice",
+      "Atta & Dal",
+      "atta",
+      "dal"
+    ],
+    "id": 142
+  },
+  {
+    "name": "Oil, Masala & Sauces",
+    "description": "Oil, Masala & Sauces",
+    "price": 156,
+    "mrp": 180,
+    "rating": 5,
+    "image": "https://images-eu.ssl-images-amazon.com/images/G/31/img24/Sep/Jupiter/SBC/V1/Oil_ghee__masala.jpg",
+    "buyLink": "https://amzn.to/3Eh4tv9",
+    "keywords": [
+      "Oil",
+      "Masala & Sauces",
+      "fresh",
+      "oil",
+      "masala"
+    ],
+    "id": 143
+  },
+  {
+    "name": " Chocolates & Icecreams",
+    "description": "\nChocolates & Icecreams",
+    "price": 100,
+    "mrp": 120,
+    "rating": 5,
+    "image": "https://images-eu.ssl-images-amazon.com/images/G/31/img24/NOV/V2/SBC_TILE_phase-1-copy_1.jpg",
+    "buyLink": "https://amzn.to/4h8vHCC",
+    "keywords": [
+      "Chocolates",
+      "Icecreams"
+    ],
+    "id": 144
+  },
+  {
+    "name": "Snacks & Biscuits",
+    "description": "Snacks & Biscuits",
+    "price": 50,
+    "mrp": 100,
+    "rating": 5,
+    "image": "https://images-eu.ssl-images-amazon.com/images/G/31/img24/Sep/Jupiter/SBC/V1/Snacks__Biscuits.jpg",
+    "buyLink": "https://amzn.to/4jPjq87",
+    "keywords": [
+      "Snacks",
+      "Biscuits"
+    ],
+    "id": 145
+  },
+  {
+    "name": "Amazon Prime",
+    "description": "Amazon Prime",
+    "price": 299,
+    "mrp": 300,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/G/31/prime/flayout_HO_T3.jpg",
+    "buyLink": "https://amzn.to/42zdPfY",
+    "keywords": [
+      "Prime",
+      "Amazon prime"
+    ],
+    "id": 146
   }
 ]
