@@ -2414,5 +2414,50 @@
       "Amazon prime"
     ],
     "id": 146
+  },
+  {
+    "name": "Ventil Air DB 300mm Exhaust Fan",
+    "description": "Havells Ventil Air DB 300mm Exhaust Fan| Cut Out Size: Ø12.8| Watt: 70| RPM: 1400| Air Delivery: 1770| Suitable for Kitchen, Bathroom, and Office| Warranty: 2 Years (pista green",
+    "price": 1399,
+    "mrp": 1829,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/41QC85Vx-6L._SY300_SX300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/42EulLw",
+    "keywords": [
+      "fans",
+      "exhaust fans"
+    ],
+    "id": 147
+  },
+  {
+    "name": "iQOO Z9s Pro 5G",
+    "description": "iQOO Z9s Pro 5G (Luxe Marble, 8Gb Ram, 128Gb Storage) | Snapdragon 7 Gen 3 Processor |120 Hz Curved Amoled Display with 4500 Nits Local Peak Brightness | 5500 Mah Battery | Ai Erase, White",
+    "price": 22999,
+    "mrp": 25999,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/71esSBwj01L._SX679_.jpg",
+    "buyLink": "https://amzn.to/40Vspgh",
+    "keywords": [
+      "iqoo z9s pro 5g",
+      "iqoo",
+      "5g"
+    ],
+    "id": 148
+  },
+  {
+    "name": "USB 3.0 to Type C OTG Adaptor",
+    "description": "Portronics Bridge Y USB 3.0 to Type C OTG Adaptor, 10Gbps High Speed Data Transfer, Thunderbolt to USB Adapter, Compatible for All Type C Devices, Smartphone, Laptops, Tablets, Chargers, MacBook",
+    "price": 109,
+    "mrp": 150,
+    "rating": 5,
+    "image": "https://images-na.ssl-images-amazon.com/images/I/41gXXBbKu7L._SX300_SY300_QL70_FMwebp_.jpg",
+    "buyLink": "https://amzn.to/4aGnpzn",
+    "keywords": [
+      "usb",
+      "USB 3.0 to Type C OTG Adaptor",
+      "type c to usb 3.0",
+      ""
+    ],
+    "id": 149
   }
 ]
