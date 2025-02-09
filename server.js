@@ -294,7 +294,7 @@ bot.onText(/\/today/, async (msg) => {
     const dealsMessage = todayDeals.map((deal, index) => {
       return `
 Deal ${index + 1}:
-🎧 ${deal.name}
+<b>${deal.name}</b>
 💰 Price: ₹${deal.price.toFixed(2)}
 💵 MRP: ₹${deal.mrp.toFixed(2)}
 ⭐ Rating: ${deal.rating} ⭐
