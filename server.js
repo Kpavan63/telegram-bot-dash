@@ -41,6 +41,8 @@ app.get('/', (req, res) => {
 // Define file paths
 const productsFile = path.join(__dirname, 'products.json');
 const analyticsFile = path.join(__dirname, 'analytics.json');
+// Define file path for today's deals
+const todayDealsFile = path.join(__dirname, 'today-deals.json');
 
 // Initialize analytics data
 async function initializeAnalytics() {
@@ -106,6 +108,39 @@ async function trackProductView(productId) {
   analytics.productViews[productId] += 1;
   await writeAnalytics(analytics);
 }
+
+// Initialize today's deals data
+async function initializeTodayDeals() {
+  try {
+    await fs.access(todayDealsFile);
+  } catch {
+    // If the file doesn't exist, create it with an empty array
+    await fs.writeFile(todayDealsFile, JSON.stringify([]));
+  }
+}
+
+initializeTodayDeals();
+
+// Function to read today's deals
+async function readTodayDeals() {
+  try {
+    const data = await fs.readFile(todayDealsFile, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading today deals:', error);
+    return [];
+  }
+}
+
+// Function to write today's deals
+async function writeTodayDeals(deals) {
+  try {
+    await fs.writeFile(todayDealsFile, JSON.stringify(deals, null, 2));
+  } catch (error) {
+    console.error('Error writing today deals:', error);
+  }
+}
+
 
 // PostgreSQL client
 const dbClient = new Client({
@@ -243,6 +278,58 @@ bot.onText(/\/start/, async (msg) => {
         console.error('Error handling /start command:', error);
     }
 });
+
+bot.onText(/\/today/, async (msg) => {
+  const chatId = msg.chat.id;
+
+  try {
+    const todayDeals = await readTodayDeals();
+
+    if (todayDeals.length === 0) {
+      bot.sendMessage(chatId, 'No deals available for today.');
+      return;
+    }
+
+    // Format the deals into a readable message
+    const dealsMessage = todayDeals.map((deal, index) => {
+      return `
+Deal ${index + 1}:
+🎧 ${deal.name}
+💰 Price: ₹${deal.price.toFixed(2)}
+💵 MRP: ₹${deal.mrp.toFixed(2)}
+⭐ Rating: ${deal.rating} ⭐
+🔗 Buy Link: ${deal.buyLink}
+      `;
+    }).join('\n');
+
+    bot.sendMessage(chatId, `Today's Deals:\n${dealsMessage}`);
+  } catch (error) {
+    console.error('Error fetching today deals:', error);
+    bot.sendMessage(chatId, 'An error occurred while fetching today\'s deals. Please try again later.');
+  }
+});
+
+// API Route to serve today's deals
+app.get('/api/today-deals', async (req, res) => {
+  try {
+    const todayDeals = await readTodayDeals();
+    res.json(todayDeals);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching today deals', error: error.message });
+  }
+});
+
+// API Route to update today's deals (POST request)
+app.post('/api/today-deals', async (req, res) => {
+  try {
+    const newDeals = req.body; // Expecting an array of deals
+    await writeTodayDeals(newDeals);
+    res.status(201).json({ success: true, message: 'Today deals updated successfully!' });
+  } catch (error) {
+    res.status(400).json({ success: false, message: 'Error updating today deals', error: error.message });
+  }
+});
+
 // telegram bot to help handler
 bot.onText(/\/help/, (msg) => {
   const chatId = msg.chat.id;
