@@ -5,7 +5,8 @@
     "price": 1999.99,
     "mrp": 2499.99,
     "rating": 4.5,
-    "buyLink": "https://example.com/buy-earbuds"
+    "buyLink": "https://example.com/buy-earbuds",
+    "image": "https://example.com/images/earbuds.jpg"
   },
   {
     "id": 2,
@@ -13,6 +14,7 @@
     "price": 14999.99,
     "mrp": 19999.99,
     "rating": 4.7,
-    "buyLink": "https://example.com/buy-smartphone"
+    "buyLink": "https://example.com/buy-smartphone",
+    "image": "https://example.com/images/smartphone.jpg"
   }
 ]
