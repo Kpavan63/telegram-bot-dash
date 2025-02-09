@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "Wireless Earbuds",
+    "price": 1999.99,
+    "mrp": 2499.99,
+    "rating": 4.5,
+    "buyLink": "https://example.com/buy-earbuds"
+  },
+  {
+    "id": 2,
+    "name": "Smartphone",
+    "price": 14999.99,
+    "mrp": 19999.99,
+    "rating": 4.7,
+    "buyLink": "https://example.com/buy-smartphone"
+  }
+]
