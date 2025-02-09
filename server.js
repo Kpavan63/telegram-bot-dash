@@ -290,19 +290,39 @@ bot.onText(/\/today/, async (msg) => {
       return;
     }
 
-    // Format the deals into a readable message
-    const dealsMessage = todayDeals.map((deal, index) => {
-      return `
-Deal ${index + 1}:
-<b>${deal.name}</b>
+    // Loop through each deal and send it as a separate message
+    for (const deal of todayDeals) {
+      const htmlMessage = `
+<b>Deal:</b>
+ <b>${deal.name}</b>
 💰 Price: ₹${deal.price.toFixed(2)}
 💵 MRP: ₹${deal.mrp.toFixed(2)}
 ⭐ Rating: ${deal.rating} ⭐
-🔗 Buy Link: ${deal.buyLink}
-      `;
-    }).join('\n');
+`;
 
-    bot.sendMessage(chatId, `Today's Deals:\n${dealsMessage}`);
+      // Create the inline keyboard with an "Order Now" button
+      const inlineKeyboard = {
+        inline_keyboard: [
+          [{ text: 'Order Now', url: deal.buyLink }] // Add the "Order Now" button
+        ]
+      };
+
+      // Send the deal details to the user
+      if (deal.image) {
+        // Send the deal image with a caption
+        await bot.sendPhoto(chatId, deal.image, {
+          caption: htmlMessage,
+          parse_mode: 'HTML',
+          reply_markup: inlineKeyboard
+        });
+      } else {
+        // If no image is available, send a text message
+        await bot.sendMessage(chatId, htmlMessage, {
+          parse_mode: 'HTML',
+          reply_markup: inlineKeyboard
+        });
+      }
+    }
   } catch (error) {
     console.error('Error fetching today deals:', error);
     bot.sendMessage(chatId, 'An error occurred while fetching today\'s deals. Please try again later.');
