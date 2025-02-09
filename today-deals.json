@@ -29,5 +29,26 @@
       "kettle",
       "stove",
       "electric kettle"
+    ],
+    "id": 2,
+    "views": 0,
+    "clicks": 0
+  },
+  {
+    "name": "pTron Bassbuds",
+    "description": "pTron Bassbuds Bliss TWS In-Ear Earbuds with 4 Quadpro Mics, 3D Audioscape, TruTalk ENC Calls, 40H Playtime, 50ms Low-Latency Game/Music Modes, BT5.3 Headphones,Type C Fast Charging & IPX5 (Navy Blue)",
+    "price": 699,
+    "mrp": 1500,
+    "rating": 5,
+    "image": "https://m.media-amazon.com/images/I/51DJx5VXGXL._SL1200_.jpg",
+    "buyLink": "https://amzn.to/4jk55jD",
+    "keywords": [
+      "buds",
+      "earbuds",
+      "earphones.ptron buds"
+    ],
+    "id": 3,
+    "views": 0,
+    "clicks": 0
   }
 ]
