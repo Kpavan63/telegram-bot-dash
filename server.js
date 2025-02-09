@@ -1088,6 +1088,7 @@ app.get('/admin/today-deals', async (req, res) => {
     const todayDeals = await readTodayDeals();
     const analytics = await readAnalytics();
     const productViews = analytics.productViews;
+    const categories = [...new Set(todayDeals.map(deal => deal.category))];
 
     let dealsHTML = `
       <!DOCTYPE html>
@@ -1142,6 +1143,23 @@ app.get('/admin/today-deals', async (req, res) => {
           .page-subtitle {
             color: var(--text-secondary);
             font-size: 1.1rem;
+          }
+
+          .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            padding: 0 1rem;
+          }
+
+          .filter-bar select,
+          .filter-bar input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
           }
 
           .deal-container {
@@ -1275,6 +1293,30 @@ app.get('/admin/today-deals', async (req, res) => {
             box-shadow: var(--shadow-md);
           }
 
+          .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+          }
+
+          .pagination a {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: var(--card-background);
+            box-shadow: var(--shadow-sm);
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: all 0.2s ease;
+          }
+
+          .pagination a:hover {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+          }
+
           @keyframes fadeInDown {
             from {
               opacity: 0;
@@ -1311,6 +1353,11 @@ app.get('/admin/today-deals', async (req, res) => {
             .deal-content {
               padding: 1rem;
             }
+
+            .filter-bar {
+              flex-direction: column;
+              gap: 1rem;
+            }
           }
 
           @media (max-width: 480px) {
@@ -1327,12 +1374,88 @@ app.get('/admin/today-deals', async (req, res) => {
             }
           }
         </style>
+        <script>
+          function filterDeals() {
+            const searchQuery = document.getElementById('search').value.toLowerCase();
+            const category = document.getElementById('category').value;
+            const deals = document.querySelectorAll('.deal-card');
+
+            deals.forEach(deal => {
+              const title = deal.querySelector('.deal-title').textContent.toLowerCase();
+              const dealCategory = deal.dataset.category;
+
+              if (title.includes(searchQuery) && (category === 'all' || dealCategory === category)) {
+                deal.style.display = 'block';
+              } else {
+                deal.style.display = 'none';
+              }
+            });
+          }
+
+          function sortDeals() {
+            const sortOption = document.getElementById('sort').value;
+            const dealContainer = document.querySelector('.deal-container');
+            const deals = Array.from(dealContainer.children);
+
+            deals.sort((a, b) => {
+              const priceA = parseFloat(a.querySelector('.current-price').textContent.replace('₹', ''));
+              const priceB = parseFloat(b.querySelector('.current-price').textContent.replace('₹', ''));
+              const discountA = parseInt(a.querySelector('.discount-badge').textContent.replace('% OFF', ''));
+              const discountB = parseInt(b.querySelector('.discount-badge').textContent.replace('% OFF', ''));
+              const viewsA = parseInt(a.querySelector('.stat-item span').textContent.replace(',', ''));
+              const viewsB = parseInt(b.querySelector('.stat-item span').textContent.replace(',', ''));
+
+              if (sortOption === 'price-asc') {
+                return priceA - priceB;
+              } else if (sortOption === 'price-desc') {
+                return priceB - priceA;
+              } else if (sortOption === 'discount') {
+                return discountB - discountA;
+              } else if (sortOption === 'views') {
+                return viewsB - viewsA;
+              }
+            });
+
+            dealContainer.innerHTML = '';
+            deals.forEach(deal => dealContainer.appendChild(deal));
+          }
+
+          function openModal(dealId) {
+            const modal = document.getElementById('deal-modal');
+            const deal = document.querySelector(\`.deal-card[data-id="\${dealId}"]\`);
+
+            modal.querySelector('.modal-title').textContent = deal.querySelector('.deal-title').textContent;
+            modal.querySelector('.modal-image').src = deal.querySelector('.deal-image').src;
+            modal.querySelector('.modal-price').textContent = deal.querySelector('.current-price').textContent;
+            modal.querySelector('.modal-description').textContent = deal.querySelector('.deal-description').textContent;
+
+            modal.style.display = 'block';
+          }
+
+          function closeModal() {
+            const modal = document.getElementById('deal-modal');
+            modal.style.display = 'none';
+          }
+        </script>
       </head>
       <body>
         <header class="page-header">
           <h1 class="page-title">Today's Featured Deals</h1>
           <p class="page-subtitle">Discover our exclusive daily offers</p>
         </header>
+        <div class="filter-bar">
+          <input type="text" id="search" placeholder="Search deals..." onkeyup="filterDeals()">
+          <select id="category" onchange="filterDeals()">
+            <option value="all">All Categories</option>
+            ${categories.map(category => `<option value="${category}">${category}</option>`).join('')}
+          </select>
+          <select id="sort" onchange="sortDeals()">
+            <option value="price-asc">Sort by Price: Low to High</option>
+            <option value="price-desc">Sort by Price: High to Low</option>
+            <option value="discount">Sort by Discount</option>
+            <option value="views">Sort by Views</option>
+          </select>
+        </div>
         <div class="deal-container">
     `;
 
@@ -1350,7 +1473,7 @@ app.get('/admin/today-deals', async (req, res) => {
         const discountPercentage = Math.round(((deal.mrp - deal.price) / deal.mrp) * 100);
         
         dealsHTML += `
-          <div class="deal-card" style="animation-delay: ${index * 0.1}s">
+          <div class="deal-card" data-id="${deal.id}" data-category="${deal.category}" style="animation-delay: ${index * 0.1}s" onclick="openModal('${deal.id}')">
             <div class="deal-image-container">
               <img src="${deal.image}" alt="${deal.name}" class="deal-image">
             </div>
@@ -1371,6 +1494,7 @@ app.get('/admin/today-deals', async (req, res) => {
                   <span>${clicks.toLocaleString()} clicks</span>
                 </div>
               </div>
+              <p class="deal-description" style="display: none;">${deal.description}</p>
             </div>
           </div>
         `;
@@ -1379,11 +1503,26 @@ app.get('/admin/today-deals', async (req, res) => {
 
     dealsHTML += `
         </div>
+        <div class="pagination">
+          <a href="#" onclick="goToPage(1)">1</a>
+          <a href="#" onclick="goToPage(2)">2</a>
+          <a href="#" onclick="goToPage(3)">3</a>
+          <!-- Add more pagination links as needed -->
+        </div>
         <div style="text-align: center;">
           <a href="/admin" class="back-link">
             <i class="fas fa-arrow-left"></i>
             Back to Dashboard
           </a>
+        </div>
+        <div id="deal-modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 class="modal-title"></h2>
+            <img src="" alt="" class="modal-image">
+            <p class="modal-price"></p>
+            <p class="modal-description"></p>
+          </div>
         </div>
       </body>
       </html>
@@ -1395,6 +1534,7 @@ app.get('/admin/today-deals', async (req, res) => {
     res.status(500).send('Error loading today\'s deals.');
   }
 });
+
 
 // Serve Add Product HTML
 app.get('/admin/add-product', (req, res) => {
