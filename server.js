@@ -932,7 +932,7 @@ app.get('/admin', (req, res) => {
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
         <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
         <a href="/admin/notify" class="btn btn-primary mt-4">Send Notification to All Users</a>
-        <a href="/admin/today-deals">Today's Deals</a>
+        <a href="/admin/today-deals" class="btn btn-primary mt-4">Today's Deals</a>
       </div>
 
       <script>
@@ -1092,7 +1092,7 @@ app.get('/admin/today-deals', async (req, res) => {
     const analytics = await readAnalytics();
     const productViews = analytics.productViews;
 
-    // Prepare the HTML for displaying today's deals in card format
+    // Prepare the HTML for displaying today's deals in a Flexbox grid
     let dealsHTML = `
       <!DOCTYPE html>
       <html lang="en">
@@ -1110,13 +1110,18 @@ app.get('/admin/today-deals', async (req, res) => {
             text-align: center;
             color: #333;
           }
+          .deal-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+          }
           .deal-card {
             background-color: #fff;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 15px auto;
-            max-width: 400px;
+            width: 300px; /* Medium card size */
             overflow: hidden;
             transition: transform 0.2s ease-in-out;
           }
@@ -1125,7 +1130,7 @@ app.get('/admin/today-deals', async (req, res) => {
           }
           .deal-image {
             width: 100%;
-            height: 200px;
+            height: 150px;
             object-fit: cover;
           }
           .deal-content {
@@ -1137,12 +1142,12 @@ app.get('/admin/today-deals', async (req, res) => {
             margin-bottom: 10px;
             color: #333;
           }
-          .deal-info {
-            font-size: 0.9em;
-            color: #666;
+          .deal-price {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 10px;
           }
           .deal-stats {
-            margin-top: 10px;
             display: flex;
             justify-content: space-between;
             font-size: 0.9em;
@@ -1167,6 +1172,7 @@ app.get('/admin/today-deals', async (req, res) => {
       </head>
       <body>
         <h1>Today's Deals</h1>
+        <div class="deal-container">
     `;
 
     if (todayDeals.length === 0) {
@@ -1181,8 +1187,8 @@ app.get('/admin/today-deals', async (req, res) => {
             <img src="${deal.image}" alt="${deal.name}" class="deal-image">
             <div class="deal-content">
               <div class="deal-title">${deal.name}</div>
-              <div class="deal-info">
-                Price: ₹${deal.price.toFixed(2)} | MRP: ₹${deal.mrp.toFixed(2)} | Rating: ${deal.rating} ⭐
+              <div class="deal-price">
+                Price: ₹${deal.price.toFixed(2)} | MRP: ₹${deal.mrp.toFixed(2)}
               </div>
               <div class="deal-stats">
                 <span>Views: ${views}</span>
@@ -1195,6 +1201,7 @@ app.get('/admin/today-deals', async (req, res) => {
     }
 
     dealsHTML += `
+        </div>
         <a href="/admin" class="back-link">Back to Admin Dashboard</a>
       </body>
       </html>
