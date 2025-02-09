@@ -1085,114 +1085,279 @@ app.get('/admin', (req, res) => {
 //today deals admin code
 app.get('/admin/today-deals', async (req, res) => {
   try {
-    // Fetch today's deals
     const todayDeals = await readTodayDeals();
-
-    // Fetch analytics data
     const analytics = await readAnalytics();
     const productViews = analytics.productViews;
 
-    // Prepare the HTML for displaying today's deals in a Flexbox grid
     let dealsHTML = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Today's Deals</title>
+        <title>Today's Deals | Admin Dashboard</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
         <style>
+          :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --background-color: #f3f4f6;
+            --card-background: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+          }
+
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+
           body {
-            font-family: Arial, sans-serif;
-            background-color: lightgray;
-            padding: 20px;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 2rem 1rem;
           }
-          h1 {
+
+          .page-header {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
             text-align: center;
-            color: #333;
+            opacity: 0;
+            animation: fadeInDown 0.6s ease-out forwards;
           }
+
+          .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+          }
+
+          .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+          }
+
           .deal-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
           }
+
           .deal-card {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 300px; /* Medium card size */
+            background: var(--card-background);
+            border-radius: 1rem;
             overflow: hidden;
-            transition: transform 0.2s ease-in-out;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
           }
+
           .deal-card:hover {
-            transform: scale(1.03);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
           }
+
+          .deal-image-container {
+            position: relative;
+            padding-top: 66.67%;
+            overflow: hidden;
+          }
+
           .deal-image {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 150px;
+            height: 100%;
             object-fit: cover;
+            transition: transform 0.5s ease;
           }
+
+          .deal-card:hover .deal-image {
+            transform: scale(1.05);
+          }
+
           .deal-content {
-            padding: 15px;
+            padding: 1.5rem;
           }
+
           .deal-title {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
           }
+
           .deal-price {
-            font-size: 1em;
-            color: #555;
-            margin-bottom: 10px;
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
           }
+
+          .current-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+          }
+
+          .original-price {
+            color: var(--text-secondary);
+            text-decoration: line-through;
+          }
+
+          .discount-badge {
+            background: #dcfce7;
+            color: #166534;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+          }
+
           .deal-stats {
             display: flex;
             justify-content: space-between;
-            font-size: 0.9em;
-            color: #555;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
           }
-          .deal-stats span {
-            background-color: #e9ecef;
-            padding: 5px 10px;
-            border-radius: 4px;
+
+          .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
           }
+
+          .stat-item i {
+            color: var(--primary-color);
+          }
+
           .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #007bff;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
             text-decoration: none;
+            font-weight: 500;
+            margin-top: 2rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            background: var(--card-background);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
           }
+
           .back-link:hover {
-            text-decoration: underline;
+            background: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+          }
+
+          .no-deals {
+            text-align: center;
+            padding: 3rem;
+            background: var(--card-background);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-md);
+          }
+
+          @keyframes fadeInDown {
+            from {
+              opacity: 0;
+              transform: translateY(-20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          /* Responsive Design */
+          @media (max-width: 768px) {
+            .page-title {
+              font-size: 2rem;
+            }
+
+            .deal-container {
+              grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+              gap: 1rem;
+            }
+
+            .deal-content {
+              padding: 1rem;
+            }
+          }
+
           }
         </style>
       </head>
       <body>
-        <h1>Today's Deals</h1>
+        <header class="page-header">
+          <h1 class="page-title">Today's Featured Deals</h1>
+          <p class="page-subtitle">Discover our exclusive daily offers</p>
+        </header>
         <div class="deal-container">
     `;
 
     if (todayDeals.length === 0) {
-      dealsHTML += '<p style="text-align: center;">No deals available for today.</p>';
+      dealsHTML += `
+        <div class="no-deals">
+          <i class="fas fa-shopping-basket fa-3x" style="color: var(--text-secondary); margin-bottom: 1rem;"></i>
+          <p>No deals available for today. Check back later!</p>
+        </div>
+      `;
     } else {
-      todayDeals.forEach(deal => {
+      todayDeals.forEach((deal, index) => {
         const views = productViews[deal.id] || 0;
         const clicks = (analytics.queries.filter(query => query.query.includes(deal.name)).length) || 0;
-
+        const discountPercentage = Math.round(((deal.mrp - deal.price) / deal.mrp) * 100);
+        
         dealsHTML += `
-          <div class="deal-card">
-            <img src="${deal.image}" alt="${deal.name}" class="deal-image">
+          <div class="deal-card" style="animation-delay: ${index * 0.1}s">
+            <div class="deal-image-container">
+              <img src="${deal.image}" alt="${deal.name}" class="deal-image">
+            </div>
             <div class="deal-content">
-              <div class="deal-title">${deal.name}</div>
+              <h2 class="deal-title">${deal.name}</h2>
               <div class="deal-price">
-                Price: ₹${deal.price.toFixed(2)} | MRP: ₹${deal.mrp.toFixed(2)}
+                <span class="current-price">₹${deal.price.toFixed(2)}</span>
+                <span class="original-price">₹${deal.mrp.toFixed(2)}</span>
+                <span class="discount-badge">${discountPercentage}% OFF</span>
               </div>
               <div class="deal-stats">
-                <span>Views: ${views}</span>
-                <span>Clicks: ${clicks}</span>
+                <div class="stat-item">
+                  <i class="fas fa-eye"></i>
+                  <span>${views.toLocaleString()} views</span>
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-mouse-pointer"></i>
+                  <span>${clicks.toLocaleString()} clicks</span>
+                </div>
               </div>
             </div>
           </div>
@@ -1202,7 +1367,12 @@ app.get('/admin/today-deals', async (req, res) => {
 
     dealsHTML += `
         </div>
-        <a href="/admin" class="back-link">Back to Admin Dashboard</a>
+        <div style="text-align: center;">
+          <a href="/admin" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Dashboard
+          </a>
+        </div>
       </body>
       </html>
     `;
