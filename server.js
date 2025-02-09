@@ -932,6 +932,7 @@ app.get('/admin', (req, res) => {
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
         <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
         <a href="/admin/notify" class="btn btn-primary mt-4">Send Notification to All Users</a>
+        <a href="/admin/today-deals">Today's Deals</a>
       </div>
 
       <script>
@@ -1080,6 +1081,130 @@ app.get('/admin', (req, res) => {
     </html>
   `;
   res.send(adminHTML);
+});
+//today deals admin code
+app.get('/admin/today-deals', async (req, res) => {
+  try {
+    // Fetch today's deals
+    const todayDeals = await readTodayDeals();
+
+    // Fetch analytics data
+    const analytics = await readAnalytics();
+    const productViews = analytics.productViews;
+
+    // Prepare the HTML for displaying today's deals in card format
+    let dealsHTML = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Today's Deals</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+          }
+          h1 {
+            text-align: center;
+            color: #333;
+          }
+          .deal-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 15px auto;
+            max-width: 400px;
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+          }
+          .deal-card:hover {
+            transform: scale(1.03);
+          }
+          .deal-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+          }
+          .deal-content {
+            padding: 15px;
+          }
+          .deal-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+          }
+          .deal-info {
+            font-size: 0.9em;
+            color: #666;
+          }
+          .deal-stats {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #555;
+          }
+          .deal-stats span {
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 4px;
+          }
+          .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+          }
+          .back-link:hover {
+            text-decoration: underline;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Today's Deals</h1>
+    `;
+
+    if (todayDeals.length === 0) {
+      dealsHTML += '<p style="text-align: center;">No deals available for today.</p>';
+    } else {
+      todayDeals.forEach(deal => {
+        const views = productViews[deal.id] || 0;
+        const clicks = (analytics.queries.filter(query => query.query.includes(deal.name)).length) || 0;
+
+        dealsHTML += `
+          <div class="deal-card">
+            <img src="${deal.image}" alt="${deal.name}" class="deal-image">
+            <div class="deal-content">
+              <div class="deal-title">${deal.name}</div>
+              <div class="deal-info">
+                Price: ₹${deal.price.toFixed(2)} | MRP: ₹${deal.mrp.toFixed(2)} | Rating: ${deal.rating} ⭐
+              </div>
+              <div class="deal-stats">
+                <span>Views: ${views}</span>
+                <span>Clicks: ${clicks}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    dealsHTML += `
+        <a href="/admin" class="back-link">Back to Admin Dashboard</a>
+      </body>
+      </html>
+    `;
+
+    res.send(dealsHTML);
+  } catch (error) {
+    console.error('Error fetching today deals:', error);
+    res.status(500).send('Error loading today\'s deals.');
+  }
 });
 
 // Serve Add Product HTML
