@@ -1103,7 +1103,7 @@ app.get('/admin/today-deals', async (req, res) => {
         <style>
           body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background-color: lightgray;
             padding: 20px;
           }
           h1 {
