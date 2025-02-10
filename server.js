@@ -989,10 +989,15 @@ app.get('/admin', (req, res) => {
         const correctPin = '${process.env.ADMIN_PIN || '6300'}';
 
         const isPinVerified = localStorage.getItem('pinVerified') === 'true';
+        const pinExpiry = localStorage.getItem('pinExpiry');
+        const now = new Date().getTime();
 
-        if (isPinVerified) {
+        if (isPinVerified && pinExpiry && now < pinExpiry) {
           document.getElementById('pinPopup').style.display = 'none';
           document.getElementById('adminFeatures').style.display = 'block';
+        } else {
+          localStorage.removeItem('pinVerified');
+          localStorage.removeItem('pinExpiry');
         }
 
         function moveToNext(currentInput) {
@@ -1016,7 +1021,9 @@ app.get('/admin', (req, res) => {
           if (enteredPin === correctPin) {
             pinPopup.style.display = 'none';
             adminFeatures.style.display = 'block';
+            const expiryTime = new Date().getTime() + 60 * 60 * 1000; // 1 hour
             localStorage.setItem('pinVerified', 'true');
+            localStorage.setItem('pinExpiry', expiryTime);
           } else {
             pinError.textContent = 'Invalid PIN. Please try again.';
           }
