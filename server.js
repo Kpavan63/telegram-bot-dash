@@ -1042,6 +1042,10 @@ app.get('/admin', (req, res) => {
 
         let currentChatId = null;
 
+        function generateRandomData() {
+          return Math.floor(Math.random() * 100);
+        }
+
         async function fetchAnalytics() {
           try {
             const response = await axios.get('/api/analytics');
@@ -1080,7 +1084,7 @@ app.get('/admin', (req, res) => {
             const trafficOptions = {
               series: [{
                 name: 'Traffic',
-                data: analytics.queries.map(() => Math.floor(Math.random() * 100)) // Simulated traffic data
+                data: analytics.queries.map(() => generateRandomData()) // Simulated traffic data
               }],
               chart: {
                 type: 'line',
@@ -1171,6 +1175,13 @@ app.get('/admin', (req, res) => {
 
             const salesChart = new ApexCharts(document.querySelector("#salesOverviewChart"), salesOptions);
             salesChart.render();
+
+            setInterval(() => {
+              chart.updateSeries([{
+                data: [...chart.w.globals.series[0].data.slice(1), generateRandomData()]
+              }]);
+            }, 2000); // Update every 2 seconds
+
           } catch (error) {
             console.error('Error fetching analytics:', error);
           }
@@ -1198,7 +1209,7 @@ app.get('/admin', (req, res) => {
         });
 
         fetchAnalytics();
-        setInterval(fetchAnalytics, 5000);
+        setInterval(fetchAnalytics, 60000); // Fetch analytics every 1 minute
       </script>
     </body>
     </html>
