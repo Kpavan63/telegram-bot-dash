@@ -743,8 +743,17 @@ app.get('/admin', (req, res) => {
           font-family: 'Roboto', sans-serif;
           margin: 0;
           padding: 0;
-          background: #f8f9fa;
+          background: linear-gradient(135deg, #023047, #8ecae6);
+          background-size: 400% 400%;
+          animation: gradientBackground 15s ease infinite;
+          min-height: 100vh;
           color: #333;
+        }
+
+        @keyframes gradientBackground {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
 
         .container {
@@ -786,18 +795,18 @@ app.get('/admin', (req, res) => {
           height: 60px;
           text-align: center;
           font-size: 24px;
-          border: 2px solid #007bff;
+          border: 2px solid #219ebc;
           border-radius: 8px;
         }
 
         .pin-input-container input:focus {
           outline: none;
-          border-color: #0056b3;
+          border-color: #ffb703;
         }
 
         .pin-popup button {
           padding: 12px 24px;
-          background-color: #007bff;
+          background-color: #ffb703;
           color: white;
           border: none;
           border-radius: 8px;
@@ -806,7 +815,7 @@ app.get('/admin', (req, res) => {
         }
 
         .pin-popup button:hover {
-          background-color: #0056b3;
+          background-color: #fb8500;
         }
 
         .pin-error {
@@ -833,12 +842,12 @@ app.get('/admin', (req, res) => {
         }
 
         .btn-primary {
-          background-color: #007bff;
+          background-color: #219ebc;
           border: none;
         }
 
         .btn-primary:hover {
-          background-color: #0056b3;
+          background-color: #023047;
         }
 
         .table {
@@ -889,7 +898,7 @@ app.get('/admin', (req, res) => {
         }
       </style>
 
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>
@@ -968,7 +977,7 @@ app.get('/admin', (req, res) => {
         </table>
 
         <h2 class="mt-4">Realtime Traffic Chart</h2>
-        <canvas id="realtimeTrafficChart"></canvas>
+        <div id="realtimeTrafficChart"></div>
 
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
         <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
@@ -977,7 +986,7 @@ app.get('/admin', (req, res) => {
       </div>
 
       <script>
-        const correctPin = '${process.env.ADMIN_PIN || '6300'}'; // Fetch PIN from environment variable or use default
+        const correctPin = '${process.env.ADMIN_PIN || '6300'}';
 
         const isPinVerified = localStorage.getItem('pinVerified') === 'true';
 
@@ -1050,27 +1059,39 @@ app.get('/admin', (req, res) => {
               </tr>
             \`).join('');
 
-            const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
-            const trafficChart = new Chart(ctx, {
-              type: 'line',
-              data: {
-                labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
-                datasets: [{
-                  label: 'Traffic',
-                  data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
-                  borderColor: 'rgba(75, 192, 192, 1)',
-                  borderWidth: 1,
-                  fill: false
-                }]
-              },
-              options: {
-                scales: {
-                  y: {
-                    beginAtZero: true
+            const options = {
+              series: [{
+                name: 'Traffic',
+                data: analytics.queries.map(() => Math.floor(Math.random() * 100)) // Simulated traffic data
+              }],
+              chart: {
+                type: 'line',
+                height: 350,
+                animations: {
+                  enabled: true,
+                  easing: 'easeinout',
+                  speed: 800,
+                  animateGradually: {
+                    enabled: true,
+                    delay: 150
+                  },
+                  dynamicAnimation: {
+                    enabled: true,
+                    speed: 350
                   }
                 }
-              }
-            });
+              },
+              stroke: {
+                curve: 'smooth'
+              },
+              xaxis: {
+                categories: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
+              },
+              colors: ['#219ebc']
+            };
+
+            const chart = new ApexCharts(document.querySelector("#realtimeTrafficChart"), options);
+            chart.render();
           } catch (error) {
             console.error('Error fetching analytics:', error);
           }
