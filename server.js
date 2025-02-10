@@ -890,7 +890,7 @@ app.get('/admin', (req, res) => {
           border-radius: 8px;
         }
 
-        #realtimeTrafficChart, #userActivityHeatmap {
+        #realtimeTrafficChart {
           background: #ffffff;
           border-radius: 8px;
           padding: 20px;
@@ -948,9 +948,6 @@ app.get('/admin', (req, res) => {
             </div>
           </div>
         </div>
-
-        <h2 class="mt-4">User Activity Heatmap</h2>
-        <div id="userActivityHeatmap"></div>
 
         <h2 class="mt-4">Query Status</h2>
         <div class="fixed-height">
@@ -1116,65 +1113,6 @@ app.get('/admin', (req, res) => {
             const chart = new ApexCharts(document.querySelector("#realtimeTrafficChart"), trafficOptions);
             chart.render();
 
-            const heatmapOptions = {
-              series: [{
-                name: 'Activity',
-                data: generateHeatmapData()
-              }],
-              chart: {
-                type: 'heatmap',
-                height: 350,
-                animations: {
-                  enabled: true,
-                  easing: 'easeinout',
-                  speed: 800,
-                  animateGradually: {
-                    enabled: true,
-                    delay: 150
-                  },
-                  dynamicAnimation: {
-                    enabled: true,
-                    speed: 350
-                  }
-                }
-              },
-              plotOptions: {
-                heatmap: {
-                  shadeIntensity: 0.5,
-                  radius: 0,
-                  useFillColorAsStroke: true,
-                  colorScale: {
-                    ranges: [{
-                      from: 0,
-                      to: 50,
-                      name: 'Low',
-                      color: '#8ecae6'
-                    }, {
-                      from: 51,
-                      to: 100,
-                      name: 'High',
-                      color: '#023047'
-                    }]
-                  }
-                }
-              },
-              dataLabels: {
-                enabled: false
-              },
-              xaxis: {
-                categories: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
-              },
-              yaxis: {
-                title: {
-                  text: 'User Activity'
-                }
-              },
-              colors: ['#fb8500', '#219ebc']
-            };
-
-            const heatmapChart = new ApexCharts(document.querySelector("#userActivityHeatmap"), heatmapOptions);
-            heatmapChart.render();
-
             setInterval(() => {
               chart.updateSeries([{
                 data: [...chart.w.globals.series[0].data.slice(1), generateRandomData()]
@@ -1184,17 +1122,6 @@ app.get('/admin', (req, res) => {
           } catch (error) {
             console.error('Error fetching analytics:', error);
           }
-        }
-
-        function generateHeatmapData() {
-          const data = [];
-          for (let i = 0; i < 12; i++) {
-            data.push({
-              x: i * 2 + ':00',
-              y: generateRandomData()
-            });
-          }
-          return data;
         }
 
         function openChat(chatId) {
