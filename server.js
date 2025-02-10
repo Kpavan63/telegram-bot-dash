@@ -737,13 +737,13 @@ app.get('/admin', (req, res) => {
       <title>Admin Dashboard</title>
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
       <style>
+        /* General Styles */
         body {
-          font-family: 'Roboto', sans-serif;
+          font-family: Arial, sans-serif;
           margin: 0;
-          padding: 0;
-          background: linear-gradient(135deg, #023047, #8ecae6);
+          padding: 20px;
+          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
           background-size: 400% 400%;
           animation: gradientBackground 15s ease infinite;
           min-height: 100vh;
@@ -756,24 +756,30 @@ app.get('/admin', (req, res) => {
           100% { background-position: 0% 50%; }
         }
 
-        .container {
-          max-width: 1200px;
-          margin: 50px auto;
-          padding: 20px;
-          background: #ffffff;
-          border-radius: 10px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        h1, h2 {
+          color: #fff;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 20px;
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* PIN Popup Card */
         .pin-popup {
           position: fixed;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          background: #ffffff;
-          padding: 30px;
+          background: rgba(255, 255, 255, 0.95);
+          padding: 20px;
           border-radius: 10px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
           z-index: 1000;
           text-align: center;
         }
@@ -791,31 +797,31 @@ app.get('/admin', (req, res) => {
         }
 
         .pin-input-container input {
-          width: 60px;
-          height: 60px;
+          width: 50px;
+          height: 50px;
           text-align: center;
-          font-size: 24px;
-          border: 2px solid #219ebc;
-          border-radius: 8px;
+          font-size: 20px;
+          border: 2px solid #007bff;
+          border-radius: 5px;
         }
 
         .pin-input-container input:focus {
           outline: none;
-          border-color: #ffb703;
+          border-color: #0056b3;
         }
 
         .pin-popup button {
-          padding: 12px 24px;
-          background-color: #ffb703;
+          padding: 10px 20px;
+          background-color: #007bff;
           color: white;
           border: none;
-          border-radius: 8px;
+          border-radius: 5px;
           cursor: pointer;
-          font-size: 18px;
+          font-size: 16px;
         }
 
         .pin-popup button:hover {
-          background-color: #fb8500;
+          background-color: #0056b3;
         }
 
         .pin-error {
@@ -823,90 +829,17 @@ app.get('/admin', (req, res) => {
           margin-top: 10px;
         }
 
+        /* Hide admin features by default */
         #adminFeatures {
           display: none;
         }
-
-        .card {
-          background: #ffffff;
-          color: #333;
-          border: none;
-          border-radius: 8px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-          margin-bottom: 20px;
-        }
-
-        .card-title {
-          font-size: 1.25rem;
-          font-weight: 500;
-        }
-
-        .btn-primary {
-          background-color: #219ebc;
-          border: none;
-        }
-
-        .btn-primary:hover {
-          background-color: #023047;
-        }
-
-        .table {
-          background: #ffffff;
-          border-radius: 8px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .table th, .table td {
-          color: #333;
-        }
-
-        .chat-window {
-          background: #ffffff;
-          border-radius: 8px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-          padding: 20px;
-          height: 200px; /* Reduced height */
-          overflow-y: scroll;
-        }
-
-        .chat-message {
-          margin-bottom: 10px;
-          color: #333;
-        }
-
-        .chat-message.admin {
-          text-align: right;
-        }
-
-        .input-group {
-          margin-top: 20px;
-        }
-
-        .input-group input {
-          border-radius: 8px;
-        }
-
-        .input-group button {
-          border-radius: 8px;
-        }
-
-        #realtimeTrafficChart {
-          background: #ffffff;
-          border-radius: 8px;
-          padding: 20px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .fixed-height {
-          height: 300px;
-          overflow-y: auto;
-        }
       </style>
 
-      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>
+      <!-- PIN Popup Card -->
       <div class="pin-popup" id="pinPopup">
         <h2>Enter PIN to Access Admin Panel</h2>
         <div class="pin-input-container">
@@ -919,9 +852,11 @@ app.get('/admin', (req, res) => {
         <div id="pinError" class="pin-error"></div>
       </div>
 
-      <div class="container" id="adminFeatures">
-        <h1 class="mb-4">Admin Dashboard</h1>
+      <!-- Admin Features (hidden by default) -->
+      <div class="container mt-5" id="adminFeatures">
+        <h1 class="mb-4" style="color:black;">Admin Dashboard</h1>
 
+        <!-- Dashboard Cards -->
         <div class="row mb-4">
           <div class="col-md-4">
             <div class="card">
@@ -949,44 +884,50 @@ app.get('/admin', (req, res) => {
           </div>
         </div>
 
-        <h2 class="mt-4">Query Status</h2>
-        <div class="fixed-height">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Chat ID</th>
-                <th>Query</th>
-                <th>Timestamp</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="queryTable"></tbody>
-          </table>
-        </div>
+        <!-- Query Status -->
+        <h2 class="mt-4" style="color:black;">Query Status</h2>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Chat ID</th>
+              <th>Query</th>
+              <th>Timestamp</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="queryTable">
+            <!-- Queries will be populated here -->
+          </tbody>
+        </table>
 
-        <h2 class="mt-4">Chat with User</h2>
-        <div class="chat-window fixed-height" id="chatWindow"></div>
+        <!-- Chat Window -->
+        <h2 class="mt-4" style="color:black;">Chat with User</h2>
+        <div class="chat-window" id="chatWindow">
+          <!-- Chat messages will be displayed here -->
+        </div>
         <div class="input-group mt-3">
           <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
           <button class="btn btn-primary" id="sendMessageBtn">Send</button>
         </div>
 
-        <h2 class="mt-4">Product Views</h2>
-        <div class="fixed-height">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Product ID</th>
-                <th>Views</th>
-              </tr>
-            </thead>
-            <tbody id="productViewsTable"></tbody>
-          </table>
-        </div>
+        <!-- Product Views -->
+        <h2 class="mt-4" style="color:black;">Product Views</h2>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Product ID</th>
+              <th>Views</th>
+            </tr>
+          </thead>
+          <tbody id="productViewsTable">
+            <!-- Product views will be populated here -->
+          </tbody>
+        </table>
 
-        <h2 class="mt-4">Realtime Traffic Chart</h2>
-        <div id="realtimeTrafficChart"></div>
+        <!-- Realtime Traffic Chart -->
+        <h2 class="mt-4" style="color:black;">Realtime Traffic Chart</h2>
+        <canvas id="realtimeTrafficChart"></canvas>
 
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
         <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
@@ -995,20 +936,18 @@ app.get('/admin', (req, res) => {
       </div>
 
       <script>
-        const correctPin = '${process.env.ADMIN_PIN || '6300'}';
+        const correctPin = '${process.env.ADMIN_PIN || '6300'}'; // Fetch PIN from environment variable or use default
 
+        // Check if the PIN has already been verified
         const isPinVerified = localStorage.getItem('pinVerified') === 'true';
-        const pinExpiry = localStorage.getItem('pinExpiry');
-        const now = new Date().getTime();
 
-        if (isPinVerified && pinExpiry && now < pinExpiry) {
+        if (isPinVerified) {
+          // Hide the PIN popup and show the admin features
           document.getElementById('pinPopup').style.display = 'none';
           document.getElementById('adminFeatures').style.display = 'block';
-        } else {
-          localStorage.removeItem('pinVerified');
-          localStorage.removeItem('pinExpiry');
         }
 
+        // Function to move to the next input box
         function moveToNext(currentInput) {
           const nextInput = document.getElementById(\`pin\${currentInput + 1}\`);
           if (nextInput && document.getElementById(\`pin\${currentInput}\`).value) {
@@ -1016,6 +955,7 @@ app.get('/admin', (req, res) => {
           }
         }
 
+        // Function to verify the PIN
         function verifyPin() {
           const pin1 = document.getElementById('pin1').value;
           const pin2 = document.getElementById('pin2').value;
@@ -1028,38 +968,41 @@ app.get('/admin', (req, res) => {
           const pinPopup = document.getElementById('pinPopup');
 
           if (enteredPin === correctPin) {
+            // Hide the PIN popup and show the admin features
             pinPopup.style.display = 'none';
             adminFeatures.style.display = 'block';
-            const expiryTime = new Date().getTime() + 60 * 60 * 1000; // 1 hour
+
+            // Store the PIN verification state in local storage
             localStorage.setItem('pinVerified', 'true');
-            localStorage.setItem('pinExpiry', expiryTime);
           } else {
+            // Show an error message
             pinError.textContent = 'Invalid PIN. Please try again.';
           }
         }
 
         let currentChatId = null;
 
-        function generateRandomData() {
-          return Math.floor(Math.random() * 100);
-        }
-
+        // Fetch analytics data
         async function fetchAnalytics() {
           try {
             const response = await axios.get('/api/analytics');
             const analytics = response.data;
 
+            // Update total products
             const productsResponse = await axios.get('/api/products');
             document.getElementById('totalProducts').textContent = productsResponse.data.length;
 
+            // Update most viewed product
             const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
               analytics.productViews[a] > analytics.productViews[b] ? a : b
             );
             const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
             document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
 
+            // Update realtime traffic
             document.getElementById('realtimeTraffic').textContent = analytics.traffic;
 
+            // Update query status table
             const queryTable = document.getElementById('queryTable');
             queryTable.innerHTML = analytics.queries.map(query => \`
               <tr>
@@ -1071,6 +1014,7 @@ app.get('/admin', (req, res) => {
               </tr>
             \`).join('');
 
+            // Update product views table
             const productViewsTable = document.getElementById('productViewsTable');
             productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
               <tr>
@@ -1079,56 +1023,40 @@ app.get('/admin', (req, res) => {
               </tr>
             \`).join('');
 
-            const trafficOptions = {
-              series: [{
-                name: 'Traffic',
-                data: analytics.queries.map(() => generateRandomData()) // Simulated traffic data
-              }],
-              chart: {
-                type: 'line',
-                height: 350,
-                animations: {
-                  enabled: true,
-                  easing: 'easeinout',
-                  speed: 800,
-                  animateGradually: {
-                    enabled: true,
-                    delay: 150
-                  },
-                  dynamicAnimation: {
-                    enabled: true,
-                    speed: 350
+            // Update realtime traffic chart
+            const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
+            const trafficChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
+                datasets: [{
+                  label: 'Traffic',
+                  data: analytics.queries.map(() => Math.floor(Math.random() * 100)), // Simulated traffic data
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1,
+                  fill: false
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
                   }
                 }
-              },
-              stroke: {
-                curve: 'smooth'
-              },
-              xaxis: {
-                categories: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
-              },
-              colors: ['#219ebc']
-            };
-
-            const chart = new ApexCharts(document.querySelector("#realtimeTrafficChart"), trafficOptions);
-            chart.render();
-
-            setInterval(() => {
-              chart.updateSeries([{
-                data: [...chart.w.globals.series[0].data.slice(1), generateRandomData()]
-              }]);
-            }, 2000); // Update every 2 seconds
-
+              }
+            });
           } catch (error) {
             console.error('Error fetching analytics:', error);
           }
         }
 
+        // Open chat with a user
         function openChat(chatId) {
           currentChatId = chatId;
           document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
         }
 
+        // Send message to user
         document.getElementById('sendMessageBtn').addEventListener('click', async () => {
           const message = document.getElementById('chatInput').value;
           if (!message || !currentChatId) return;
@@ -1145,8 +1073,9 @@ app.get('/admin', (req, res) => {
           }
         });
 
+        // Fetch analytics data every 5 seconds
         fetchAnalytics();
-        setInterval(fetchAnalytics, 60000); // Fetch analytics every 1 minute
+        setInterval(fetchAnalytics, 5000);
       </script>
     </body>
     </html>
