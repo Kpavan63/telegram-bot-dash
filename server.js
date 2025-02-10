@@ -737,49 +737,34 @@ app.get('/admin', (req, res) => {
       <title>Admin Dashboard</title>
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
       <style>
-        /* General Styles */
         body {
-          font-family: Arial, sans-serif;
+          font-family: 'Roboto', sans-serif;
           margin: 0;
-          padding: 20px;
-          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-          background-size: 400% 400%;
-          animation: gradientBackground 15s ease infinite;
-          min-height: 100vh;
+          padding: 0;
+          background: #f8f9fa;
           color: #333;
-        }
-
-        @keyframes gradientBackground {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        h1, h2 {
-          color: #fff;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .container {
           max-width: 1200px;
-          margin: 0 auto;
+          margin: 50px auto;
           padding: 20px;
-          background: rgba(255, 255, 255, 0.9);
+          background: #ffffff;
           border-radius: 10px;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* PIN Popup Card */
         .pin-popup {
           position: fixed;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
-          background: rgba(255, 255, 255, 0.95);
-          padding: 20px;
+          background: #ffffff;
+          padding: 30px;
           border-radius: 10px;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
           z-index: 1000;
           text-align: center;
         }
@@ -797,12 +782,12 @@ app.get('/admin', (req, res) => {
         }
 
         .pin-input-container input {
-          width: 50px;
-          height: 50px;
+          width: 60px;
+          height: 60px;
           text-align: center;
-          font-size: 20px;
+          font-size: 24px;
           border: 2px solid #007bff;
-          border-radius: 5px;
+          border-radius: 8px;
         }
 
         .pin-input-container input:focus {
@@ -811,13 +796,13 @@ app.get('/admin', (req, res) => {
         }
 
         .pin-popup button {
-          padding: 10px 20px;
+          padding: 12px 24px;
           background-color: #007bff;
           color: white;
           border: none;
-          border-radius: 5px;
+          border-radius: 8px;
           cursor: pointer;
-          font-size: 16px;
+          font-size: 18px;
         }
 
         .pin-popup button:hover {
@@ -829,9 +814,78 @@ app.get('/admin', (req, res) => {
           margin-top: 10px;
         }
 
-        /* Hide admin features by default */
         #adminFeatures {
           display: none;
+        }
+
+        .card {
+          background: #ffffff;
+          color: #333;
+          border: none;
+          border-radius: 8px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          margin-bottom: 20px;
+        }
+
+        .card-title {
+          font-size: 1.25rem;
+          font-weight: 500;
+        }
+
+        .btn-primary {
+          background-color: #007bff;
+          border: none;
+        }
+
+        .btn-primary:hover {
+          background-color: #0056b3;
+        }
+
+        .table {
+          background: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th, .table td {
+          color: #333;
+        }
+
+        .chat-window {
+          background: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+          padding: 20px;
+          height: 300px;
+          overflow-y: scroll;
+        }
+
+        .chat-message {
+          margin-bottom: 10px;
+          color: #333;
+        }
+
+        .chat-message.admin {
+          text-align: right;
+        }
+
+        .input-group {
+          margin-top: 20px;
+        }
+
+        .input-group input {
+          border-radius: 8px;
+        }
+
+        .input-group button {
+          border-radius: 8px;
+        }
+
+        #realtimeTrafficChart {
+          background: #ffffff;
+          border-radius: 8px;
+          padding: 20px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
       </style>
 
@@ -839,7 +893,6 @@ app.get('/admin', (req, res) => {
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <body>
-      <!-- PIN Popup Card -->
       <div class="pin-popup" id="pinPopup">
         <h2>Enter PIN to Access Admin Panel</h2>
         <div class="pin-input-container">
@@ -852,11 +905,9 @@ app.get('/admin', (req, res) => {
         <div id="pinError" class="pin-error"></div>
       </div>
 
-      <!-- Admin Features (hidden by default) -->
-      <div class="container mt-5" id="adminFeatures">
-        <h1 class="mb-4" style="color:black;">Admin Dashboard</h1>
+      <div class="container" id="adminFeatures">
+        <h1 class="mb-4">Admin Dashboard</h1>
 
-        <!-- Dashboard Cards -->
         <div class="row mb-4">
           <div class="col-md-4">
             <div class="card">
@@ -884,8 +935,7 @@ app.get('/admin', (req, res) => {
           </div>
         </div>
 
-        <!-- Query Status -->
-        <h2 class="mt-4" style="color:black;">Query Status</h2>
+        <h2 class="mt-4">Query Status</h2>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -896,23 +946,17 @@ app.get('/admin', (req, res) => {
               <th>Action</th>
             </tr>
           </thead>
-          <tbody id="queryTable">
-            <!-- Queries will be populated here -->
-          </tbody>
+          <tbody id="queryTable"></tbody>
         </table>
 
-        <!-- Chat Window -->
-        <h2 class="mt-4" style="color:black;">Chat with User</h2>
-        <div class="chat-window" id="chatWindow">
-          <!-- Chat messages will be displayed here -->
-        </div>
+        <h2 class="mt-4">Chat with User</h2>
+        <div class="chat-window" id="chatWindow"></div>
         <div class="input-group mt-3">
           <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
           <button class="btn btn-primary" id="sendMessageBtn">Send</button>
         </div>
 
-        <!-- Product Views -->
-        <h2 class="mt-4" style="color:black;">Product Views</h2>
+        <h2 class="mt-4">Product Views</h2>
         <table class="table table-bordered">
           <thead>
             <tr>
@@ -920,13 +964,10 @@ app.get('/admin', (req, res) => {
               <th>Views</th>
             </tr>
           </thead>
-          <tbody id="productViewsTable">
-            <!-- Product views will be populated here -->
-          </tbody>
+          <tbody id="productViewsTable"></tbody>
         </table>
 
-        <!-- Realtime Traffic Chart -->
-        <h2 class="mt-4" style="color:black;">Realtime Traffic Chart</h2>
+        <h2 class="mt-4">Realtime Traffic Chart</h2>
         <canvas id="realtimeTrafficChart"></canvas>
 
         <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
@@ -938,16 +979,13 @@ app.get('/admin', (req, res) => {
       <script>
         const correctPin = '${process.env.ADMIN_PIN || '6300'}'; // Fetch PIN from environment variable or use default
 
-        // Check if the PIN has already been verified
         const isPinVerified = localStorage.getItem('pinVerified') === 'true';
 
         if (isPinVerified) {
-          // Hide the PIN popup and show the admin features
           document.getElementById('pinPopup').style.display = 'none';
           document.getElementById('adminFeatures').style.display = 'block';
         }
 
-        // Function to move to the next input box
         function moveToNext(currentInput) {
           const nextInput = document.getElementById(\`pin\${currentInput + 1}\`);
           if (nextInput && document.getElementById(\`pin\${currentInput}\`).value) {
@@ -955,7 +993,6 @@ app.get('/admin', (req, res) => {
           }
         }
 
-        // Function to verify the PIN
         function verifyPin() {
           const pin1 = document.getElementById('pin1').value;
           const pin2 = document.getElementById('pin2').value;
@@ -968,41 +1005,32 @@ app.get('/admin', (req, res) => {
           const pinPopup = document.getElementById('pinPopup');
 
           if (enteredPin === correctPin) {
-            // Hide the PIN popup and show the admin features
             pinPopup.style.display = 'none';
             adminFeatures.style.display = 'block';
-
-            // Store the PIN verification state in local storage
             localStorage.setItem('pinVerified', 'true');
           } else {
-            // Show an error message
             pinError.textContent = 'Invalid PIN. Please try again.';
           }
         }
 
         let currentChatId = null;
 
-        // Fetch analytics data
         async function fetchAnalytics() {
           try {
             const response = await axios.get('/api/analytics');
             const analytics = response.data;
 
-            // Update total products
             const productsResponse = await axios.get('/api/products');
             document.getElementById('totalProducts').textContent = productsResponse.data.length;
 
-            // Update most viewed product
             const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
               analytics.productViews[a] > analytics.productViews[b] ? a : b
             );
             const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
             document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
 
-            // Update realtime traffic
             document.getElementById('realtimeTraffic').textContent = analytics.traffic;
 
-            // Update query status table
             const queryTable = document.getElementById('queryTable');
             queryTable.innerHTML = analytics.queries.map(query => \`
               <tr>
@@ -1014,7 +1042,6 @@ app.get('/admin', (req, res) => {
               </tr>
             \`).join('');
 
-            // Update product views table
             const productViewsTable = document.getElementById('productViewsTable');
             productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
               <tr>
@@ -1023,7 +1050,6 @@ app.get('/admin', (req, res) => {
               </tr>
             \`).join('');
 
-            // Update realtime traffic chart
             const ctx = document.getElementById('realtimeTrafficChart').getContext('2d');
             const trafficChart = new Chart(ctx, {
               type: 'line',
@@ -1050,13 +1076,11 @@ app.get('/admin', (req, res) => {
           }
         }
 
-        // Open chat with a user
         function openChat(chatId) {
           currentChatId = chatId;
           document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
         }
 
-        // Send message to user
         document.getElementById('sendMessageBtn').addEventListener('click', async () => {
           const message = document.getElementById('chatInput').value;
           if (!message || !currentChatId) return;
@@ -1073,7 +1097,6 @@ app.get('/admin', (req, res) => {
           }
         });
 
-        // Fetch analytics data every 5 seconds
         fetchAnalytics();
         setInterval(fetchAnalytics, 5000);
       </script>
