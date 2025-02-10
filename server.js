@@ -738,102 +738,225 @@ app.get('/admin', (req, res) => {
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
       <style>
-        /* General Styles */
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 20px;
-          background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-          background-size: 400% 400%;
-          animation: gradientBackground 15s ease infinite;
-          min-height: 100vh;
-          color: #333;
-        }
+    :root {
+      --primary-color: #023047;
+      --secondary-color: #219ebc;
+      --accent-color: #ffb703;
+      --text-light: #ffffff;
+      --text-dark: #023047;
+    }
 
-        @keyframes gradientBackground {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
+    /* General Styles */
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--primary-color);
+      min-height: 100vh;
+      color: var(--text-dark);
+    }
 
-        h1, h2 {
-          color: #fff;
-          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
+    /* Container Styles */
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
 
-        .container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 20px;
-          background: rgba(255, 255, 255, 0.9);
-          border-radius: 10px;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+    /* Header Styles */
+    h1, h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
 
-        /* PIN Popup Card */
-        .pin-popup {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: rgba(255, 255, 255, 0.95);
-          padding: 20px;
-          border-radius: 10px;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-          z-index: 1000;
-          text-align: center;
-        }
+    /* Card Styles */
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease;
+      background: white;
+      margin-bottom: 20px;
+    }
 
-        .pin-popup h2 {
-          margin-bottom: 20px;
-          color: #333;
-        }
+    .card:hover {
+      transform: translateY(-5px);
+    }
 
-        .pin-input-container {
-          display: flex;
-          justify-content: center;
-          gap: 10px;
-          margin-bottom: 20px;
-        }
+    .card-body {
+      padding: 1.5rem;
+    }
 
-        .pin-input-container input {
-          width: 50px;
-          height: 50px;
-          text-align: center;
-          font-size: 20px;
-          border: 2px solid #007bff;
-          border-radius: 5px;
-        }
+    .card-title {
+      color: var(--secondary-color);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
 
-        .pin-input-container input:focus {
-          outline: none;
-          border-color: #0056b3;
-        }
+    /* PIN Popup Styles */
+    .pin-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      width: 90%;
+      max-width: 400px;
+    }
 
-        .pin-popup button {
-          padding: 10px 20px;
-          background-color: #007bff;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          font-size: 16px;
-        }
+    .pin-input-container {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
 
-        .pin-popup button:hover {
-          background-color: #0056b3;
-        }
+    .pin-input-container input {
+      width: 45px;
+      height: 45px;
+      text-align: center;
+      font-size: 1.2rem;
+      border: 2px solid var(--secondary-color);
+      border-radius: 8px;
+      background: #f8f9fa;
+    }
 
-        .pin-error {
-          color: red;
-          margin-top: 10px;
-        }
+    .pin-input-container input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(255, 183, 3, 0.2);
+    }
 
-        /* Hide admin features by default */
-        #adminFeatures {
+    /* Button Styles */
+    .btn-primary {
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    /* Table Styles */
+    .table {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .table thead th {
+      background: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 1rem;
+    }
+
+    /* Chat Window Styles */
+    .chat-window {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+        margin: 10px;
+      }
+
+      .card {
+        margin-bottom: 15px;
+      }
+
+      .table {
+        font-size: 0.9rem;
+      }
+
+      .pin-popup {
+        width: 95%;
+        padding: 1.5rem;
+      }
+
+      .pin-input-container input {
+        width: 40px;
+        height: 40px;
+      }
+    }
+
+    /* Dashboard Cards Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .row > div {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .row > div:nth-child(1) { animation-delay: 0.1s; }
+    .row > div:nth-child(2) { animation-delay: 0.2s; }
+    .row > div:nth-child(3) { animation-delay: 0.3s; }
+
+    /* Chart Styles */
+    canvas {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    /* Status Badge Styles */
+    .badge {
+      padding: 0.5em 1em;
+      border-radius: 6px;
+    }
+
+    .bg-success {
+      background-color: var(--secondary-color) !important;
+    }
+
+    /* Error Message Styles */
+    .pin-error {
+      color: #dc3545;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+    }
+
+    /* Action Buttons Container */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .action-buttons .btn {
+      flex: 1;
+      min-width: 200px;
+      margin-bottom: 10px;
+    }
+    #adminFeatures {
           display: none;
         }
-      </style>
+  </style>
 
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
