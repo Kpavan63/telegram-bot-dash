@@ -733,20 +733,34 @@ app.get('/admin', (req, res) => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Admin Dashboard</title>
+      <title>Admin Dashboard | Advanced</title>
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
       <style>
-        body {
-          font-family: 'Roboto', sans-serif;
+        :root {
+          --primary-color: #023047;
+          --secondary-color: #219ebc;
+          --accent-color: #ffb703;
+          --warning-color: #fb8500;
+          --info-color: #8ecae6;
+          --text-color: #333;
+          --bg-gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        * {
           margin: 0;
           padding: 0;
-          background: linear-gradient(135deg, #023047, #8ecae6);
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Poppins', sans-serif;
+          background: var(--bg-gradient);
           background-size: 400% 400%;
           animation: gradientBackground 15s ease infinite;
           min-height: 100vh;
-          color: #333;
+          color: var(--text-color);
         }
 
         @keyframes gradientBackground {
@@ -755,470 +769,620 @@ app.get('/admin', (req, res) => {
           100% { background-position: 0% 50%; }
         }
 
-        .container {
-          max-width: 1200px;
-          margin: 50px auto;
-          padding: 20px;
-          background: #ffffff;
-          border-radius: 10px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .pin-popup {
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          background: #ffffff;
-          padding: 30px;
-          border-radius: 10px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        .header {
+          background: rgba(255, 255, 255, 0.95);
+          padding: 1rem;
+          position: sticky;
+          top: 0;
           z-index: 1000;
-          text-align: center;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .pin-popup h2 {
-          margin-bottom: 20px;
-          color: #333;
-        }
-
-        .pin-input-container {
+        .header-content {
           display: flex;
+          justify-content: space-between;
+          align-items: center;
+          max-width: 1400px;
+          margin: 0 auto;
+        }
+
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: var(--accent-color);
+          display: flex;
+          align-items: center;
           justify-content: center;
-          gap: 10px;
-          margin-bottom: 20px;
-        }
-
-        .pin-input-container input {
-          width: 60px;
-          height: 60px;
-          text-align: center;
-          font-size: 24px;
-          border: 2px solid #219ebc;
-          border-radius: 8px;
-        }
-
-        .pin-input-container input:focus {
-          outline: none;
-          border-color: #ffb703;
-        }
-
-        .pin-popup button {
-          padding: 12px 24px;
-          background-color: #ffb703;
           color: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 18px;
+          font-weight: bold;
         }
 
-        .pin-popup button:hover {
-          background-color: #fb8500;
+        .container {
+          max-width: 1400px;
+          margin: 2rem auto;
+          padding: 0 1rem;
         }
 
-        .pin-error {
-          color: red;
-          margin-top: 10px;
-        }
-
-        #adminFeatures {
-          display: none;
+        .dashboard-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 1.5rem;
+          margin-bottom: 2rem;
         }
 
         .card {
-          background: #ffffff;
-          color: #333;
-          border: none;
-          border-radius: 8px;
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 15px;
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-          margin-bottom: 20px;
+          transition: transform 0.3s ease;
+          overflow: hidden;
         }
 
-        .card-title {
-          font-size: 1.25rem;
+        .card:hover {
+          transform: translateY(-5px);
+        }
+
+        .card-header {
+          background: var(--primary-color);
+          color: white;
+          padding: 1rem;
           font-weight: 500;
         }
 
-        .btn-primary {
-          background-color: #219ebc;
-          border: none;
+        .card-body {
+          padding: 1.5rem;
         }
 
-        .btn-primary:hover {
-          background-color: #023047;
+        .stat-card {
+          background: var(--bg-gradient);
+          color: white;
+        }
+
+        .stat-value {
+          font-size: 2rem;
+          font-weight: 600;
+          margin: 1rem 0;
+        }
+
+        .chart-card {
+          min-height: 400px;
+        }
+
+        .table-responsive {
+          max-height: 300px;
+          overflow-y: auto;
         }
 
         .table {
-          background: #ffffff;
-          border-radius: 8px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .table th, .table td {
-          color: #333;
+          margin: 0;
         }
 
         .chat-window {
-          background: #ffffff;
-          border-radius: 8px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-          padding: 20px;
-          height: 200px; /* Reduced height */
-          overflow-y: scroll;
+          height: 300px;
+          overflow-y: auto;
+          padding: 1rem;
+          background: #f8f9fa;
+          border-radius: 10px;
         }
 
         .chat-message {
-          margin-bottom: 10px;
-          color: #333;
+          margin-bottom: 1rem;
+          padding: 0.5rem 1rem;
+          border-radius: 10px;
+          max-width: 80%;
         }
 
         .chat-message.admin {
-          text-align: right;
+          background: var(--secondary-color);
+          color: white;
+          margin-left: auto;
         }
 
-        .input-group {
-          margin-top: 20px;
+        .chat-message.user {
+          background: var(--info-color);
+          color: var(--text-color);
         }
 
-        .input-group input {
-          border-radius: 8px;
+        .status-badge {
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+          font-size: 0.875rem;
         }
 
-        .input-group button {
-          border-radius: 8px;
+        .status-badge.active {
+          background: var(--accent-color);
+          color: white;
         }
 
-        #realtimeTrafficChart, #userActivityHeatmap {
-          background: #ffffff;
-          border-radius: 8px;
-          padding: 20px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        @media (max-width: 768px) {
+          .header-content {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+          }
+
+          .dashboard-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .stat-value {
+            font-size: 1.5rem;
+          }
         }
 
-        .fixed-height {
-          height: 300px;
-          overflow-y: auto;
+        .loading {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(255, 255, 255, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 9999;
+        }
+
+        .loading-spinner {
+          width: 50px;
+          height: 50px;
+          border: 5px solid var(--info-color);
+          border-top: 5px solid var(--primary-color);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       </style>
+    </head>
+    <body>
+      <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+      </div>
+
+      <header class="header">
+        <div class="header-content">
+          <div class="user-info">
+            <div class="user-avatar">
+              ${req.query.username ? req.query.username.charAt(0).toUpperCase() : 'A'}
+            </div>
+            <div>
+              <h6 class="mb-0">${req.query.username || 'Admin'}</h6>
+              <small class="text-muted" id="currentUTC"></small>
+            </div>
+          </div>
+          <div>
+            <button class="btn btn-outline-primary" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="container">
+        <div class="dashboard-grid">
+          <!-- Stats Cards -->
+          <div class="card stat-card">
+            <div class="card-body">
+              <h5>Total Products</h5>
+              <div class="stat-value" id="totalProducts">0</div>
+              <div class="stat-change">
+                <i class="fas fa-arrow-up"></i> +5% from last week
+              </div>
+            </div>
+          </div>
+
+          <div class="card stat-card">
+            <div class="card-body">
+              <h5>Active Users</h5>
+              <div class="stat-value" id="activeUsers">0</div>
+              <div class="stat-change">
+                <i class="fas fa-users"></i> Currently Online
+              </div>
+            </div>
+          </div>
+
+          <div class="card stat-card">
+            <div class="card-body">
+              <h5>Today's Revenue</h5>
+              <div class="stat-value" id="todayRevenue">$0</div>
+              <div class="stat-change">
+                <i class="fas fa-chart-line"></i> Real-time Updates
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Traffic Chart -->
+        <div class="card chart-card mb-4">
+          <div class="card-header">
+            Real-time Traffic Analytics
+          </div>
+          <div class="card-body">
+            <div id="trafficChart"></div>
+          </div>
+        </div>
+
+        <!-- Activity Grid -->
+        <div class="dashboard-grid">
+          <!-- User Activity -->
+          <div class="card">
+            <div class="card-header">
+              User Activity
+            </div>
+            <div class="card-body">
+              <div id="userActivityHeatmap"></div>
+            </div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="card">
+            <div class="card-header">
+              Recent Transactions
+            </div>
+            <div class="card-body table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionsTable">
+                  <!-- Transactions will be inserted here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="card mb-4">
+          <div class="card-header">
+            Live Customer Support
+          </div>
+          <div class="card-body">
+            <div class="chat-window" id="chatWindow"></div>
+            <div class="input-group mt-3">
+              <input type="text" class="form-control" id="chatInput" placeholder="Type your message...">
+              <button class="btn btn-primary" id="sendMessageBtn">
+                <i class="fas fa-paper-plane"></i> Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
       <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    </head>
-    <body>
-      <div class="pin-popup" id="pinPopup">
-        <h2>Enter PIN to Access Admin Panel</h2>
-        <div class="pin-input-container">
-          <input type="text" id="pin1" maxlength="1" oninput="moveToNext(1)" />
-          <input type="text" id="pin2" maxlength="1" oninput="moveToNext(2)" />
-          <input type="text" id="pin3" maxlength="1" oninput="moveToNext(3)" />
-          <input type="text" id="pin4" maxlength="1" oninput="moveToNext(4)" />
-        </div>
-        <button onclick="verifyPin()">Submit</button>
-        <div id="pinError" class="pin-error"></div>
-      </div>
-
-      <div class="container" id="adminFeatures">
-        <h1 class="mb-4">Admin Dashboard</h1>
-
-        <div class="row mb-4">
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Total Products</h5>
-                <p class="card-text" id="totalProducts">0</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Most Viewed Product</h5>
-                <p class="card-text" id="mostViewedProduct">N/A</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Realtime Traffic</h5>
-                <p class="card-text" id="realtimeTraffic">0</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h2 class="mt-4">User Activity Heatmap</h2>
-        <div id="userActivityHeatmap"></div>
-
-        <h2 class="mt-4">Query Status</h2>
-        <div class="fixed-height">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Chat ID</th>
-                <th>Query</th>
-                <th>Timestamp</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="queryTable"></tbody>
-          </table>
-        </div>
-
-        <h2 class="mt-4">Chat with User</h2>
-        <div class="chat-window fixed-height" id="chatWindow"></div>
-        <div class="input-group mt-3">
-          <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
-          <button class="btn btn-primary" id="sendMessageBtn">Send</button>
-        </div>
-
-        <h2 class="mt-4">Product Views</h2>
-        <div class="fixed-height">
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Product ID</th>
-                <th>Views</th>
-              </tr>
-            </thead>
-            <tbody id="productViewsTable"></tbody>
-          </table>
-        </div>
-
-        <h2 class="mt-4">Realtime Traffic Chart</h2>
-        <div id="realtimeTrafficChart"></div>
-
-        <a href="/admin/add-product" class="btn btn-primary mt-4">Add Product</a>
-        <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
-        <a href="/admin/notify" class="btn btn-primary mt-4">Send Notification to All Users</a>
-        <a href="/admin/today-deals" class="btn btn-primary mt-4">Today's Deals</a>
-      </div>
-
       <script>
-        const correctPin = '${process.env.ADMIN_PIN || '6300'}';
-
-        const isPinVerified = localStorage.getItem('pinVerified') === 'true';
-        const pinExpiry = localStorage.getItem('pinExpiry');
-        const now = new Date().getTime();
-
-        if (isPinVerified && pinExpiry && now < pinExpiry) {
-          document.getElementById('pinPopup').style.display = 'none';
-          document.getElementById('adminFeatures').style.display = 'block';
-        } else {
-          localStorage.removeItem('pinVerified');
-          localStorage.removeItem('pinExpiry');
+        // Update UTC time
+        function updateUTCTime() {
+          const now = new Date();
+          document.getElementById('currentUTC').textContent = 
+            now.toISOString().replace('T', ' ').substr(0, 19) + ' UTC';
         }
 
-        function moveToNext(currentInput) {
-          const nextInput = document.getElementById(\`pin\${currentInput + 1}\`);
-          if (nextInput && document.getElementById(\`pin\${currentInput}\`).value) {
-            nextInput.focus();
-          }
+        setInterval(updateUTCTime, 1000);
+        updateUTCTime();
+
+        // Generate random data for charts
+        function generateRandomData(count = 10) {
+          return Array.from({ length: count }, () => Math.floor(Math.random() * 100));
         }
 
-        function verifyPin() {
-          const pin1 = document.getElementById('pin1').value;
-          const pin2 = document.getElementById('pin2').value;
-          const pin3 = document.getElementById('pin3').value;
-          const pin4 = document.getElementById('pin4').value;
-          const enteredPin = pin1 + pin2 + pin3 + pin4;
-
-          const pinError = document.getElementById('pinError');
-          const adminFeatures = document.getElementById('adminFeatures');
-          const pinPopup = document.getElementById('pinPopup');
-
-          if (enteredPin === correctPin) {
-            pinPopup.style.display = 'none';
-            adminFeatures.style.display = 'block';
-            const expiryTime = new Date().getTime() + 60 * 60 * 1000; // 1 hour
-            localStorage.setItem('pinVerified', 'true');
-            localStorage.setItem('pinExpiry', expiryTime);
-          } else {
-            pinError.textContent = 'Invalid PIN. Please try again.';
-          }
-        }
-
-        let currentChatId = null;
-
-        function generateRandomData() {
-          return Math.floor(Math.random() * 100);
-        }
-
-        async function fetchAnalytics() {
-          try {
-            const response = await axios.get('/api/analytics');
-            const analytics = response.data;
-
-            const productsResponse = await axios.get('/api/products');
-            document.getElementById('totalProducts').textContent = productsResponse.data.length;
-
-            const mostViewedProductId = Object.keys(analytics.productViews).reduce((a, b) => 
-              analytics.productViews[a] > analytics.productViews[b] ? a : b
-            );
-            const mostViewedProduct = productsResponse.data.find(p => p.id.toString() === mostViewedProductId);
-            document.getElementById('mostViewedProduct').textContent = mostViewedProduct ? mostViewedProduct.name : 'N/A';
-
-            document.getElementById('realtimeTraffic').textContent = analytics.traffic;
-
-            const queryTable = document.getElementById('queryTable');
-            queryTable.innerHTML = analytics.queries.map(query => \`
-              <tr>
-                <td>\${query.chatId}</td>
-                <td>\${query.query}</td>
-                <td>\${new Date(query.timestamp).toLocaleString()}</td>
-                <td><span class="badge bg-success">\${query.status}</span></td>
-                <td><button class="btn btn-sm btn-primary" onclick="openChat(\${query.chatId})">Chat</button></td>
-              </tr>
-            \`).join('');
-
-            const productViewsTable = document.getElementById('productViewsTable');
-            productViewsTable.innerHTML = Object.entries(analytics.productViews).map(([id, views]) => \`
-              <tr>
-                <td>\${id}</td>
-                <td><i class="fas fa-eye"></i> \${views}</td>
-              </tr>
-            \`).join('');
-
-            const trafficOptions = {
-              series: [{
-                name: 'Traffic',
-                data: analytics.queries.map(() => generateRandomData()) // Simulated traffic data
-              }],
-              chart: {
-                type: 'line',
-                height: 350,
-                animations: {
-                  enabled: true,
-                  easing: 'easeinout',
-                  speed: 800,
-                  animateGradually: {
-                    enabled: true,
-                    delay: 150
-                  },
-                  dynamicAnimation: {
-                    enabled: true,
-                    speed: 350
-                  }
-                }
-              },
-              stroke: {
-                curve: 'smooth'
-              },
-              xaxis: {
-                categories: analytics.queries.map((_, index) => \`Query \${index + 1}\`),
-              },
-              colors: ['#219ebc']
-            };
-
-            const chart = new ApexCharts(document.querySelector("#realtimeTrafficChart"), trafficOptions);
-            chart.render();
-
-            const heatmapOptions = {
-              series: [{
-                name: 'Activity',
-                data: generateHeatmapData()
-              }],
-              chart: {
-                type: 'heatmap',
-                height: 350,
-                animations: {
-                  enabled: true,
-                  easing: 'easeinout',
-                  speed: 800,
-                  animateGradually: {
-                    enabled: true,
-                    delay: 150
-                  },
-                  dynamicAnimation: {
-                    enabled: true,
-                    speed: 350
-                  }
-                }
-              },
-              plotOptions: {
-                heatmap: {
-                  shadeIntensity: 0.5,
-                  radius: 0,
-                  useFillColorAsStroke: true,
-                  colorScale: {
-                    ranges: [{
-                      from: 0,
-                      to: 50,
-                      name: 'Low',
-                      color: '#8ecae6'
-                    }, {
-                      from: 51,
-                      to: 100,
-                      name: 'High',
-                      color: '#023047'
-                    }]
-                  }
-                }
-              },
-              dataLabels: {
-                enabled: false
-              },
-              xaxis: {
-                categories: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
-              },
-              yaxis: {
-                title: {
-                  text: 'User Activity'
-                }
-              },
-              colors: ['#fb8500', '#219ebc']
-            };
-
-            const heatmapChart = new ApexCharts(document.querySelector("#userActivityHeatmap"), heatmapOptions);
-            heatmapChart.render();
-
-            setInterval(() => {
-              chart.updateSeries([{
-                data: [...chart.w.globals.series[0].data.slice(1), generateRandomData()]
-              }]);
-            }, 2000); // Update every 2 seconds
-
-          } catch (error) {
-            console.error('Error fetching analytics:', error);
-          }
-        }
-
-        function generateHeatmapData() {
-          const data = [];
-          for (let i = 0; i < 12; i++) {
-            data.push({
-              x: i * 2 + ':00',
-              y: generateRandomData()
-            });
-          }
-          return data;
-        }
-
-        function openChat(chatId) {
-          currentChatId = chatId;
-          document.getElementById('chatWindow').innerHTML = '<p>Start chatting with the user...</p>';
-        }
-
-        document.getElementById('sendMessageBtn').addEventListener('click', async () => {
-          const message = document.getElementById('chatInput').value;
-          if (!message || !currentChatId) return;
-
-          try {
-            const response = await axios.post('/api/send-message', { chatId: currentChatId, message });
-            if (response.data.success) {
-              const chatWindow = document.getElementById('chatWindow');
-              chatWindow.innerHTML += \`<div class="chat-message admin">\${message}</div>\`;
-              document.getElementById('chatInput').value = '';
+        // Initialize traffic chart
+        const trafficChart = new ApexCharts(document.getElementById('trafficChart'), {
+          series: [{
+            name: 'Traffic',
+            data: generateRandomData()
+          }],
+          chart: {
+            type: 'area',
+            height: 350,
+            animations: {
+              enabled: true,
+              easing: 'linear',
+              dynamicAnimation: {
+                speed: 1000
+              }
+            },
+            toolbar: {
+              show: false
+            },
+            zoom: {
+              enabled: false
             }
-          } catch (error) {
-            console.error('Error sending message:', error);
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'smooth',
+            width: 3
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.3,
+              stops: [0, 90, 100]
+            }
+          },
+          xaxis: {
+            categories: Array.from({ length: 10 }, (_, i) => `${i + 1}m ago`),
+            labels: {
+              show: true
+            }
+          },
+          yaxis: {
+            labels: {
+              show: true
+            }
+          },
+          colors: ['#219ebc']
+        });
+
+        trafficChart.render();
+
+        // Update traffic chart every second
+        setInterval(() => {
+          const newData = [...trafficChart.w.globals.series[0].data.slice(1), Math.floor(Math.random() * 100)];
+          trafficChart.updateSeries([{
+            data: newData
+          }]);
+        }, 1000);
+
+        // Initialize heatmap
+        const heatmapChart = new ApexCharts(document.getElementById('userActivityHeatmap'), {
+          series: [{
+            name: 'Users',
+            data: generateRandomData(24)
+          }],
+          chart: {
+            type: 'heatmap',
+            height: 350,
+            toolbar: {
+              show: false
+            }
+          },
+          plotOptions: {
+            heatmap: {
+              shadeIntensity: 0.5,
+              radius: 0,
+              useFillColorAsStroke: true,
+              colorScale: {
+                ranges: [{
+                  from: 0,
+                  to: 40,
+                  name: 'Low',
+                  color: '#8ecae6'
+                }, {
+                  from: 41,
+                  to: 70,
+                  name: 'Medium',
+                  color: '#219ebc'
+                }, {
+                  from: 71,
+                  to: 100,
+                  name: 'High',
+                  color: '#023047'
+                }]
+              }
+            }
+          },
+          dataLabels: {
+            enabled: false
+          },
+          xaxis: {
+            categories: Array.from({ length: 24 }, (_, i) => `${i}:00`)
           }
         });
 
-        fetchAnalytics();
-        setInterval(fetchAnalytics, 60000); // Fetch analytics every 1 minute
+        heatmapChart.render();
+
+        // Update stats randomly
+        function updateStats() {
+          document.getElementById('totalProducts').textContent = Math.floor(Math.random() * 1000);
+          document.getElementById('activeUsers').textContent = Math.floor(Math.random() * 100);
+          document.getElementById('todayRevenue').textContent = 
+            '$' + (Math.floor(Math.random() * 10000) / 100).toFixed(2) + 'k';
+        }
+
+        // Update transactions table
+        function updateTransactions() {
+          const statuses = ['success', 'pending', 'failed'];
+          const users = ['John D.', 'Alice M.', 'Bob K.', 'Sarah L.'];
+          const transactions = Array.from({ length: 10 }, (_, i) => ({
+            id: Math.floor(Math.random() * 1000000),
+            user: users[Math.floor(Math.random() * users.length)],
+            amount: '$' + (Math.floor(Math.random() * 1000) / 100).toFixed(2),
+            status: statuses[Math.floor(Math.random() * statuses.length)]
+          }));
+
+          const tbody = document.getElementById('transactionsTable');
+          tbody.innerHTML = transactions.map(t => `
+            <tr>
+              <td>#${t.id}</td>
+              <td>${t.user}</td>
+              <td>${t.user}</td>
+              <td>${t.amount}</td>
+              <td>
+                <span class="status-badge ${t.status}">
+                  ${t.status.charAt(0).toUpperCase() + t.status.slice(1)}
+                </span>
+              </td>
+            </tr>
+          `).join('');
+        }
+
+        // Initialize everything and start real-time updates
+        let chatMessages = [];
+        const currentUser = 'Kpavan63';
+        const currentUTC = '2025-02-10 14:00:20';
+
+        function initializeDashboard() {
+          // Update header with user info
+          document.querySelector('.user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+          document.querySelector('.user-info h6').textContent = currentUser;
+          document.getElementById('currentUTC').textContent = currentUTC;
+
+          // Start real-time updates
+          updateStats();
+          updateTransactions();
+          setInterval(updateStats, 3000);
+          setInterval(updateTransactions, 5000);
+
+          // Remove loading screen
+          document.getElementById('loading').style.display = 'none';
+        }
+
+        // Chat functionality
+        document.getElementById('sendMessageBtn').addEventListener('click', () => {
+          const input = document.getElementById('chatInput');
+          const message = input.value.trim();
+          
+          if (message) {
+            const chatWindow = document.getElementById('chatWindow');
+            chatMessages.push({
+              text: message,
+              sender: 'admin',
+              timestamp: new Date().toISOString()
+            });
+
+            // Update chat window
+            chatWindow.innerHTML = chatMessages.map(msg => `
+              <div class="chat-message ${msg.sender}">
+                <div class="message-content">${msg.text}</div>
+                <small class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</small>
+              </div>
+            `).join('');
+
+            // Clear input and scroll to bottom
+            input.value = '';
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+          }
+        });
+
+        // Handle chat input enter key
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            document.getElementById('sendMessageBtn').click();
+          }
+        });
+
+        // Logout function
+        function logout() {
+          localStorage.removeItem('pinVerified');
+          localStorage.removeItem('pinExpiry');
+          window.location.reload();
+        }
+
+        // Custom styles for status badges
+        const statusStyles = document.createElement('style');
+        statusStyles.textContent = `
+          .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+          }
+          .status-badge.success {
+            background-color: #28a745;
+            color: white;
+          }
+          .status-badge.pending {
+            background-color: #ffc107;
+            color: #000;
+          }
+          .status-badge.failed {
+            background-color: #dc3545;
+            color: white;
+          }
+        `;
+        document.head.appendChild(statusStyles);
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+
+        // Handle window resize for responsive charts
+        window.addEventListener('resize', () => {
+          trafficChart.render();
+          heatmapChart.render();
+        });
+
+        // Add some sample chat messages
+        setTimeout(() => {
+          const sampleMessages = [
+            { text: "Welcome to the admin dashboard!", sender: "system", timestamp: new Date().toISOString() },
+            { text: "How can I help you today?", sender: "admin", timestamp: new Date().toISOString() }
+          ];
+          
+          chatMessages = [...sampleMessages];
+          const chatWindow = document.getElementById('chatWindow');
+          chatWindow.innerHTML = chatMessages.map(msg => `
+            <div class="chat-message ${msg.sender}">
+              <div class="message-content">${msg.text}</div>
+              <small class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</small>
+            </div>
+          `).join('');
+          chatWindow.scrollTop = chatWindow.scrollHeight;
+        }, 1000);
+
+        // Add pulse animation to real-time indicators
+        const pulseStyle = document.createElement('style');
+        pulseStyle.textContent = `
+          .stat-change i {
+            animation: pulse 2s infinite;
+          }
+          
+          @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+          }
+        `;
+        document.head.appendChild(pulseStyle);
+
+        // Add tooltip functionality
+        const tooltips = document.querySelectorAll('[data-tooltip]');
+        tooltips.forEach(tooltip => {
+          tooltip.style.position = 'relative';
+          tooltip.addEventListener('mouseenter', (e) => {
+            const tooltipText = document.createElement('div');
+            tooltipText.className = 'tooltip';
+            tooltipText.textContent = tooltip.dataset.tooltip;
+            tooltipText.style.position = 'absolute';
+            tooltipText.style.bottom = '100%';
+            tooltipText.style.left = '50%';
+            tooltipText.style.transform = 'translateX(-50%)';
+            tooltipText.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            tooltipText.style.color = 'white';
+            tooltipText.style.padding = '5px 10px';
+            tooltipText.style.borderRadius = '5px';
+            tooltipText.style.fontSize = '12px';
+            tooltipText.style.zIndex = '1000';
+            tooltip.appendChild(tooltipText);
+          });
+          tooltip.addEventListener('mouseleave', () => {
+            const tooltipText = tooltip.querySelector('.tooltip');
+            if (tooltipText) tooltipText.remove();
+          });
+        });
+
       </script>
     </body>
     </html>
