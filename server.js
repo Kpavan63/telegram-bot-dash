@@ -726,7 +726,6 @@ app.get('/user-profile', (req, res) => {
 // Serve Admin Panel HTML
 // Serve Admin Panel HTML with PIN Authentication
 // Serve Admin Panel HTML with PIN Authentication
-// Serve Admin Panel HTML with PIN Authentication
 app.get('/admin', (req, res) => {
   const adminHTML = `
     <!DOCTYPE html>
@@ -865,7 +864,7 @@ app.get('/admin', (req, res) => {
           border-radius: 8px;
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
           padding: 20px;
-          height: 300px;
+          height: 200px; /* Reduced height */
           overflow-y: scroll;
         }
 
@@ -890,7 +889,7 @@ app.get('/admin', (req, res) => {
           border-radius: 8px;
         }
 
-        #realtimeTrafficChart {
+        #realtimeTrafficChart, #salesOverviewChart {
           background: #ffffff;
           border-radius: 8px;
           padding: 20px;
@@ -948,6 +947,9 @@ app.get('/admin', (req, res) => {
             </div>
           </div>
         </div>
+
+        <h2 class="mt-4">Sales Overview</h2>
+        <div id="salesOverviewChart"></div>
 
         <h2 class="mt-4">Query Status</h2>
         <div class="fixed-height">
@@ -1075,7 +1077,7 @@ app.get('/admin', (req, res) => {
               </tr>
             \`).join('');
 
-            const options = {
+            const trafficOptions = {
               series: [{
                 name: 'Traffic',
                 data: analytics.queries.map(() => Math.floor(Math.random() * 100)) // Simulated traffic data
@@ -1106,8 +1108,69 @@ app.get('/admin', (req, res) => {
               colors: ['#219ebc']
             };
 
-            const chart = new ApexCharts(document.querySelector("#realtimeTrafficChart"), options);
+            const chart = new ApexCharts(document.querySelector("#realtimeTrafficChart"), trafficOptions);
             chart.render();
+
+            const salesOptions = {
+              series: [{
+                name: 'Sales',
+                data: [10, 41, 35, 51, 49, 62, 69, 91, 148] // Sample sales data
+              }],
+              chart: {
+                type: 'bar',
+                height: 350,
+                animations: {
+                  enabled: true,
+                  easing: 'easeinout',
+                  speed: 800,
+                  animateGradually: {
+                    enabled: true,
+                    delay: 150
+                  },
+                  dynamicAnimation: {
+                    enabled: true,
+                    speed: 350
+                  }
+                }
+              },
+              plotOptions: {
+                bar: {
+                  horizontal: false,
+                  columnWidth: '55%',
+                  endingShape: 'rounded'
+                }
+              },
+              dataLabels: {
+                enabled: false
+              },
+              stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+              },
+              xaxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+              },
+              yaxis: {
+                title: {
+                  text: '$ (thousands)'
+                }
+              },
+              fill: {
+                opacity: 1
+              },
+              tooltip: {
+                y: {
+                  formatter: function (val) {
+                    return "$ " + val + " thousands"
+                  }
+                }
+              },
+              colors: ['#fb8500', '#219ebc']
+            };
+
+            const salesChart = new ApexCharts(document.querySelector("#salesOverviewChart"), salesOptions);
+            salesChart.render();
           } catch (error) {
             console.error('Error fetching analytics:', error);
           }
