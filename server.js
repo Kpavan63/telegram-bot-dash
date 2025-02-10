@@ -896,6 +896,11 @@ app.get('/admin', (req, res) => {
           padding: 20px;
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
+        .fixed-height {
+          height: 300px;
+          overflow-y: auto;
+        }
       </style>
 
       <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -945,36 +950,40 @@ app.get('/admin', (req, res) => {
         </div>
 
         <h2 class="mt-4">Query Status</h2>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Chat ID</th>
-              <th>Query</th>
-              <th>Timestamp</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="queryTable"></tbody>
-        </table>
+        <div class="fixed-height">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Chat ID</th>
+                <th>Query</th>
+                <th>Timestamp</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="queryTable"></tbody>
+          </table>
+        </div>
 
         <h2 class="mt-4">Chat with User</h2>
-        <div class="chat-window" id="chatWindow"></div>
+        <div class="chat-window fixed-height" id="chatWindow"></div>
         <div class="input-group mt-3">
           <input type="text" id="chatInput" class="form-control" placeholder="Type your message...">
           <button class="btn btn-primary" id="sendMessageBtn">Send</button>
         </div>
 
         <h2 class="mt-4">Product Views</h2>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Product ID</th>
-              <th>Views</th>
-            </tr>
-          </thead>
-          <tbody id="productViewsTable"></tbody>
-        </table>
+        <div class="fixed-height">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Product ID</th>
+                <th>Views</th>
+              </tr>
+            </thead>
+            <tbody id="productViewsTable"></tbody>
+          </table>
+        </div>
 
         <h2 class="mt-4">Realtime Traffic Chart</h2>
         <div id="realtimeTrafficChart"></div>
