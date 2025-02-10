@@ -728,669 +728,396 @@ app.get('/user-profile', (req, res) => {
 // Serve Admin Panel HTML with PIN Authentication
 // Serve Admin Panel HTML with PIN Authentication
 app.get('/admin', (req, res) => {
-  const adminHTML = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Admin Dashboard | Advanced</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-      <style>
-        :root {
-          --primary-color: #023047;
-          --secondary-color: #219ebc;
-          --accent-color: #ffb703;
-          --warning-color: #fb8500;
-          --info-color: #8ecae6;
-          --text-color: #333;
-          --bg-gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-        }
+    const currentUser = 'Kpavan63';
+    const currentUTC = '2025-02-10 14:14:56';
 
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
+    // Create static array for timestamps
+    const timeLabels = ['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m', '10m'];
+
+    const adminHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Admin Dashboard</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #023047;
+            --secondary: #219ebc;
+            --accent: #ffb703;
+            --bg-dark: #1a1a1a;
+            --text-light: #ffffff;
         }
 
         body {
-          font-family: 'Poppins', sans-serif;
-          background: var(--bg-gradient);
-          background-size: 400% 400%;
-          animation: gradientBackground 15s ease infinite;
-          min-height: 100vh;
-          color: var(--text-color);
-        }
-
-        @keyframes gradientBackground {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        .header {
-          background: rgba(255, 255, 255, 0.95);
-          padding: 1rem;
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          max-width: 1400px;
-          margin: 0 auto;
-        }
-
-        .user-info {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-        }
-
-        .user-avatar {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background: var(--accent-color);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-        }
-
-        .container {
-          max-width: 1400px;
-          margin: 2rem auto;
-          padding: 0 1rem;
-        }
-
-        .dashboard-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
         }
 
         .card {
-          background: rgba(255, 255, 255, 0.95);
-          border-radius: 15px;
-          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease;
-          overflow: hidden;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+            border: none;
+            transition: transform 0.3s ease;
         }
 
         .card:hover {
-          transform: translateY(-5px);
+            transform: translateY(-5px);
         }
 
-        .card-header {
-          background: var(--primary-color);
-          color: white;
-          padding: 1rem;
-          font-weight: 500;
+        .stats-card {
+            background: var(--primary);
+            color: var(--text-light);
         }
 
-        .card-body {
-          padding: 1.5rem;
+        .chart-container {
+            height: 350px;
+            width: 100%;
         }
 
-        .stat-card {
-          background: var(--bg-gradient);
-          color: white;
+        .header-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            margin-bottom: 20px;
+            border-radius: 15px;
         }
 
-        .stat-value {
-          font-size: 2rem;
-          font-weight: 600;
-          margin: 1rem 0;
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        .chart-card {
-          min-height: 400px;
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
         }
 
-        .table-responsive {
-          max-height: 300px;
-          overflow-y: auto;
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .table {
-          margin: 0;
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
         }
 
-        .chat-window {
-          height: 300px;
-          overflow-y: auto;
-          padding: 1rem;
-          background: #f8f9fa;
-          border-radius: 10px;
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .scrollable {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
         }
 
         .chat-message {
-          margin-bottom: 1rem;
-          padding: 0.5rem 1rem;
-          border-radius: 10px;
-          max-width: 80%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
         }
 
         .chat-message.admin {
-          background: var(--secondary-color);
-          color: white;
-          margin-left: auto;
+            background: var(--primary);
+            color: white;
+            margin-left: auto;
         }
 
         .chat-message.user {
-          background: var(--info-color);
-          color: var(--text-color);
+            background: #f1f1f1;
         }
 
-        .status-badge {
-          padding: 0.25rem 0.75rem;
-          border-radius: 20px;
-          font-size: 0.875rem;
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
         }
 
-        .status-badge.active {
-          background: var(--accent-color);
-          color: white;
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
         }
-
-        @media (max-width: 768px) {
-          .header-content {
-            flex-direction: column;
-            gap: 1rem;
-            text-align: center;
-          }
-
-          .dashboard-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .stat-value {
-            font-size: 1.5rem;
-          }
-        }
-
-        .loading {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(255, 255, 255, 0.8);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 9999;
-        }
-
-        .loading-spinner {
-          width: 50px;
-          height: 50px;
-          border: 5px solid var(--info-color);
-          border-top: 5px solid var(--primary-color);
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      </style>
-    </head>
-    <body>
-      <div id="loading" class="loading">
-        <div class="loading-spinner"></div>
-      </div>
-
-      <header class="header">
-        <div class="header-content">
-          <div class="user-info">
-            <div class="user-avatar">
-              ${req.query.username ? req.query.username.charAt(0).toUpperCase() : 'A'}
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="header-card">
+            <div class="user-info">
+                <div class="user-avatar">${currentUser.charAt(0)}</div>
+                <div>
+                    <h4 class="mb-0">${currentUser}</h4>
+                    <small class="text-muted">${currentUTC} UTC</small>
+                </div>
             </div>
-            <div>
-              <h6 class="mb-0">${req.query.username || 'Admin'}</h6>
-              <small class="text-muted" id="currentUTC"></small>
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span>Live Dashboard</span>
             </div>
-          </div>
-          <div>
-            <button class="btn btn-outline-primary" onclick="logout()">
-              <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div class="container">
-        <div class="dashboard-grid">
-          <!-- Stats Cards -->
-          <div class="card stat-card">
-            <div class="card-body">
-              <h5>Total Products</h5>
-              <div class="stat-value" id="totalProducts">0</div>
-              <div class="stat-change">
-                <i class="fas fa-arrow-up"></i> +5% from last week
-              </div>
-            </div>
-          </div>
-
-          <div class="card stat-card">
-            <div class="card-body">
-              <h5>Active Users</h5>
-              <div class="stat-value" id="activeUsers">0</div>
-              <div class="stat-change">
-                <i class="fas fa-users"></i> Currently Online
-              </div>
-            </div>
-          </div>
-
-          <div class="card stat-card">
-            <div class="card-body">
-              <h5>Today's Revenue</h5>
-              <div class="stat-value" id="todayRevenue">$0</div>
-              <div class="stat-change">
-                <i class="fas fa-chart-line"></i> Real-time Updates
-              </div>
-            </div>
-          </div>
         </div>
 
-        <!-- Traffic Chart -->
-        <div class="card chart-card mb-4">
-          <div class="card-header">
-            Real-time Traffic Analytics
-          </div>
-          <div class="card-body">
-            <div id="trafficChart"></div>
-          </div>
+        <!-- Stats Row -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-value">$<span id="revenue">0</span></div>
+                        <small class="text-white-50">↑ 15% increase</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="stat-label">Active Users</div>
+                        <div class="stat-value"><span id="activeUsers">0</span></div>
+                        <small class="text-white-50">Online Now</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="stat-label">Orders Today</div>
+                        <div class="stat-value"><span id="orders">0</span></div>
+                        <small class="text-white-50">↑ 25% increase</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <div class="stat-label">Conversion Rate</div>
+                        <div class="stat-value"><span id="conversion">0</span>%</div>
+                        <small class="text-white-50">Last 24 hours</small>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Activity Grid -->
-        <div class="dashboard-grid">
-          <!-- User Activity -->
-          <div class="card">
-            <div class="card-header">
-              User Activity
+        <!-- Charts Row -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Real-time Traffic</h5>
+                        <div id="trafficChart" class="chart-container"></div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-              <div id="userActivityHeatmap"></div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>User Activity</h5>
+                        <div id="activityChart" class="chart-container"></div>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          <!-- Recent Transactions -->
-          <div class="card">
-            <div class="card-header">
-              Recent Transactions
-            </div>
-            <div class="card-body table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="transactionsTable">
-                  <!-- Transactions will be inserted here -->
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
 
-        <!-- Chat Section -->
-        <div class="card mb-4">
-          <div class="card-header">
-            Live Customer Support
-          </div>
-          <div class="card-body">
-            <div class="chat-window" id="chatWindow"></div>
-            <div class="input-group mt-3">
-              <input type="text" class="form-control" id="chatInput" placeholder="Type your message...">
-              <button class="btn btn-primary" id="sendMessageBtn">
-                <i class="fas fa-paper-plane"></i> Send
-              </button>
+        <!-- Activity and Chat -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Recent Activity</h5>
+                        <div id="activityFeed" class="scrollable"></div>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Live Support Chat</h5>
+                        <div id="chatWindow" class="scrollable mb-3"></div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="chatInput" placeholder="Type your message...">
+                            <button class="btn btn-primary" id="sendMessage">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-      <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-      <script>
-        // Update UTC time
-        function updateUTCTime() {
-          const now = new Date();
-          document.getElementById('currentUTC').textContent = 
-            now.toISOString().replace('T', ' ').substr(0, 19) + ' UTC';
-        }
-
-        setInterval(updateUTCTime, 1000);
-        updateUTCTime();
-
-        // Generate random data for charts
-        function generateRandomData(count = 10) {
-          return Array.from({ length: count }, () => Math.floor(Math.random() * 100));
-        }
-
-        // Initialize traffic chart
-        const trafficChart = new ApexCharts(document.getElementById('trafficChart'), {
-          series: [{
-            name: 'Traffic',
-            data: generateRandomData()
-          }],
-          chart: {
-            type: 'area',
-            height: 350,
-            animations: {
-              enabled: true,
-              easing: 'linear',
-              dynamicAnimation: {
-                speed: 1000
-              }
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        // Initialize Traffic Chart
+        const trafficChart = new ApexCharts(document.querySelector("#trafficChart"), {
+            series: [{
+                name: 'Traffic',
+                data: [30, 40, 35, 50, 49, 60, 70, 91, 125]
+            }],
+            chart: {
+                type: 'area',
+                height: 350,
+                animations: {
+                    enabled: true,
+                    easing: 'linear',
+                    dynamicAnimation: {
+                        speed: 1000
+                    }
+                }
             },
-            toolbar: {
-              show: false
+            stroke: {
+                curve: 'smooth'
             },
-            zoom: {
-              enabled: false
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.3
+                }
+            },
+            xaxis: {
+                categories: ['1m', '2m', '3m', '4m', '5m', '6m', '7m', '8m', '9m']
             }
-          },
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: 'smooth',
-            width: 3
-          },
-          fill: {
-            type: 'gradient',
-            gradient: {
-              shadeIntensity: 1,
-              opacityFrom: 0.7,
-              opacityTo: 0.3,
-              stops: [0, 90, 100]
-            }
-          },
-          xaxis: {
-            categories: Array.from({ length: 10 }, (_, i) => `${i + 1}m ago`),
-            labels: {
-              show: true
-            }
-          },
-          yaxis: {
-            labels: {
-              show: true
-            }
-          },
-          colors: ['#219ebc']
         });
 
+        // Initialize Activity Chart
+        const activityChart = new ApexCharts(document.querySelector("#activityChart"), {
+            series: [{
+                name: 'Users',
+                data: [31, 40, 28, 51, 42, 109, 100]
+            }],
+            chart: {
+                height: 350,
+                type: 'area'
+            },
+            xaxis: {
+                categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            stroke: {
+                curve: 'smooth'
+            }
+        });
+
+        // Render charts
         trafficChart.render();
+        activityChart.render();
 
-        // Update traffic chart every second
-        setInterval(() => {
-          const newData = [...trafficChart.w.globals.series[0].data.slice(1), Math.floor(Math.random() * 100)];
-          trafficChart.updateSeries([{
-            data: newData
-          }]);
-        }, 1000);
-
-        // Initialize heatmap
-        const heatmapChart = new ApexCharts(document.getElementById('userActivityHeatmap'), {
-          series: [{
-            name: 'Users',
-            data: generateRandomData(24)
-          }],
-          chart: {
-            type: 'heatmap',
-            height: 350,
-            toolbar: {
-              show: false
-            }
-          },
-          plotOptions: {
-            heatmap: {
-              shadeIntensity: 0.5,
-              radius: 0,
-              useFillColorAsStroke: true,
-              colorScale: {
-                ranges: [{
-                  from: 0,
-                  to: 40,
-                  name: 'Low',
-                  color: '#8ecae6'
-                }, {
-                  from: 41,
-                  to: 70,
-                  name: 'Medium',
-                  color: '#219ebc'
-                }, {
-                  from: 71,
-                  to: 100,
-                  name: 'High',
-                  color: '#023047'
-                }]
-              }
-            }
-          },
-          dataLabels: {
-            enabled: false
-          },
-          xaxis: {
-            categories: Array.from({ length: 24 }, (_, i) => `${i}:00`)
-          }
-        });
-
-        heatmapChart.render();
-
-        // Update stats randomly
+        // Update stats every 3 seconds
         function updateStats() {
-          document.getElementById('totalProducts').textContent = Math.floor(Math.random() * 1000);
-          document.getElementById('activeUsers').textContent = Math.floor(Math.random() * 100);
-          document.getElementById('todayRevenue').textContent = 
-            '$' + (Math.floor(Math.random() * 10000) / 100).toFixed(2) + 'k';
+            document.getElementById('revenue').textContent = Math.floor(Math.random() * 50000);
+            document.getElementById('activeUsers').textContent = Math.floor(Math.random() * 500);
+            document.getElementById('orders').textContent = Math.floor(Math.random() * 100);
+            document.getElementById('conversion').textContent = (Math.random() * 100).toFixed(1);
         }
 
-        // Update transactions table
-        function updateTransactions() {
-          const statuses = ['success', 'pending', 'failed'];
-          const users = ['John D.', 'Alice M.', 'Bob K.', 'Sarah L.'];
-          const transactions = Array.from({ length: 10 }, (_, i) => ({
-            id: Math.floor(Math.random() * 1000000),
-            user: users[Math.floor(Math.random() * users.length)],
-            amount: '$' + (Math.floor(Math.random() * 1000) / 100).toFixed(2),
-            status: statuses[Math.floor(Math.random() * statuses.length)]
-          }));
-
-          const tbody = document.getElementById('transactionsTable');
-          tbody.innerHTML = transactions.map(t => `
-            <tr>
-              <td>#${t.id}</td>
-              <td>${t.user}</td>
-              <td>${t.user}</td>
-              <td>${t.amount}</td>
-              <td>
-                <span class="status-badge ${t.status}">
-                  ${t.status.charAt(0).toUpperCase() + t.status.slice(1)}
-                </span>
-              </td>
-            </tr>
-          `).join('');
+        // Update traffic chart
+        function updateTrafficChart() {
+            const newData = trafficChart.w.globals.series[0].data.slice(1);
+            newData.push(Math.floor(Math.random() * 150));
+            trafficChart.updateSeries([{
+                data: newData
+            }]);
         }
 
-        // Initialize everything and start real-time updates
-        let chatMessages = [];
-        const currentUser = 'Kpavan63';
-        const currentUTC = '2025-02-10 14:00:20';
+        // Initialize activity feed
+        const activities = [
+            'New order #1234 received',
+            'User John Doe registered',
+            'Payment processed successfully',
+            'New product added to inventory',
+            'Support ticket resolved'
+        ];
 
-        function initializeDashboard() {
-          // Update header with user info
-          document.querySelector('.user-avatar').textContent = currentUser.charAt(0).toUpperCase();
-          document.querySelector('.user-info h6').textContent = currentUser;
-          document.getElementById('currentUTC').textContent = currentUTC;
-
-          // Start real-time updates
-          updateStats();
-          updateTransactions();
-          setInterval(updateStats, 3000);
-          setInterval(updateTransactions, 5000);
-
-          // Remove loading screen
-          document.getElementById('loading').style.display = 'none';
+        function addActivity() {
+            const feed = document.getElementById('activityFeed');
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            const time = new Date().toLocaleTimeString();
+            
+            const activityHTML = \`
+                <div class="activity-item mb-3">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-circle-notch text-primary me-2"></i>
+                        <div>
+                            <div>\${activity}</div>
+                            <small class="text-muted">\${time}</small>
+                        </div>
+                    </div>
+                </div>
+            \`;
+            
+            feed.insertAdjacentHTML('afterbegin', activityHTML);
         }
+
+        // Start updates
+        setInterval(updateStats, 3000);
+        setInterval(updateTrafficChart, 2000);
+        setInterval(addActivity, 5000);
+
+        // Initial updates
+        updateStats();
+        addActivity();
 
         // Chat functionality
-        document.getElementById('sendMessageBtn').addEventListener('click', () => {
-          const input = document.getElementById('chatInput');
-          const message = input.value.trim();
-          
-          if (message) {
-            const chatWindow = document.getElementById('chatWindow');
-            chatMessages.push({
-              text: message,
-              sender: 'admin',
-              timestamp: new Date().toISOString()
-            });
-
-            // Update chat window
-            chatWindow.innerHTML = chatMessages.map(msg => `
-              <div class="chat-message ${msg.sender}">
-                <div class="message-content">${msg.text}</div>
-                <small class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</small>
-              </div>
-            `).join('');
-
-            // Clear input and scroll to bottom
-            input.value = '';
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-          }
+        document.getElementById('sendMessage').addEventListener('click', () => {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const chatWindow = document.getElementById('chatWindow');
+                const messageHTML = \`
+                    <div class="chat-message admin">
+                        <div class="message-content">\${message}</div>
+                        <small class="text-white-50">\${new Date().toLocaleTimeString()}</small>
+                    </div>
+                \`;
+                
+                chatWindow.insertAdjacentHTML('beforeend', messageHTML);
+                input.value = '';
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
         });
 
-        // Handle chat input enter key
+        // Handle Enter key in chat
         document.getElementById('chatInput').addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') {
-            document.getElementById('sendMessageBtn').click();
-          }
+            if (e.key === 'Enter') {
+                document.getElementById('sendMessage').click();
+            }
         });
+    </script>
+</body>
+</html>`;
 
-        // Logout function
-        function logout() {
-          localStorage.removeItem('pinVerified');
-          localStorage.removeItem('pinExpiry');
-          window.location.reload();
-        }
-
-        // Custom styles for status badges
-        const statusStyles = document.createElement('style');
-        statusStyles.textContent = `
-          .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 500;
-          }
-          .status-badge.success {
-            background-color: #28a745;
-            color: white;
-          }
-          .status-badge.pending {
-            background-color: #ffc107;
-            color: #000;
-          }
-          .status-badge.failed {
-            background-color: #dc3545;
-            color: white;
-          }
-        `;
-        document.head.appendChild(statusStyles);
-
-        // Initialize dashboard when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initializeDashboard);
-
-        // Handle window resize for responsive charts
-        window.addEventListener('resize', () => {
-          trafficChart.render();
-          heatmapChart.render();
-        });
-
-        // Add some sample chat messages
-        setTimeout(() => {
-          const sampleMessages = [
-            { text: "Welcome to the admin dashboard!", sender: "system", timestamp: new Date().toISOString() },
-            { text: "How can I help you today?", sender: "admin", timestamp: new Date().toISOString() }
-          ];
-          
-          chatMessages = [...sampleMessages];
-          const chatWindow = document.getElementById('chatWindow');
-          chatWindow.innerHTML = chatMessages.map(msg => `
-            <div class="chat-message ${msg.sender}">
-              <div class="message-content">${msg.text}</div>
-              <small class="message-time">${new Date(msg.timestamp).toLocaleTimeString()}</small>
-            </div>
-          `).join('');
-          chatWindow.scrollTop = chatWindow.scrollHeight;
-        }, 1000);
-
-        // Add pulse animation to real-time indicators
-        const pulseStyle = document.createElement('style');
-        pulseStyle.textContent = `
-          .stat-change i {
-            animation: pulse 2s infinite;
-          }
-          
-          @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-          }
-        `;
-        document.head.appendChild(pulseStyle);
-
-        // Add tooltip functionality
-        const tooltips = document.querySelectorAll('[data-tooltip]');
-        tooltips.forEach(tooltip => {
-          tooltip.style.position = 'relative';
-          tooltip.addEventListener('mouseenter', (e) => {
-            const tooltipText = document.createElement('div');
-            tooltipText.className = 'tooltip';
-            tooltipText.textContent = tooltip.dataset.tooltip;
-            tooltipText.style.position = 'absolute';
-            tooltipText.style.bottom = '100%';
-            tooltipText.style.left = '50%';
-            tooltipText.style.transform = 'translateX(-50%)';
-            tooltipText.style.backgroundColor = 'rgba(0,0,0,0.8)';
-            tooltipText.style.color = 'white';
-            tooltipText.style.padding = '5px 10px';
-            tooltipText.style.borderRadius = '5px';
-            tooltipText.style.fontSize = '12px';
-            tooltipText.style.zIndex = '1000';
-            tooltip.appendChild(tooltipText);
-          });
-          tooltip.addEventListener('mouseleave', () => {
-            const tooltipText = tooltip.querySelector('.tooltip');
-            if (tooltipText) tooltipText.remove();
-          });
-        });
-
-      </script>
-    </body>
-    </html>
-  `;
-  res.send(adminHTML);
+    res.send(adminHTML);
 });
-
 //today deals admin code
 app.get('/admin/today-deals', async (req, res) => {
   try {
