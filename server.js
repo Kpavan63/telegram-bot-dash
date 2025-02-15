@@ -1057,6 +1057,7 @@ app.get('/admin', (req, res) => {
         <a href="/user-profile" class="btn btn-secondary mt-4">View User Profile</a>
         <a href="/admin/notify" class="btn btn-primary mt-4">Send Notification to All Users</a>
         <a href="/admin/today-deals" class="btn btn-primary mt-4">Today's Deals</a>
+        <a href="https://kpavan63.github.io/telegram-bot-dash/" class="btn btn-primary mt-4"> Server Status</a>
       </div>
 
       <script>
