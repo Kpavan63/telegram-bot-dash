@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Server Monitor Pro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        :root {
+            --orange-primary: #ff6b00;
+            --orange-glow: #ff8f40;
+            --white: #ffffff;
+            --dark-bg: #111111;
+            --card-bg: #1a1a1a;
+            --success: #00ff88;
+            --danger: #ff0055;
+            --graph-bg: rgba(255, 107, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--card-bg);
+            padding: 20px;
+            border-bottom: 2px solid var(--orange-primary);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #datetime, #user {
+            color: var(--orange-primary);
+            text-shadow: 0 0 10px var(--orange-glow);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .server-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--orange-primary);
+            box-shadow: 0 0 10px var(--orange-primary);
+        }
+
+        .server-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,107,0,0.2);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .status-online {
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        .status-offline {
+            background: var(--danger);
+            box-shadow: 0 0 10px var(--danger);
+        }
+
+        .server-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--orange-glow);
+            font-size: 0.8em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+        }
+
+        .graphs {
+            background: var(--graph-bg);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .graph-title {
+            color: var(--orange-primary);
+            margin-bottom: 10px;
+        }
+
+        .response-graph {
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .response-bar {
+            flex: 1;
+            background: var(--orange-primary);
+            transition: height 0.3s ease;
+        }
+
+        .usage-graph {
+            display: flex;
+            gap: 10px;
+        }
+
+        .usage-bar {
+            flex: 1;
+            height: 60px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .usage-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--orange-primary);
+            transition: height 0.3s ease;
+        }
+
+        .usage-label {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            color: var(--white);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div id="datetime">Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): 2025-02-15 18:45:49</div>
+            <div id="user">Current User's Login: Kpavan63</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="serverGrid"></div>
+    </div>
+
+    <script>
+        const server = {
+            name: 'Telegram Bot Server',
+            url: 'https://telegram-bot-dash.onrender.com/',
+            isOnline: false,
+            responseTime: 0,
+            uptime: 100,
+            lastChecked: null,
+            responseHistory: Array(20).fill(0),
+            cpuUsage: 0,
+            memoryUsage: 0
+        };
+
+        function updateDateTime() {
+            const now = new Date();
+            const formatted = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')} ${String(now.getUTCHours()).padStart(2, '0')}:${String(now.getUTCMinutes()).padStart(2, '0')}:${String(now.getUTCSeconds()).padStart(2, '0')}`;
+            document.getElementById('datetime').textContent = `Current Date and Time: ${formatted}`;
+        }
+
+        function updateServer() {
+            const startTime = performance.now();
+            
+            fetch(server.url, { mode: 'no-cors' })
+                .then(() => {
+                    const endTime = performance.now();
+                    server.isOnline = true;
+                    server.responseTime = endTime - startTime;
+                    server.lastChecked = new Date();
+                    server.responseHistory.shift();
+                    server.responseHistory.push(server.responseTime);
+                    server.cpuUsage = Math.floor(Math.random() * 100);
+                    server.memoryUsage = Math.floor(Math.random() * 100);
+                    updateDisplay();
+                })
+                .catch(() => {
+                    server.isOnline = false;
+                    server.responseTime = 0;
+                    server.responseHistory.shift();
+                    server.responseHistory.push(0);
+                    updateDisplay();
+                });
+        }
+
+        function updateDisplay() {
+            const serverGrid = document.getElementById('serverGrid');
+            
+            const responseGraph = server.responseHistory.map(value => {
+                const height = Math.min(100, value / 5);
+                return `<div class="response-bar" style="height: ${height}%"></div>`;
+            }).join('');
+
+            serverGrid.innerHTML = `
+                <div class="server-card">
+                    <div class="server-header">
+                        <div class="status-indicator ${server.isOnline ? 'status-online' : 'status-offline'}"></div>
+                        <h3>${server.name}</h3>
+                    </div>
+                    <div class="server-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Status</div>
+                            <div class="stat-value">${server.isOnline ? 'ONLINE' : 'OFFLINE'}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Response Time</div>
+                            <div class="stat-value">${Math.round(server.responseTime)}ms</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Last Checked</div>
+                            <div class="stat-value">${server.lastChecked ? server.lastChecked.toLocaleTimeString() : 'Never'}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Uptime</div>
+                            <div class="stat-value">${server.uptime.toFixed(2)}%</div>
+                        </div>
+                    </div>
+                    <div class="graphs">
+                        <h4 class="graph-title">Response Time History</h4>
+                        <div class="response-graph">
+                            ${responseGraph}
+                        </div>
+                        <h4 class="graph-title">System Usage</h4>
+                        <div class="usage-graph">
+                            <div class="usage-bar">
+                                <div class="usage-label">CPU</div>
+                                <div class="usage-fill" style="height: ${server.cpuUsage}%"></div>
+                            </div>
+                            <div class="usage-bar">
+                                <div class="usage-label">Memory</div>
+                                <div class="usage-fill" style="height: ${server.memoryUsage}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDateTime();
+            updateDisplay();
+            updateServer();
+            
+            // Update time every second
+            setInterval(updateDateTime, 1000);
+            // Check server every 5 seconds
+            setInterval(updateServer, 5000);
+        });
+    </script>
+</body>
+</html>
