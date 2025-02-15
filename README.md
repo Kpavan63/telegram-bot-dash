@@ -28,5 +28,5 @@ A **Telegram bot** that helps users search, compare, and get the best deals on p
 ---
 
 ## Demo
-[click](https://kpavan63.github.io/telegram-bot-dash/)
+[Click Here](https://kpavan63.github.io/telegram-bot-dash/)
 
