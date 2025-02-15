@@ -744,6 +744,7 @@ app.get('/admin', (req, res) => {
       --accent-color: #ffb703;
       --text-light: #ffffff;
       --text-dark: #023047;
+      --succ:green;
     }
 
     /* General Styles */
@@ -930,7 +931,7 @@ app.get('/admin', (req, res) => {
     }
 
     .bg-success {
-      background-color: var(--secondary-color) !important;
+      background-color: var(--succ) !important;
     }
 
     /* Error Message Styles */
