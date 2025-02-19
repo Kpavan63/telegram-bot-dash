@@ -199,80 +199,271 @@ app.get('/admin/users', async (req, res) => {
 });
 
 // Serve the user details page
+// Update the /admin/users/view endpoint handler
 app.get('/admin/users/view', (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Admin Panel - User Details</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f8f9fa;
-          padding: 20px;
-        }
-        h1 {
-          color: #333;
-          margin-bottom: 20px;
-        }
-        .card {
-          margin-bottom: 20px;
-        }
-        .card img {
-          max-width: 100%;
-          height: auto;
-        }
-      </style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Management Dashboard</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .dashboard-title {
+                color: #2c3e50;
+                text-align: center;
+                margin: 2rem 0;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                position: relative;
+            }
+
+            .dashboard-title:after {
+                content: '';
+                display: block;
+                width: 50px;
+                height: 3px;
+                background: #3498db;
+                margin: 10px auto;
+            }
+
+            .card {
+                border: none;
+                border-radius: 15px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                margin-bottom: 30px;
+                overflow: hidden;
+                background: white;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            }
+
+            .card-img-wrapper {
+                position: relative;
+                padding-top: 100%;
+                overflow: hidden;
+                background: #f8f9fa;
+            }
+
+            .card-img-top {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .card:hover .card-img-top {
+                transform: scale(1.05);
+            }
+
+            .card-body {
+                padding: 1.5rem;
+                background: white;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-text {
+                color: #7f8c8d;
+                font-size: 0.9rem;
+            }
+
+            .user-status {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #2ecc71;
+                border: 2px solid white;
+            }
+
+            .loading-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255,255,255,0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+                border: 5px solid #f3f3f3;
+                border-top: 5px solid #3498db;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 40px;
+                color: #7f8c8d;
+            }
+
+            .back-button {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 15px 30px;
+                border-radius: 30px;
+                background: #3498db;
+                color: white;
+                border: none;
+                box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+                transition: all 0.3s ease;
+            }
+
+            .back-button:hover {
+                background: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+            }
+
+            .user-count {
+                background: rgba(52, 152, 219, 0.1);
+                color: #3498db;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                margin-bottom: 2rem;
+                display: inline-block;
+            }
+
+            @media (max-width: 768px) {
+                .card {
+                    margin-bottom: 20px;
+                }
+            }
+        </style>
     </head>
     <body>
-      <div class="container">
-        <h1>User Details</h1>
-        <div class="row" id="userCards">
-          <!-- User cards will be populated here -->
+        <div class="container">
+            <h1 class="dashboard-title">User Management Dashboard</h1>
+            <div class="text-center">
+                <div id="userCount" class="user-count">
+                    <i class="fas fa-users"></i>
+                    <span>Loading users...</span>
+                </div>
+            </div>
+            <div class="row" id="userCards">
+                <!-- User cards will be populated here -->
+            </div>
         </div>
-        <a href="/admin" class="btn btn-secondary">Back to Admin Panel</a>
-      </div>
 
-      <script>
-        async function fetchUsers() {
-          try {
-            const response = await fetch('/admin/users');
-            const users = await response.json();
-            const userCards = document.getElementById('userCards');
+        <div id="loadingContainer" class="loading-container">
+            <div class="loading-spinner"></div>
+        </div>
 
-            users.forEach(user => {
-              const col = document.createElement('div');
-              col.className = 'col-md-4';
-              const card = document.createElement('div');
-              card.className = 'card';
+        <a href="/admin" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Admin
+        </a>
 
-              const img = document.createElement('img');
-              img.src = 'https://via.placeholder.com/150'; // Placeholder image URL
-              img.className = 'card-img-top';
-              card.appendChild(img);
+        <script>
+            async function fetchUsers() {
+                try {
+                    const response = await fetch('/admin/users');
+                    const users = await response.json();
+                    const userCards = document.getElementById('userCards');
+                    const loadingContainer = document.getElementById('loadingContainer');
+                    const userCount = document.getElementById('userCount');
 
-              const cardBody = document.createElement('div');
-              cardBody.className = 'card-body';
+                    // Update user count
+                    userCount.innerHTML = \`
+                        <i class="fas fa-users"></i>
+                        <span>\${users.length} Users Found</span>
+                    \`;
 
-              const cardTitle = document.createElement('h5');
-              cardTitle.className = 'card-title';
-              cardTitle.textContent = \`Chat ID: \${user.chatid}\`;
-              cardBody.appendChild(cardTitle);
+                    if (users.length === 0) {
+                        userCards.innerHTML = \`
+                            <div class="col-12">
+                                <div class="empty-state">
+                                    <i class="fas fa-users fa-3x mb-3"></i>
+                                    <h3>No Users Found</h3>
+                                    <p>Start adding users to see them here.</p>
+                                </div>
+                            </div>
+                        \`;
+                    } else {
+                        userCards.innerHTML = users.map(user => \`
+                            <div class="col-md-4 col-lg-3">
+                                <div class="card">
+                                    <div class="card-img-wrapper">
+                                        <div class="user-status"></div>
+                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=\${user.chatid}"
+                                             class="card-img-top"
+                                             alt="User Avatar">
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-user-circle"></i>
+                                            User \${user.chatid.substring(0, 8)}
+                                        </h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-id-badge"></i> Chat ID: \${user.chatid}
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        \`).join('');
+                    }
 
-              card.appendChild(cardBody);
-              col.appendChild(card);
-              userCards.appendChild(col);
-            });
-          } catch (error) {
-            console.error('Error fetching users:', error);
-          }
-        }
+                    // Add fade-out animation to loading screen
+                    loadingContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingContainer.style.display = 'none';
+                    }, 500);
 
-        document.addEventListener('DOMContentLoaded', fetchUsers);
-      </script>
+                } catch (error) {
+                    console.error('Error fetching users:', error);
+                    document.getElementById('userCards').innerHTML = \`
+                        <div class="col-12">
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Error loading users. Please try again later.
+                            </div>
+                        </div>
+                    \`;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', fetchUsers);
+        </script>
     </body>
     </html>
   `);
