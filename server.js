@@ -142,69 +142,66 @@ async function writeTodayDeals(deals) {
 }
 
 
-// PostgreSQL client
-const dbClient = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // Required for Render's PostgreSQL
-  },
-});
-
-// Connect to the database
-dbClient.connect()
-  .then(() => console.log('Connected to PostgreSQL database'))
-  .catch(err => console.error('Error connecting to PostgreSQL database:', err));
-
-// Initialize the users table
-async function initializeDatabase() {
+// Function to send data to Google Sheets using Steinhq API
+async function sendDataToSheet(data) {
+  const url = `https://api.steinhq.com/v1/storages/${process.env.STEINHQ_SHEET_ID}/Sheet1`; // Adjust the sheet name if needed
   try {
-    await dbClient.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        chat_id BIGINT PRIMARY KEY
-      );
-    `);
-    console.log('Users table initialized.');
+    const response = await axios.post(url, data, {
+      headers: {
+        'Authorization': `Bearer ${process.env.STEINHQ_API_KEY}`
+      }
+    });
+    console.log('Data sent to Google Sheet:', response.data);
   } catch (error) {
-    console.error('Error initializing database:', error);
+    console.error('Error sending data to Google Sheet:', error);
+    throw new Error('Failed to send data to Google Sheet');
   }
 }
 
-initializeDatabase();
-
-// Function to read users
+// Function to read users from Google Sheets
 async function readUsers() {
+  const url = `https://api.steinhq.com/v1/storages/${process.env.STEINHQ_SHEET_ID}/Sheet1`;
   try {
-    const res = await dbClient.query('SELECT chat_id FROM users');
-    return res.rows.map(row => row.chat_id);
+    const response = await axios.get(url, {
+      headers: {
+        'Authorization': `Bearer ${process.env.STEINHQ_API_KEY}`
+      }
+    });
+    return response.data.map(row => row.chatid);
   } catch (error) {
     console.error('Error reading users:', error);
     return [];
   }
 }
 
-// Function to write users
+// Function to write users to Google Sheets
 async function writeUsers(chatId) {
-    try {
-        // Ensure chatId is a valid number
-        if (typeof chatId === 'string' && chatId.startsWith('{')) {
-            // Parse JSON-like string if required
-            chatId = JSON.parse(chatId);
-        }
-        chatId = Number(chatId); // Convert to a plain number
-
-        if (isNaN(chatId)) {
-            throw new Error(`Invalid chatId: ${chatId}`);
-        }
-
-        // Insert into database
-        await dbClient.query(
-            'INSERT INTO users (chat_id) VALUES ($1) ON CONFLICT (chat_id) DO NOTHING',
-            [chatId]
-        );
-    } catch (error) {
-        console.error('Error writing user:', error);
-    }
+  const data = [{ chatid: chatId }];
+  try {
+    await sendDataToSheet(data);
+  } catch (error) {
+    console.error('Error writing user:', error);
+  }
 }
+
+// API endpoint to send chat ID to Google Sheets
+app.get('/send-chatid/:chatid', async (req, res) => {
+  const chatid = req.params.chatid;
+  try {
+    await writeUsers(chatid);
+    res.json({ success: true, message: 'Chat ID sent to Google Sheet successfully!' });
+  } catch (error) {
+    console.error('Error sending chat ID to Google Sheet:', error);
+    res.status(500).json({ success: false, message: 'Failed to send chat ID to Google Sheet.' });
+  }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Unexpected error:', err);
+  res.status(500).json({ success: false, message: 'An unexpected error occurred.' });
+});
+
 
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
