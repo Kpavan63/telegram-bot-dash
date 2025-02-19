@@ -153,12 +153,13 @@ async function sendDataToSheet(data) {
   }
 }
 
-// Function to read users from Google Sheets
+// Update the readUsers function
 async function readUsers() {
   const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
     const response = await axios.get(url);
-    return response.data;
+    // Extract just the chatid values from the response data
+    return response.data.map(user => user.chatid);
   } catch (error) {
     console.error('Error reading users:', error);
     return [];
@@ -483,16 +484,40 @@ app.get('/admin/notify', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin-notify.html'));
 });
 
-// API to send notifications
+// Update the notification endpoint
 app.post('/admin/send-notification', async (req, res) => {
   const { image, text, link } = req.body;
 
+  if (!text) {
+    return res.status(400).json({
+      success: false,
+      message: 'Text is required for the notification'
+    });
+  }
+
   try {
     const users = await readUsers();
+    
+    if (!Array.isArray(users) || users.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No users found to send notifications to'
+      });
+    }
+
+    const results = {
+      successful: 0,
+      failed: 0,
+      errors: []
+    };
 
     // Send notification to each user
     for (const chatId of users) {
       try {
+        if (typeof chatId !== 'string' && typeof chatId !== 'number') {
+          throw new Error(`Invalid chat ID format: ${chatId}`);
+        }
+
         if (image) {
           // Send image with caption
           await bot.sendPhoto(chatId, image, { caption: text });
@@ -505,18 +530,41 @@ app.post('/admin/send-notification', async (req, res) => {
         if (link) {
           await bot.sendMessage(chatId, `🔗 Link: ${link}`);
         }
+
+        results.successful++;
       } catch (error) {
+        results.failed++;
+        results.errors.push({
+          chatId,
+          error: error.message
+        });
         console.error(`Error sending notification to chat ID ${chatId}:`, error);
       }
     }
 
-    res.json({ success: true, message: 'Notification sent to all users!' });
+    // Return detailed response
+    if (results.failed === 0) {
+      res.json({
+        success: true,
+        message: 'Notification sent to all users successfully!',
+        stats: results
+      });
+    } else {
+      res.status(207).json({
+        success: results.successful > 0,
+        message: `Notification sent with some failures: ${results.successful} successful, ${results.failed} failed`,
+        stats: results
+      });
+    }
   } catch (error) {
     console.error('Error sending notifications:', error);
-    res.status(500).json({ success: false, message: 'Failed to send notifications.' });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send notifications',
+      error: error.message
+    });
   }
 });
-
 // Telegram Bot Handlers
 bot.onText(/\/start/, async (msg) => {
     let chatId = msg.chat.id;
