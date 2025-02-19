@@ -144,13 +144,9 @@ async function writeTodayDeals(deals) {
 
 // Function to send data to Google Sheets using Steinhq API
 async function sendDataToSheet(data) {
-  const url = `https://api.steinhq.com/v1/storages/${process.env.STEINHQ_SHEET_ID}/Sheet1`; // Adjust the sheet name if needed
+  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1'; // Use the provided API URL and adjust the sheet name if needed
   try {
-    const response = await axios.post(url, data, {
-      headers: {
-        'Authorization': `Bearer ${process.env.STEINHQ_API_KEY}`
-      }
-    });
+    const response = await axios.post(url, data);
     console.log('Data sent to Google Sheet:', response.data);
   } catch (error) {
     console.error('Error sending data to Google Sheet:', error);
@@ -160,13 +156,9 @@ async function sendDataToSheet(data) {
 
 // Function to read users from Google Sheets
 async function readUsers() {
-  const url = `https://api.steinhq.com/v1/storages/${process.env.STEINHQ_SHEET_ID}/Sheet1`;
+  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
-    const response = await axios.get(url, {
-      headers: {
-        'Authorization': `Bearer ${process.env.STEINHQ_API_KEY}`
-      }
-    });
+    const response = await axios.get(url);
     return response.data.map(row => row.chatid);
   } catch (error) {
     console.error('Error reading users:', error);
@@ -202,6 +194,10 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, message: 'An unexpected error occurred.' });
 });
 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
