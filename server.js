@@ -198,7 +198,6 @@ app.get('/admin/users', async (req, res) => {
   }
 });
 
-
 // Serve the user details page
 app.get('/admin/users/view', (req, res) => {
   res.send(`
