@@ -141,7 +141,6 @@ async function writeTodayDeals(deals) {
   }
 }
 
-
 // Function to send data to Google Sheets using Steinhq API
 async function sendDataToSheet(data) {
   const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1'; // Use the provided API URL and adjust the sheet name if needed
@@ -159,7 +158,7 @@ async function readUsers() {
   const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
     const response = await axios.get(url);
-    return response.data.map(row => row.chatid);
+    return response.data;
   } catch (error) {
     console.error('Error reading users:', error);
     return [];
@@ -188,12 +187,103 @@ app.get('/send-chatid/:chatid', async (req, res) => {
   }
 });
 
+// API endpoint to get all users
+app.get('/admin/users', async (req, res) => {
+  try {
+    const users = await readUsers();
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch users.' });
+  }
+});
+
+
+// Serve the user details page
+app.get('/admin/users/view', (req, res) => {
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Admin Panel - User Details</title>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f8f9fa;
+          padding: 20px;
+        }
+        h1 {
+          color: #333;
+          margin-bottom: 20px;
+        }
+        .card {
+          margin-bottom: 20px;
+        }
+        .card img {
+          max-width: 100%;
+          height: auto;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>User Details</h1>
+        <div class="row" id="userCards">
+          <!-- User cards will be populated here -->
+        </div>
+        <a href="/admin" class="btn btn-secondary">Back to Admin Panel</a>
+      </div>
+
+      <script>
+        async function fetchUsers() {
+          try {
+            const response = await fetch('/admin/users');
+            const users = await response.json();
+            const userCards = document.getElementById('userCards');
+
+            users.forEach(user => {
+              const col = document.createElement('div');
+              col.className = 'col-md-4';
+              const card = document.createElement('div');
+              card.className = 'card';
+
+              const img = document.createElement('img');
+              img.src = 'https://via.placeholder.com/150'; // Placeholder image URL
+              img.className = 'card-img-top';
+              card.appendChild(img);
+
+              const cardBody = document.createElement('div');
+              cardBody.className = 'card-body';
+
+              const cardTitle = document.createElement('h5');
+              cardTitle.className = 'card-title';
+              cardTitle.textContent = `Chat ID: ${user.chatid}`;
+              cardBody.appendChild(cardTitle);
+
+              card.appendChild(cardBody);
+              col.appendChild(card);
+              userCards.appendChild(col);
+            });
+          } catch (error) {
+            console.error('Error fetching users:', error);
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchUsers);
+      </script>
+    </body>
+    </html>
+  `);
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unexpected error:', err);
   res.status(500).json({ success: false, message: 'An unexpected error occurred.' });
 });
-
 
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -1047,6 +1137,7 @@ app.get('/admin', (req, res) => {
         <a href="/admin/notify" class="btn btn-primary mt-4">Send Notification to All Users</a>
         <a href="/admin/today-deals" class="btn btn-primary mt-4">Today's Deals</a>
         <a href="https://kpavan63.github.io/telegram-bot-dash/" class="btn btn-primary mt-4"> Server Status</a>
+        <a href="/admin/users/view" class="btn btn-primary mt-4">User</a>
       </div>
 
       <script>
