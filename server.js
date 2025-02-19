@@ -259,7 +259,7 @@ app.get('/admin/users/view', (req, res) => {
 
               const cardTitle = document.createElement('h5');
               cardTitle.className = 'card-title';
-              cardTitle.textContent = `Chat ID: ${user.chatid}`;
+              cardTitle.textContent = \`Chat ID: \${user.chatid}\`;
               cardBody.appendChild(cardTitle);
 
               card.appendChild(cardBody);
