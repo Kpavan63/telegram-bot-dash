@@ -194,10 +194,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, message: 'An unexpected error occurred.' });
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
