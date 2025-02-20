@@ -143,7 +143,7 @@ async function writeTodayDeals(deals) {
 
 // Function to send data to Google Sheets using Steinhq API
 async function sendDataToSheet(data) {
-  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1'; // Use the provided API URL and adjust the sheet name if needed
+  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
     const response = await axios.post(url, data);
     console.log('Data sent to Google Sheet:', response.data);
@@ -153,15 +153,16 @@ async function sendDataToSheet(data) {
   }
 }
 
-// Update the readUsers function
+// Update the readUsers function to include all user fields
 async function readUsers() {
   const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
     const response = await axios.get(url);
-    // Extract just the chatid values from the response data
     return response.data.map(user => ({
       chatid: user.chatid,
-      name: user.name || 'Unknown',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      username: user.username || '',
       image: user.image || 'https://via.placeholder.com/150'
     }));
   } catch (error) {
@@ -170,9 +171,14 @@ async function readUsers() {
   }
 }
 
-// Function to write users to Google Sheets
-async function writeUsers(chatId) {
-  const data = [{ chatid: chatId }];
+// Function to write users to Google Sheets with additional fields
+async function writeUsers(userData) {
+  const data = [{
+    chatid: userData.chatid,
+    firstName: userData.firstName || '',
+    lastName: userData.lastName || '',
+    username: userData.username || ''
+  }];
   try {
     await sendDataToSheet(data);
   } catch (error) {
@@ -180,26 +186,109 @@ async function writeUsers(chatId) {
   }
 }
 
-// API endpoint to send chat ID to Google Sheets
+// API endpoint to send chat ID and user data to Google Sheets
 app.get('/send-chatid/:chatid', async (req, res) => {
   const chatid = req.params.chatid;
   try {
-    await writeUsers(chatid);
-    res.json({ success: true, message: 'Chat ID sent to Google Sheet successfully!' });
+    // Get user data from Telegram API
+    const userInfoResponse = await axios.get(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getChat`,
+      { params: { chat_id: chatid } }
+    );
+
+    if (!userInfoResponse.data.ok) {
+      throw new Error('Failed to fetch user data from Telegram');
+    }
+
+    const userData = {
+      chatid: chatid,
+      firstName: userInfoResponse.data.result.first_name || '',
+      lastName: userInfoResponse.data.result.last_name || '',
+      username: userInfoResponse.data.result.username || '',
+      joinDate: new Date().toISOString() // Adding timestamp
+    };
+
+    await writeUsers(userData);
+    res.json({ 
+      success: true, 
+      message: 'User data sent to Google Sheet successfully!',
+      userData: userData 
+    });
   } catch (error) {
-    console.error('Error sending chat ID to Google Sheet:', error);
-    res.status(500).json({ success: false, message: 'Failed to send chat ID to Google Sheet.' });
+    console.error('Error sending user data to Google Sheet:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to send user data to Google Sheet.',
+      error: error.message 
+    });
   }
 });
 
-// API endpoint to get all users
+// API endpoint to get all users with enhanced data
 app.get('/admin/users', async (req, res) => {
   try {
     const users = await readUsers();
-    res.json(users);
+    
+    // Transform the data to include additional information
+    const enhancedUsers = users.map(user => ({
+      ...user,
+      displayName: `${user.firstName} ${user.lastName}`.trim() || 'Unknown User',
+      image: user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || 'U')}+${encodeURIComponent(user.lastName || 'U')}&background=random`,
+      status: 'active', // You can implement actual status logic here
+      lastSeen: user.lastSeen || user.joinDate || new Date().toISOString()
+    }));
+
+    // Add metadata to the response
+    res.json({
+      success: true,
+      count: enhancedUsers.length,
+      lastUpdated: new Date().toISOString(),
+      users: enhancedUsers
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch users.' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch users.',
+      error: error.message
+    });
+  }
+});
+
+// New endpoint to get specific user details
+app.get('/admin/users/:chatid', async (req, res) => {
+  const chatid = req.params.chatid;
+  try {
+    const users = await readUsers();
+    const user = users.find(u => u.chatid === chatid);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Enhance user data with additional information
+    const enhancedUser = {
+      ...user,
+      displayName: `${user.firstName} ${user.lastName}`.trim() || 'Unknown User',
+      image: user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || 'U')}+${encodeURIComponent(user.lastName || 'U')}&background=random`,
+      status: 'active',
+      lastSeen: user.lastSeen || user.joinDate || new Date().toISOString()
+    };
+
+    res.json({
+      success: true,
+      user: enhancedUser
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch user details',
+      error: error.message
+    });
   }
 });
 
@@ -215,255 +304,279 @@ app.get('/admin/users/view', (req, res) => {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
+            :root {
+                --primary-color: #4361ee;
+                --secondary-color: #3f37c9;
+                --accent-color: #4895ef;
+                --success-color: #4cc9f0;
+            }
+
             body {
                 font-family: 'Poppins', sans-serif;
-                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
                 min-height: 100vh;
                 padding: 20px;
             }
 
-            .dashboard-title {
-                color: #2c3e50;
+            .dashboard-container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .dashboard-header {
                 text-align: center;
-                margin: 2rem 0;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                position: relative;
+                color: white;
+                padding: 2rem 0;
+                opacity: 0;
+                transform: translateY(-20px);
+                animation: fadeInDown 0.6s ease forwards;
             }
 
-            .dashboard-title:after {
-                content: '';
-                display: block;
-                width: 50px;
-                height: 3px;
-                background: #3498db;
-                margin: 10px auto;
+            .dashboard-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
             }
 
-            .card {
-                border: none;
-                border-radius: 15px;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                margin-bottom: 30px;
+            .user-count {
+                background: rgba(255, 255, 255, 0.2);
+                padding: 0.5rem 1.5rem;
+                border-radius: 20px;
+                font-size: 1.1rem;
+                display: inline-block;
+            }
+
+            .user-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 25px;
+                padding: 20px;
+            }
+
+            .user-card {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 20px;
                 overflow: hidden;
-                background: white;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+                opacity: 0;
+                transform: translateY(20px);
             }
 
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            .user-card.animate {
+                animation: fadeInUp 0.6s ease forwards;
             }
 
-            .card-img-wrapper {
+            .user-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .user-image-container {
                 position: relative;
                 padding-top: 100%;
-                overflow: hidden;
-                background: #f8f9fa;
+                background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
             }
 
-            .card-img-top {
+            .user-image {
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transition: transform 0.3s ease;
+                transition: transform 0.5s ease;
             }
 
-            .card:hover .card-img-top {
-                transform: scale(1.05);
+            .user-card:hover .user-image {
+                transform: scale(1.1);
             }
 
-            .card-body {
-                padding: 1.5rem;
-                background: white;
+            .user-info {
+                padding: 20px;
             }
 
-            .card-title {
-                font-size: 1.25rem;
+            .user-name {
+                font-size: 1.4rem;
                 font-weight: 600;
-                color: #2c3e50;
-                margin-bottom: 0.5rem;
+                color: var(--secondary-color);
+                margin-bottom: 10px;
             }
 
-            .card-text {
-                color: #7f8c8d;
+            .user-username {
+                color: #666;
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+
+            .user-chatid {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: #f8f9fa;
+                padding: 8px 12px;
+                border-radius: 10px;
                 font-size: 0.9rem;
             }
 
-            .user-status {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                background: #2ecc71;
-                border: 2px solid white;
+            .copy-btn {
+                background: var(--success-color);
+                color: white;
+                border: none;
+                padding: 5px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 0.9rem;
             }
 
-            .loading-container {
+            .copy-btn:hover {
+                background: var(--accent-color);
+                transform: scale(1.05);
+            }
+
+            .copied-toast {
                 position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(255,255,255,0.9);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
+                bottom: 20px;
+                right: 20px;
+                background: var(--success-color);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: all 0.3s ease;
             }
 
-            .loading-spinner {
-                width: 50px;
-                height: 50px;
-                border: 5px solid #f3f3f3;
-                border-top: 5px solid #3498db;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
+            .copied-toast.show {
+                opacity: 1;
+                transform: translateY(0);
             }
 
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
+            @keyframes fadeInDown {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
-            .empty-state {
-                text-align: center;
-                padding: 40px;
-                color: #7f8c8d;
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             .back-button {
                 position: fixed;
                 bottom: 20px;
                 right: 20px;
-                padding: 15px 30px;
+                background: white;
+                color: var(--primary-color);
+                padding: 12px 25px;
                 border-radius: 30px;
-                background: #3498db;
-                color: white;
-                border: none;
-                box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+                text-decoration: none;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
             }
 
             .back-button:hover {
-                background: #2980b9;
                 transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
-            }
-
-            .user-count {
-                background: rgba(52, 152, 219, 0.1);
-                color: #3498db;
-                padding: 8px 16px;
-                border-radius: 20px;
-                font-size: 0.9rem;
-                margin-bottom: 2rem;
-                display: inline-block;
-            }
-
-            @media (max-width: 768px) {
-                .card {
-                    margin-bottom: 20px;
-                }
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+                color: var(--accent-color);
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <h1 class="dashboard-title">User Management Dashboard</h1>
-            <div class="text-center">
-                <div id="userCount" class="user-count">
+        <div class="dashboard-container">
+            <header class="dashboard-header">
+                <h1 class="dashboard-title">User Management</h1>
+                <div class="user-count">
                     <i class="fas fa-users"></i>
-                    <span>Loading users...</span>
+                    <span id="userCountText">Loading users...</span>
                 </div>
-            </div>
-            <div class="row" id="userCards">
-                <!-- User cards will be populated here -->
-            </div>
-        </div>
+            </header>
 
-        <div id="loadingContainer" class="loading-container">
-            <div class="loading-spinner"></div>
+            <div class="user-grid" id="userGrid">
+                <!-- Users will be populated here -->
+            </div>
         </div>
 
         <a href="/admin" class="back-button">
-            <i class="fas fa-arrow-left"></i> Back to Admin
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
         </a>
+
+        <div class="copied-toast" id="copiedToast">
+            Chat ID copied to clipboard!
+        </div>
 
         <script>
             async function fetchUsers() {
                 try {
                     const response = await fetch('/admin/users');
                     const users = await response.json();
-                    const userCards = document.getElementById('userCards');
-                    const loadingContainer = document.getElementById('loadingContainer');
-                    const userCount = document.getElementById('userCount');
+                    const userGrid = document.getElementById('userGrid');
+                    const userCountText = document.getElementById('userCountText');
 
-                    // Update user count
-                    userCount.innerHTML = \`
-                        <i class="fas fa-users"></i>
-                        <span>\${users.length} Users Found</span>
-                    \`;
+                    userCountText.textContent = \`\${users.length} Users Found\`;
 
                     if (users.length === 0) {
-                        userCards.innerHTML = \`
-                            <div class="col-12">
-                                <div class="empty-state">
-                                    <i class="fas fa-users fa-3x mb-3"></i>
-                                    <h3>No Users Found</h3>
-                                    <p>Start adding users to see them here.</p>
-                                </div>
+                        userGrid.innerHTML = \`
+                            <div class="no-users">
+                                <i class="fas fa-users fa-3x mb-3"></i>
+                                <h3>No Users Found</h3>
+                                <p>Start adding users to see them here.</p>
                             </div>
                         \`;
-                    } else {
-                        userCards.innerHTML = users.map(user => \`
-                            <div class="col-md-4 col-lg-3">
-                                <div class="card">
-                                    <div class="card-img-wrapper">
-                                        <div class="user-status"></div>
-                                        <img src="\${user.image}"
-                                             class="card-img-top"
-                                             alt="User Avatar">
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            <i class="fas fa-user-circle"></i>
-                                            \${user.name}
-                                        </h5>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                <i class="fas fa-id-badge"></i> Chat ID: \${user.chatid}
-                                            </small>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        \`).join('');
+                        return;
                     }
 
-                    // Add fade-out animation to loading screen
-                    loadingContainer.style.opacity = '0';
+                    userGrid.innerHTML = users.map((user, index) => \`
+                        <div class="user-card" style="animation-delay: \${index * 0.1}s;">
+                            <div class="user-image-container">
+                                <img src="\${user.image}" class="user-image" alt="\${user.firstName}'s avatar">
+                            </div>
+                            <div class="user-info">
+                                <div class="user-name">\${user.firstName} \${user.lastName}</div>
+                                <div class="user-username">@\${user.username || 'No username'}</div>
+                                <div class="user-chatid">
+                                    <span>Chat ID: \${user.chatid}</span>
+                                    <button class="copy-btn" onclick="copyToClipboard('\${user.chatid}')">
+                                        <i class="fas fa-copy"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    \`).join('');
+
+                    // Add animation class to cards after they're added to DOM
                     setTimeout(() => {
-                        loadingContainer.style.display = 'none';
-                    }, 500);
+                        document.querySelectorAll('.user-card').forEach(card => {
+                            card.classList.add('animate');
+                        });
+                    }, 100);
 
                 } catch (error) {
                     console.error('Error fetching users:', error);
-                    document.getElementById('userCards').innerHTML = \`
-                        <div class="col-12">
-                            <div class="alert alert-danger" role="alert">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                Error loading users. Please try again later.
-                            </div>
+                    document.getElementById('userGrid').innerHTML = \`
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Error loading users. Please try again later.
                         </div>
                     \`;
                 }
+            }
+
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    const toast = document.getElementById('copiedToast');
+                    toast.classList.add('show');
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy text:', err);
+                });
             }
 
             document.addEventListener('DOMContentLoaded', fetchUsers);
@@ -572,8 +685,7 @@ app.post('/admin/send-notification', async (req, res) => {
 // Telegram Bot Handlers
 bot.onText(/\/start/, async (msg) => {
     let chatId = msg.chat.id;
-    const userName = msg.from.first_name; // Fetch the user's first name
-
+    
     try {
         // Convert and validate chatId
         if (typeof chatId === 'string' && chatId.startsWith('{')) {
@@ -586,17 +698,89 @@ bot.onText(/\/start/, async (msg) => {
             return;
         }
 
-        const users = await readUsers();
+        // Get user information from the message
+        const userData = {
+            chatid: chatId,
+            firstName: msg.from.first_name || '',
+            lastName: msg.from.last_name || '',
+            username: msg.from.username || '',
+            joinDate: new Date().toISOString(),
+            lastSeen: new Date().toISOString()
+        };
 
-        // Add the chat ID if it doesn't already exist
-        if (!users.includes(chatId)) {
-            await writeUsers(chatId);
+        // Get user's profile photos
+        try {
+            const userPhotos = await bot.getUserProfilePhotos(msg.from.id, { limit: 1 });
+            if (userPhotos && userPhotos.photos.length > 0) {
+                const photoFile = await bot.getFile(userPhotos.photos[0][0].file_id);
+                userData.image = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${photoFile.file_path}`;
+            } else {
+                // Generate avatar using user initials if no photo
+                const initials = `${(userData.firstName || 'U')[0]}${(userData.lastName || 'U')[0]}`;
+                userData.image = `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=random&size=200`;
+            }
+        } catch (photoError) {
+            console.error('Error fetching user photo:', photoError);
+            // Set default avatar if photo fetch fails
+            userData.image = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.firstName || 'U')}&background=random&size=200`;
         }
 
-        // Send a personalized welcome message
-        bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
+        const users = await readUsers();
+
+        // Check if user already exists
+        const existingUser = users.find(user => user.chatid === chatId);
+        if (!existingUser) {
+            // Add new user
+            await writeUsers(userData);
+            console.log('New user added:', userData);
+        } else {
+            // Update existing user's information
+            await sendDataToSheet([{
+                ...existingUser,
+                ...userData,
+                lastSeen: new Date().toISOString()
+            }]);
+            console.log('Existing user updated:', userData);
+        }
+
+        // Send a personalized welcome message with a nice card format
+        const welcomeMessage = `
+🌟 *Welcome, ${userData.firstName}!* 🌟
+
+I'm your AI-powered shopping assistant! I can help you find the best products from:
+• Amazon
+• Flipkart
+• Meesho
+
+Simply type a product name to get started!
+
+*Quick Tips:*
+• Use specific keywords for better results
+• Include brand names if you have preferences
+• You can ask for deals and offers too!
+
+Ready to start shopping? 🛍️`;
+
+        await bot.sendMessage(chatId, welcomeMessage, {
+            parse_mode: 'Markdown',
+            reply_markup: {
+                keyboard: [
+                    ['🔍 Search Products'],
+                    ['🎯 Today\'s Deals', '❤️ My Wishlist'],
+                    ['📱 Contact Support', '❓ Help']
+                ],
+                resize_keyboard: true
+            }
+        });
+
     } catch (error) {
         console.error('Error handling /start command:', error);
+        // Try to send an error message to the user
+        try {
+            await bot.sendMessage(chatId, 'Sorry, I encountered an error. Please try again later.');
+        } catch (msgError) {
+            console.error('Error sending error message:', msgError);
+        }
     }
 });
 
