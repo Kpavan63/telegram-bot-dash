@@ -144,55 +144,56 @@ async function writeTodayDeals(deals) {
 // Constants
 const SHEET_URL = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
 const DEFAULT_USER_LOGIN = 'Kpavan63';
-const DEFAULT_IMAGE = 'https://via.placeholder.com/150';
 
-// Function to get current UTC timestamp
+// Function to get current UTC timestamp in YYYY-MM-DD HH:MM:SS format
 function getUTCTimestamp() {
-  const now = new Date();
-  return now.toISOString().slice(0, 19).replace('T', ' ');
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+    const hours = String(now.getUTCHours()).padStart(2, '0');
+    const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
 
 // Function to send data to Google Sheets
 async function sendDataToSheet(data) {
-  try {
-    const response = await axios.post(SHEET_URL, data);
-    console.log('Data sent to Google Sheet:', response.data);
-    return response.data;
-  } catch (error) {
-    console.error('Error sending data to Google Sheet:', error);
-    throw new Error('Failed to send data to Google Sheet');
-  }
+    try {
+        const response = await axios.post(SHEET_URL, data);
+        console.log('Data sent to Google Sheet:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error sending data to Google Sheet:', error);
+        throw new Error('Failed to send data to Google Sheet');
+    }
 }
 
 // Function to read users from sheet
+// Function to read users from sheet
 async function readUsers() {
-  try {
-    const response = await axios.get(SHEET_URL);
-    return response.data.map(user => ({
-      chatid: user.chatid || '',
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      userName: user.userName || '',
-      userLogin: user.userLogin || DEFAULT_USER_LOGIN,
-      timestamp: user.timestamp || getUTCTimestamp(),
-      image: DEFAULT_IMAGE
-    }));
-  } catch (error) {
-    console.error('Error reading users:', error);
-    return [];
-  }
+    try {
+        const response = await axios.get(SHEET_URL);
+        return response.data || [];
+    } catch (error) {
+        console.error('Error reading users:', error);
+        return [];
+    }
 }
+
 
 
 // Function to check if user exists
 async function checkUserExists(chatId) {
-  try {
-    const users = await readUsers();
-    return users.some(user => user.chatid === chatId);
-  } catch (error) {
-    console.error('Error checking user existence:', error);
-    return false;
-  }
+    try {
+        const users = await readUsers();
+        return users.some(user => user.chatid === chatId);
+    } catch (error) {
+        console.error('Error checking user existence:', error);
+        return false;
+    }
 }
 
 
@@ -271,21 +272,25 @@ app.post('/api/users', async (req, res) => {
 });
 
 // API endpoint to get all users
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await readUsers();
-    res.json({ 
-      success: true, 
-      count: users.length,
-      users 
-    });
-  } catch (error) {
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to fetch users',
-      error: error.message 
-    });
-  }
+app.get('/admin/users', async (req, res) => {
+    try {
+        const users = await readUsers();
+        res.json({
+            success: true,
+            count: users.length,
+            users: users.map(user => ({
+                ...user,
+                image: 'https://via.placeholder.com/150'
+            }))
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch users',
+            error: error.message
+        });
+    }
 });
 
 // Serve the user details page
@@ -671,29 +676,35 @@ app.post('/admin/send-notification', async (req, res) => {
 // Telegram Bot Handlers
 bot.onText(/\/start/, async (msg) => {
     let chatId = msg.chat.id;
-    const userName = msg.from.first_name; // Fetch the user's first name
+    const userName = msg.from.first_name;
 
     try {
         // Convert and validate chatId
         if (typeof chatId === 'string' && chatId.startsWith('{')) {
             chatId = JSON.parse(chatId);
         }
-        chatId = Number(chatId);
+        chatId = chatId.toString(); // Convert to string for consistency
 
-        if (isNaN(chatId)) {
-            console.error('Invalid chatId:', chatId);
-            return;
-        }
+        // Prepare user data
+        const userData = {
+            chatid: chatId,
+            firstName: msg.from.first_name || '',
+            lastName: msg.from.last_name || '',
+            userName: msg.from.username || '',
+            userLogin: DEFAULT_USER_LOGIN,
+            timestamp: getUTCTimestamp()
+        };
 
         const users = await readUsers();
+        const userExists = users.some(user => user.chatid === chatId);
 
-        // Add the chat ID if it doesn't already exist
-        if (!users.includes(chatId)) {
-            await writeUsers(chatId);
+        if (!userExists) {
+            // Add new user to sheet
+            await sendDataToSheet([userData]);
+            bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
+        } else {
+            bot.sendMessage(chatId, `Welcome back, ${userName}! Please enter a product name to search.`);
         }
-
-        // Send a personalized welcome message
-        bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
     } catch (error) {
         console.error('Error handling /start command:', error);
     }
