@@ -156,22 +156,36 @@ async function sendDataToSheet(data) {
   }
 }
 
+// Function to read users from Google Sheets
 async function readUsers() {
-  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
-  try {
-    const response = await axios.get(url);
-    return response.data.map(user => ({
-      chatid: user.chatid,
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      username: user.username || '',
-      image: `https://ui-avatars.com/api/?name=${encodeURIComponent((user.firstName || 'U')[0])}+${encodeURIComponent((user.lastName || 'U')[0])}&background=random&size=200`
-    }));
-  } catch (error) {
-    console.error('Error reading users:', error);
-    return [];
-  }
+    const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
+    try {
+        const response = await axios.get(url);
+        console.log('Raw response from Sheets:', response.data); // Debug log
+
+        if (!Array.isArray(response.data)) {
+            console.error('Invalid data format from Sheets:', response.data);
+            return [];
+        }
+
+        // Map and validate each user
+        return response.data.map(user => ({
+            chatid: user.chatid?.toString() || '',
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            username: user.username || '',
+            // Add computed fields
+            displayName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown User',
+            image: `https://ui-avatars.com/api/?name=${encodeURIComponent((user.firstName || 'U')[0])}+${encodeURIComponent((user.lastName || 'U')[0])}&background=random&size=200`,
+            status: 'active',
+            joinDate: new Date().toISOString()
+        }));
+    } catch (error) {
+        console.error('Error reading users from Sheets:', error);
+        throw new Error(`Failed to read users: ${error.message}`);
+    }
 }
+
 
 async function writeUsers(userData) {
   try {
@@ -227,34 +241,57 @@ app.get('/send-chatid/:chatid', async (req, res) => {
 });
 
 // API endpoint to get all users with enhanced data
+// Modified API endpoint
 app.get('/admin/users', async (req, res) => {
-  try {
-    const users = await readUsers();
-    
-    // Transform the data to include additional information
-    const enhancedUsers = users.map(user => ({
-      ...user,
-      displayName: `${user.firstName} ${user.lastName}`.trim() || 'Unknown User',
-      image: user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || 'U')}+${encodeURIComponent(user.lastName || 'U')}&background=random`,
-      status: 'active', // You can implement actual status logic here
-      lastSeen: user.lastSeen || user.joinDate || new Date().toISOString()
-    }));
+    try {
+        const users = await readUsers();
+        console.log('Processed users:', users); // Debug log
 
-    // Add metadata to the response
-    res.json({
-      success: true,
-      count: enhancedUsers.length,
-      lastUpdated: new Date().toISOString(),
-      users: enhancedUsers
-    });
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to fetch users.',
-      error: error.message
-    });
-  }
+        if (!users || users.length === 0) {
+            return res.json({
+                success: true,
+                count: 0,
+                users: [],
+                message: 'No users found'
+            });
+        }
+
+        res.json({
+            success: true,
+            count: users.length,
+            lastUpdated: new Date().toISOString(),
+            users: users
+        });
+    } catch (error) {
+        console.error('Error in /admin/users endpoint:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch users',
+            error: error.message
+        });
+    }
+});
+
+// Debug endpoint with detailed error reporting
+app.get('/debug/sheets', async (req, res) => {
+    try {
+        const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
+        const response = await axios.get(url);
+        
+        res.json({
+            success: true,
+            rawData: response.data,
+            status: response.status,
+            headers: response.headers
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message,
+            stack: error.stack,
+            response: error.response?.data
+        });
+    }
 });
 
 // New endpoint to get specific user details
@@ -302,65 +339,102 @@ app.get('/admin/users/view', (req, res) => {
     <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>User Management</title>
+        <meta viewport="width=device-width, initial-scale=1.0">
+        <meta name="theme-color" content="#4361ee">
+        <title>User Management Dashboard</title>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
+            :root {
+                --primary-color: #4361ee;
+                --secondary-color: #3f37c9;
+                --text-color: #2d3748;
+                --bg-color: rgba(255, 255, 255, 0.95);
+            }
+
             body {
-                font-family: 'Segoe UI', sans-serif;
-                background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+                background: var(--primary-color);
+                background-image: url('https://raw.githubusercontent.com/Kpavan63/telegram-bot-dash/main/public/assets/bg-pattern.png'), 
+                                linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+                background-blend-mode: overlay;
+                background-size: cover;
+                background-attachment: fixed;
                 min-height: 100vh;
                 padding: 20px;
+                margin: 0;
+                overflow-x: hidden;
             }
 
             .container {
-                max-width: 1200px;
+                max-width: 1400px;
                 margin: 0 auto;
+                padding: 20px;
             }
 
             .header {
                 text-align: center;
                 color: white;
                 margin-bottom: 40px;
+                padding: 30px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
                 opacity: 0;
                 transform: translateY(-20px);
                 animation: fadeInDown 0.6s ease forwards;
             }
 
             .header h1 {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
                 font-weight: 700;
                 margin-bottom: 1rem;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             }
 
-            .user-counter {
+            .stats-container {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 20px;
+                flex-wrap: wrap;
+            }
+
+            .stat-card {
                 background: rgba(255, 255, 255, 0.2);
-                padding: 10px 20px;
-                border-radius: 20px;
-                display: inline-block;
-                margin-top: 10px;
+                padding: 15px 30px;
+                border-radius: 15px;
+                backdrop-filter: blur(5px);
+                transition: transform 0.3s ease;
+            }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
             }
 
             .user-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 20px;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 25px;
                 opacity: 0;
                 transform: translateY(20px);
                 animation: fadeInUp 0.6s ease forwards 0.3s;
             }
 
             .user-card {
-                background: white;
-                border-radius: 15px;
+                background: var(--bg-color);
+                border-radius: 20px;
                 overflow: hidden;
                 box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(10px);
             }
 
             .user-card:hover {
-                transform: translateY(-5px);
+                transform: translateY(-8px) scale(1.02);
                 box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             }
 
@@ -368,84 +442,125 @@ app.get('/admin/users/view', (req, res) => {
                 width: 100%;
                 height: 200px;
                 object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+
+            .user-card:hover .user-image {
+                transform: scale(1.05);
             }
 
             .user-info {
-                padding: 20px;
+                padding: 25px;
             }
 
             .user-name {
-                font-size: 1.25rem;
+                font-size: 1.4rem;
                 font-weight: 600;
-                color: #2d3748;
-                margin-bottom: 5px;
+                color: var(--text-color);
+                margin-bottom: 8px;
             }
 
             .user-username {
                 color: #718096;
-                font-size: 0.9rem;
-                margin-bottom: 15px;
+                font-size: 1rem;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
             }
 
             .user-id {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                background: #f7fafc;
-                padding: 8px 12px;
-                border-radius: 8px;
-                font-size: 0.9rem;
+                background: #f8fafc;
+                padding: 12px 15px;
+                border-radius: 12px;
+                font-size: 0.95rem;
             }
 
             .copy-btn {
-                background: #4361ee;
+                background: var(--primary-color);
                 color: white;
                 border: none;
-                padding: 5px 15px;
-                border-radius: 5px;
+                padding: 8px 20px;
+                border-radius: 8px;
                 cursor: pointer;
                 transition: all 0.2s ease;
-                font-size: 0.9rem;
+                font-size: 0.95rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
 
             .copy-btn:hover {
-                background: #3f37c9;
+                background: var(--secondary-color);
+                transform: translateY(-2px);
             }
 
             .back-btn {
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
+                bottom: 30px;
+                right: 30px;
                 background: white;
-                color: #4361ee;
-                padding: 12px 25px;
+                color: var(--primary-color);
+                padding: 15px 30px;
                 border-radius: 30px;
                 text-decoration: none;
                 box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                z-index: 1000;
             }
 
             .back-btn:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                color: var(--primary-color);
             }
 
             .toast {
                 position: fixed;
-                bottom: 20px;
+                bottom: 30px;
                 left: 50%;
-                transform: translateX(-50%);
+                transform: translateX(-50%) translateY(100px);
                 background: #48bb78;
                 color: white;
-                padding: 12px 24px;
-                border-radius: 8px;
-                font-size: 0.9rem;
+                padding: 15px 30px;
+                border-radius: 12px;
+                font-size: 1rem;
                 opacity: 0;
-                transition: all 0.3s ease;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 1000;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             }
 
             .toast.show {
                 opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+
+            .loading {
+                text-align: center;
+                color: white;
+                padding: 40px;
+            }
+
+            .loading i {
+                margin-bottom: 15px;
+            }
+
+            .error-container {
+                text-align: center;
+                color: white;
+                padding: 40px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                margin: 20px;
             }
 
             @keyframes fadeInDown {
@@ -462,15 +577,48 @@ app.get('/admin/users/view', (req, res) => {
                 }
             }
 
-            .loading {
-                text-align: center;
-                color: white;
-                padding: 20px;
-            }
-
             @media (max-width: 768px) {
+                .container {
+                    padding: 10px;
+                }
+
+                .header {
+                    padding: 20px;
+                    margin-bottom: 20px;
+                }
+
+                .header h1 {
+                    font-size: 2rem;
+                }
+
                 .user-grid {
                     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                    gap: 15px;
+                }
+
+                .stat-card {
+                    padding: 10px 20px;
+                }
+
+                .back-btn {
+                    bottom: 20px;
+                    right: 20px;
+                    padding: 12px 20px;
+                }
+            }
+
+            .skeleton {
+                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+                background-size: 200% 100%;
+                animation: loading 1.5s infinite;
+            }
+
+            @keyframes loading {
+                0% {
+                    background-position: 200% 0;
+                }
+                100% {
+                    background-position: -200% 0;
                 }
             }
         </style>
@@ -478,10 +626,16 @@ app.get('/admin/users/view', (req, res) => {
     <body>
         <div class="container">
             <div class="header">
-                <h1>User Management</h1>
-                <div class="user-counter">
-                    <i class="fas fa-users"></i>
-                    <span id="userCount">Loading users...</span>
+                <h1><i class="fas fa-users-gear"></i> User Management</h1>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <span id="userCount">Loading...</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-clock"></i>
+                        <span id="lastUpdate">Updating...</span>
+                    </div>
                 </div>
             </div>
 
@@ -494,15 +648,47 @@ app.get('/admin/users/view', (req, res) => {
         </div>
 
         <a href="/admin" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
+            <i class="fas fa-arrow-left"></i>
+            <span>Dashboard</span>
         </a>
 
         <div id="toast" class="toast">
-            Chat ID copied to clipboard!
+            <i class="fas fa-check-circle"></i> Chat ID copied successfully!
         </div>
 
         <script>
+            const updateLastSeen = (timestamp) => {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diff = Math.floor((now - date) / 1000);
+
+                if (diff < 60) return 'Just now';
+                if (diff < 3600) return \`\${Math.floor(diff / 60)} minutes ago\`;
+                if (diff < 86400) return \`\${Math.floor(diff / 3600)} hours ago\`;
+                return date.toLocaleDateString();
+            };
+
+            const createSkeletonCards = () => {
+                return Array(6).fill().map(() => \`
+                    <div class="user-card">
+                        <div class="skeleton" style="height: 200px;"></div>
+                        <div class="user-info">
+                            <div class="skeleton" style="height: 24px; width: 70%; margin-bottom: 10px;"></div>
+                            <div class="skeleton" style="height: 18px; width: 50%; margin-bottom: 20px;"></div>
+                            <div class="skeleton" style="height: 40px;"></div>
+                        </div>
+                    </div>
+                \`).join('');
+            };
+
             async function fetchUsers() {
+                const userGrid = document.getElementById('userGrid');
+                const userCount = document.getElementById('userCount');
+                const lastUpdate = document.getElementById('lastUpdate');
+
+                // Show skeleton loading
+                userGrid.innerHTML = createSkeletonCards();
+
                 try {
                     const response = await fetch('/admin/users');
                     const data = await response.json();
@@ -511,16 +697,19 @@ app.get('/admin/users/view', (req, res) => {
                         throw new Error(data.message);
                     }
 
-                    document.getElementById('userCount').textContent = \`\${data.count} Users Found\`;
+                    userCount.innerHTML = \`<strong>\${data.count}</strong> Users\`;
+                    lastUpdate.textContent = \`Updated \${updateLastSeen(data.lastUpdated)}\`;
 
-                    const userGrid = document.getElementById('userGrid');
-                    
-                    if (data.users.length === 0) {
+                    if (!data.users || data.users.length === 0) {
                         userGrid.innerHTML = \`
-                            <div style="grid-column: 1/-1; text-align: center; color: white;">
+                            <div class="error-container">
                                 <i class="fas fa-users fa-3x mb-3"></i>
                                 <h3>No Users Found</h3>
-                                <p>Start adding users to see them here.</p>
+                                <p>Users will appear here once they start using the bot.</p>
+                                <button onclick="location.reload()" class="copy-btn mt-3">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Refresh
+                                </button>
                             </div>
                         \`;
                         return;
@@ -528,14 +717,19 @@ app.get('/admin/users/view', (req, res) => {
 
                     userGrid.innerHTML = data.users.map(user => \`
                         <div class="user-card">
-                            <img src="\${user.image}" alt="\${user.firstName}'s avatar" class="user-image">
+                            <img src="\${user.image}" alt="\${user.firstName}'s avatar" class="user-image"
+                                onerror="this.src='https://ui-avatars.com/api/?name=U&background=random'">
                             <div class="user-info">
                                 <div class="user-name">\${user.firstName} \${user.lastName}</div>
-                                <div class="user-username">@\${user.username || 'No username'}</div>
+                                <div class="user-username">
+                                    <i class="fas fa-at"></i>
+                                    \${user.username || 'No username'}
+                                </div>
                                 <div class="user-id">
-                                    <span>ID: \${user.chatid}</span>
+                                    <span><i class="fas fa-fingerprint"></i> \${user.chatid}</span>
                                     <button class="copy-btn" onclick="copyToClipboard('\${user.chatid}')">
-                                        <i class="fas fa-copy"></i> Copy
+                                        <i class="fas fa-copy"></i>
+                                        Copy ID
                                     </button>
                                 </div>
                             </div>
@@ -544,11 +738,15 @@ app.get('/admin/users/view', (req, res) => {
 
                 } catch (error) {
                     console.error('Error:', error);
-                    document.getElementById('userGrid').innerHTML = \`
-                        <div style="grid-column: 1/-1; text-align: center; color: white;">
+                    userGrid.innerHTML = \`
+                        <div class="error-container">
                             <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
                             <h3>Error Loading Users</h3>
                             <p>\${error.message}</p>
+                            <button onclick="fetchUsers()" class="copy-btn mt-3">
+                                <i class="fas fa-sync-alt"></i>
+                                Try Again
+                            </button>
                         </div>
                     \`;
                 }
@@ -569,7 +767,148 @@ app.get('/admin/users/view', (req, res) => {
                     });
             }
 
+            // Initialize
             document.addEventListener('DOMContentLoaded', fetchUsers);
+
+            // Auto-refresh every 5 minutes
+            setInterval(fetchUsers, 300000);
+
+            // Add real-time updates
+            let lastUpdateTime = Date.now();
+            
+            // Update the "last updated" text every minute
+            setInterval(() => {
+                const lastUpdate = document.getElementById('lastUpdate');
+                if (lastUpdate) {
+                    lastUpdate.textContent = `Updated ${updateLastSeen(lastUpdateTime)}`;
+                }
+            }, 60000);
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Press 'R' to refresh
+                if (e.key === 'r' && !e.ctrlKey && !e.metaKey) {
+                    fetchUsers();
+                }
+                // Press 'B' to go back to dashboard
+                if (e.key === 'b' && !e.ctrlKey && !e.metaKey) {
+                    window.location.href = '/admin';
+                }
+            });
+
+            // Add offline support
+            window.addEventListener('online', () => {
+                fetchUsers();
+                showToast('Connection restored', 'success');
+            });
+
+            window.addEventListener('offline', () => {
+                showToast('Connection lost', 'error');
+            });
+
+            // Enhanced toast function
+            function showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                toast.className = 'toast';
+                toast.classList.add(type);
+                toast.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${message}
+                `;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // Add search functionality
+            const addSearch = () => {
+                const header = document.querySelector('.header');
+                const searchHTML = `
+                    <div class="search-container">
+                        <input type="text" 
+                               id="userSearch" 
+                               placeholder="Search users..." 
+                               class="search-input"
+                               style="
+                                    padding: 10px 20px;
+                                    border-radius: 30px;
+                                    border: none;
+                                    background: rgba(255, 255, 255, 0.2);
+                                    backdrop-filter: blur(5px);
+                                    color: white;
+                                    width: 300px;
+                                    margin-top: 20px;
+                                    outline: none;
+                               "
+                        >
+                    </div>
+                `;
+                header.insertAdjacentHTML('beforeend', searchHTML);
+
+                const searchInput = document.getElementById('userSearch');
+                searchInput.addEventListener('input', (e) => {
+                    const searchTerm = e.target.value.toLowerCase();
+                    const userCards = document.querySelectorAll('.user-card');
+                    
+                    userCards.forEach(card => {
+                        const userName = card.querySelector('.user-name').textContent.toLowerCase();
+                        const userUsername = card.querySelector('.user-username').textContent.toLowerCase();
+                        const userId = card.querySelector('.user-id').textContent.toLowerCase();
+                        
+                        if (userName.includes(searchTerm) || 
+                            userUsername.includes(searchTerm) || 
+                            userId.includes(searchTerm)) {
+                            card.style.display = '';
+                            card.style.animation = 'fadeInUp 0.3s ease forwards';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            };
+
+            // Initialize search after DOM loads
+            document.addEventListener('DOMContentLoaded', () => {
+                fetchUsers();
+                addSearch();
+            });
+
+            // Add loading progress bar
+            const addProgressBar = () => {
+                const progress = document.createElement('div');
+                progress.innerHTML = `
+                    <div id="progressBar" 
+                         style="
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            height: 3px;
+                            width: 0;
+                            background: linear-gradient(to right, #4361ee, #3f37c9);
+                            transition: width 0.3s ease;
+                            z-index: 1000;
+                         "
+                    ></div>
+                `;
+                document.body.appendChild(progress);
+            };
+
+            // Show progress bar during fetch
+            const updateProgress = (percent) => {
+                const progressBar = document.getElementById('progressBar');
+                if (progressBar) {
+                    progressBar.style.width = `${percent}%`;
+                    if (percent === 100) {
+                        setTimeout(() => {
+                            progressBar.style.width = '0';
+                        }, 500);
+                    }
+                }
+            };
+
+            // Initialize progress bar
+            addProgressBar();
         </script>
     </body>
     </html>
