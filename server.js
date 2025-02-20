@@ -140,38 +140,42 @@ async function writeTodayDeals(deals) {
     console.error('Error writing today deals:', error);
   }
 }
-// Function to format UTC timestamp in YYYY-MM-DD HH:MM:SS format
+
+// Constants
+const SHEET_URL = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
+const DEFAULT_USER_LOGIN = 'Kpavan63';
+const DEFAULT_IMAGE = 'https://via.placeholder.com/150';
+
+// Function to get current UTC timestamp
 function getUTCTimestamp() {
   const now = new Date();
   return now.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-// Function to send data to Google Sheets using Steinhq API
+// Function to send data to Google Sheets
 async function sendDataToSheet(data) {
-  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
-    const response = await axios.post(url, data);
+    const response = await axios.post(SHEET_URL, data);
     console.log('Data sent to Google Sheet:', response.data);
+    return response.data;
   } catch (error) {
     console.error('Error sending data to Google Sheet:', error);
     throw new Error('Failed to send data to Google Sheet');
   }
 }
 
-// Update the readUsers function
+// Function to read users from sheet
 async function readUsers() {
-  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
-    const response = await axios.get(url);
+    const response = await axios.get(SHEET_URL);
     return response.data.map(user => ({
-      chatid: user.chatid,
+      chatid: user.chatid || '',
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       userName: user.userName || '',
-      userLogin: user.userLogin || '',
-      timestamp: user.timestamp || '',
-      name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown',
-      image: user.image || 'https://via.placeholder.com/150'
+      userLogin: user.userLogin || DEFAULT_USER_LOGIN,
+      timestamp: user.timestamp || getUTCTimestamp(),
+      image: DEFAULT_IMAGE
     }));
   } catch (error) {
     console.error('Error reading users:', error);
@@ -179,7 +183,8 @@ async function readUsers() {
   }
 }
 
-// Function to check if user already exists
+
+// Function to check if user exists
 async function checkUserExists(chatId) {
   try {
     const users = await readUsers();
@@ -190,30 +195,36 @@ async function checkUserExists(chatId) {
   }
 }
 
-// Function to write users to Google Sheets
-async function writeUsers(chatId, userData = {}) {
+
+// Function to write user data
+async function writeUserData(userData) {
+  if (!userData.chatid) {
+    throw new Error('Chat ID is required');
+  }
+
   try {
-    const exists = await checkUserExists(chatId);
+    const exists = await checkUserExists(userData.chatid);
     if (exists) {
-      console.log(`User with chat ID ${chatId} already exists in the sheet.`);
-      return;
+      console.log(`User with chat ID ${userData.chatid} already exists`);
+      return false;
     }
 
     const data = [{
-      chatid: chatId,
+      chatid: userData.chatid,
       firstName: userData.firstName || '',
       lastName: userData.lastName || '',
       userName: userData.userName || '',
-      userLogin: userData.userLogin || '',
+      userLogin: DEFAULT_USER_LOGIN,
       timestamp: getUTCTimestamp()
     }];
 
     await sendDataToSheet(data);
+    return true;
   } catch (error) {
-    console.error('Error writing user:', error);
+    console.error('Error writing user data:', error);
+    throw error;
   }
 }
-
 
 // API endpoint to send chat ID to Google Sheets
 app.get('/send-chatid/:chatid', async (req, res) => {
@@ -233,19 +244,52 @@ app.get('/send-chatid/:chatid', async (req, res) => {
 });
 
 
+// API endpoint to add new user
+app.post('/api/users', async (req, res) => {
+  try {
+    const userData = req.body;
+    const result = await writeUserData(userData);
+    
+    if (result) {
+      res.json({ 
+        success: true, 
+        message: 'User data added successfully' 
+      });
+    } else {
+      res.json({ 
+        success: false, 
+        message: 'User already exists' 
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to add user data',
+      error: error.message 
+    });
+  }
+});
+
 // API endpoint to get all users
-app.get('/admin/users', async (req, res) => {
+app.get('/api/users', async (req, res) => {
   try {
     const users = await readUsers();
-    res.json(users);
+    res.json({ 
+      success: true, 
+      count: users.length,
+      users 
+    });
   } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ success: false, message: 'Failed to fetch users.' });
+    res.status(500).json({ 
+      success: false, 
+      message: 'Failed to fetch users',
+      error: error.message 
+    });
   }
 });
 
 // Serve the user details page
-// Serve the user details page
+// Serve the user dashboard page
 app.get('/admin/users/view', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -253,116 +297,271 @@ app.get('/admin/users/view', (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>User Management Dashboard</title>
+        <title>User Dashboard</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
-            /* ... (previous styles remain the same) ... */
+            :root {
+                --primary-color: #4f46e5;
+                --secondary-color: #818cf8;
+                --success-color: #10b981;
+                --background-color: #f3f4f6;
+                --card-background: #ffffff;
+                --text-primary: #111827;
+                --text-secondary: #6b7280;
+            }
+
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: var(--background-color);
+                color: var(--text-primary);
+                min-height: 100vh;
+                padding: 2rem 0;
+            }
+
+            .dashboard-header {
+                background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+                padding: 2rem;
+                border-radius: 1rem;
+                margin-bottom: 2rem;
+                color: white;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .search-container {
+                background: white;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                margin-bottom: 2rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .search-input {
+                border: 1px solid #e5e7eb;
+                border-radius: 0.5rem;
+                padding: 0.5rem 1rem;
+                width: 100%;
+            }
+
+            .user-card {
+                background: var(--card-background);
+                border-radius: 1rem;
+                overflow: hidden;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                transition: transform 0.2s, box-shadow 0.2s;
+                margin-bottom: 1.5rem;
+            }
+
+            .user-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            }
+
+            .user-header {
+                background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+                color: white;
+                padding: 1rem;
+                position: relative;
+            }
+
+            .user-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                border: 3px solid white;
+                margin: -40px auto 0;
+                display: block;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            }
+
+            .user-info {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .user-name {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin: 0.5rem 0;
+                color: var(--text-primary);
+            }
+
+            .user-details {
+                color: var(--text-secondary);
+                font-size: 0.875rem;
+            }
+
+            .detail-item {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .badge-active {
+                background-color: var(--success-color);
+                color: white;
+                padding: 0.25rem 0.75rem;
+                border-radius: 9999px;
+                font-size: 0.75rem;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+            }
+
+            .stats {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                margin: 1rem 0;
+                padding: 0.5rem;
+                background: var(--background-color);
+                border-radius: 0.5rem;
+            }
+
+            .stat-item {
+                text-align: center;
+                padding: 0.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: var(--primary-color);
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+                color: var(--text-secondary);
+            }
+
+            @media (max-width: 768px) {
+                .container {
+                    padding: 1rem;
+                }
+            }
         </style>
     </head>
     <body>
         <div class="container">
-            <h1 class="dashboard-title">User Management Dashboard</h1>
-            <div class="text-center">
-                <div id="userCount" class="user-count">
-                    <i class="fas fa-users"></i>
-                    <span>Loading users...</span>
-                </div>
+            <div class="dashboard-header">
+                <h1 class="h3 mb-0">User Management Dashboard</h1>
+                <p class="mb-0">Monitor and manage your users</p>
             </div>
-            <div class="row" id="userCards">
-                <!-- User cards will be populated here -->
+
+            <div class="search-container">
+                <input type="text" 
+                       id="searchInput" 
+                       class="search-input" 
+                       placeholder="Search users...">
             </div>
-        </div>
 
-        <div id="loadingContainer" class="loading-container">
-            <div class="loading-spinner"></div>
+            <div class="row" id="userCards"></div>
         </div>
-
-        <a href="/admin" class="back-button">
-            <i class="fas fa-arrow-left"></i> Back to Admin
-        </a>
 
         <script>
-            async function fetchUsers() {
+            async function loadUsers() {
                 try {
-                    const response = await fetch('/admin/users');
-                    const users = await response.json();
-                    const userCards = document.getElementById('userCards');
-                    const loadingContainer = document.getElementById('loadingContainer');
-                    const userCount = document.getElementById('userCount');
-
-                    // Update user count
-                    userCount.innerHTML = \`
-                        <i class="fas fa-users"></i>
-                        <span>\${users.length} Users Found</span>
-                    \`;
-
-                    if (users.length === 0) {
-                        userCards.innerHTML = \`
-                            <div class="col-12">
-                                <div class="empty-state">
-                                    <i class="fas fa-users fa-3x mb-3"></i>
-                                    <h3>No Users Found</h3>
-                                    <p>Start adding users to see them here.</p>
-                                </div>
-                            </div>
-                        \`;
-                    } else {
-                        userCards.innerHTML = users.map(user => \`
-                            <div class="col-md-4 col-lg-3">
-                                <div class="card">
-                                    <div class="card-img-wrapper">
-                                        <div class="user-status"></div>
-                                        <img src="\${user.image}"
-                                             class="card-img-top"
-                                             alt="User Avatar">
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            <i class="fas fa-user-circle"></i>
-                                            \${user.name}
-                                        </h5>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                <i class="fas fa-id-badge"></i> Chat ID: \${user.chatid}
-                                            </small>
-                                        </p>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                <i class="fas fa-user"></i> Login: \${user.userLogin}
-                                            </small>
-                                        </p>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                <i class="fas fa-clock"></i> Added: \${user.timestamp}
-                                            </small>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        \`).join('');
+                    const response = await fetch('/api/users');
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        throw new Error(data.message);
                     }
 
-                    // Add fade-out animation to loading screen
-                    loadingContainer.style.opacity = '0';
-                    setTimeout(() => {
-                        loadingContainer.style.display = 'none';
-                    }, 500);
+                    const userCards = document.getElementById('userCards');
+                    
+                    if (data.users.length === 0) {
+                        userCards.innerHTML = \`
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-users fa-3x mb-3 text-secondary"></i>
+                                <h3>No Users Found</h3>
+                                <p class="text-muted">Start adding users to see them here</p>
+                            </div>
+                        \`;
+                        return;
+                    }
+
+                    userCards.innerHTML = data.users.map(user => \`
+                        <div class="col-md-6 col-lg-4 user-card-container">
+                            <div class="user-card">
+                                <div class="user-header">
+                                    <span class="badge-active">
+                                        <i class="fas fa-circle me-1"></i>
+                                        Active
+                                    </span>
+                                </div>
+                                <img src="\${user.image}" 
+                                     alt="User Avatar" 
+                                     class="user-avatar">
+                                <div class="user-info">
+                                    <h5 class="user-name">
+                                        \${user.firstName} \${user.lastName}
+                                    </h5>
+                                    <div class="user-details">
+                                        <div class="detail-item">
+                                            <i class="fas fa-at"></i>
+                                            <span>\${user.userName || 'No username'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-id-badge"></i>
+                                            <span>\${user.chatid}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-user-tag"></i>
+                                            <span>\${user.userLogin}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <i class="fas fa-clock"></i>
+                                            <span>\${user.timestamp}</span>
+                                        </div>
+                                    </div>
+                                    <div class="stats">
+                                        <div class="stat-item">
+                                            <div class="stat-value">
+                                                <i class="fas fa-message"></i>
+                                            </div>
+                                            <div class="stat-label">Messages</div>
+                                        </div>
+                                        <div class="stat-item">
+                                            <div class="stat-value">
+                                                <i class="fas fa-calendar"></i>
+                                            </div>
+                                            <div class="stat-label">Joined</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    \`).join('');
+
+                    // Implement search functionality
+                    const searchInput = document.getElementById('searchInput');
+                    searchInput.addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        const cards = document.querySelectorAll('.user-card-container');
+                        
+                        cards.forEach(card => {
+                            const text = card.textContent.toLowerCase();
+                            card.style.display = text.includes(searchTerm) ? '' : 'none';
+                        });
+                    });
 
                 } catch (error) {
-                    console.error('Error fetching users:', error);
+                    console.error('Error loading users:', error);
                     document.getElementById('userCards').innerHTML = \`
                         <div class="col-12">
                             <div class="alert alert-danger" role="alert">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                Error loading users. Please try again later.
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Failed to load users. Please try again later.
                             </div>
                         </div>
                     \`;
                 }
             }
 
-            document.addEventListener('DOMContentLoaded', fetchUsers);
+            document.addEventListener('DOMContentLoaded', loadUsers);
         </script>
     </body>
     </html>
@@ -372,7 +571,11 @@ app.get('/admin/users/view', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unexpected error:', err);
-  res.status(500).json({ success: false, message: 'An unexpected error occurred.' });
+  res.status(500).json({
+    success: false,
+    message: 'An unexpected error occurred',
+    error: err.message
+  });
 });
 
 // Serve static files from the "public" folder
