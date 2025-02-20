@@ -334,585 +334,335 @@ app.get('/admin/users/:chatid', async (req, res) => {
 // Serve the user details page
 // User Management Dashboard
 app.get('/admin/users/view', (req, res) => {
+  const currentDate = new Date().toLocaleString('en-US', { 
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+
   res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta viewport="width=device-width, initial-scale=1.0">
-        <meta name="theme-color" content="#4361ee">
-        <title>User Management Dashboard</title>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <style>
-            :root {
-                --primary-color: #4361ee;
-                --secondary-color: #3f37c9;
-                --text-color: #2d3748;
-                --bg-color: rgba(255, 255, 255, 0.95);
-            }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Products Bot - User Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #48bb78;
+            --background: #f8fafc;
+            --text: #2d3748;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            body {
-                font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-                background: var(--primary-color);
-                background-image: url('https://raw.githubusercontent.com/Kpavan63/telegram-bot-dash/main/public/assets/bg-pattern.png'), 
-                                linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-                background-blend-mode: overlay;
-                background-size: cover;
-                background-attachment: fixed;
-                min-height: 100vh;
-                padding: 20px;
-                margin: 0;
-                overflow-x: hidden;
-            }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
 
-            .container {
-                max-width: 1400px;
-                margin: 0 auto;
-                padding: 20px;
-            }
+        .dashboard-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-            .header {
-                text-align: center;
-                color: white;
-                margin-bottom: 40px;
-                padding: 30px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border-radius: 20px;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        .header-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .search-section {
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 0.8rem 1rem 0.8rem 3rem;
+            border: none;
+            border-radius: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-header {
+            padding: 1.5rem;
+            background: var(--background);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            padding: 1.5rem;
+        }
+
+        .user-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--secondary);
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            opacity: 0;
+            transform: translateY(1rem);
+            transition: all 0.3s ease;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes fadeIn {
+            from {
                 opacity: 0;
-                transform: translateY(-20px);
-                animation: fadeInDown 0.6s ease forwards;
+                transform: translateY(-10px);
             }
-
-            .header h1 {
-                font-size: 2.8rem;
-                font-weight: 700;
-                margin-bottom: 1rem;
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            }
-
-            .stats-container {
-                display: flex;
-                justify-content: center;
-                gap: 20px;
-                margin-top: 20px;
-                flex-wrap: wrap;
-            }
-
-            .stat-card {
-                background: rgba(255, 255, 255, 0.2);
-                padding: 15px 30px;
-                border-radius: 15px;
-                backdrop-filter: blur(5px);
-                transition: transform 0.3s ease;
-            }
-
-            .stat-card:hover {
-                transform: translateY(-5px);
-            }
-
-            .user-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 25px;
-                opacity: 0;
-                transform: translateY(20px);
-                animation: fadeInUp 0.6s ease forwards 0.3s;
-            }
-
-            .user-card {
-                background: var(--bg-color);
-                border-radius: 20px;
-                overflow: hidden;
-                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                backdrop-filter: blur(10px);
-            }
-
-            .user-card:hover {
-                transform: translateY(-8px) scale(1.02);
-                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            }
-
-            .user-image {
-                width: 100%;
-                height: 200px;
-                object-fit: cover;
-                transition: transform 0.3s ease;
-            }
-
-            .user-card:hover .user-image {
-                transform: scale(1.05);
-            }
-
-            .user-info {
-                padding: 25px;
-            }
-
-            .user-name {
-                font-size: 1.4rem;
-                font-weight: 600;
-                color: var(--text-color);
-                margin-bottom: 8px;
-            }
-
-            .user-username {
-                color: #718096;
-                font-size: 1rem;
-                margin-bottom: 20px;
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            }
-
-            .user-id {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                background: #f8fafc;
-                padding: 12px 15px;
-                border-radius: 12px;
-                font-size: 0.95rem;
-            }
-
-            .copy-btn {
-                background: var(--primary-color);
-                color: white;
-                border: none;
-                padding: 8px 20px;
-                border-radius: 8px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-                font-size: 0.95rem;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .copy-btn:hover {
-                background: var(--secondary-color);
-                transform: translateY(-2px);
-            }
-
-            .back-btn {
-                position: fixed;
-                bottom: 30px;
-                right: 30px;
-                background: white;
-                color: var(--primary-color);
-                padding: 15px 30px;
-                border-radius: 30px;
-                text-decoration: none;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
-                backdrop-filter: blur(10px);
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                z-index: 1000;
-            }
-
-            .back-btn:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                color: var(--primary-color);
-            }
-
-            .toast {
-                position: fixed;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%) translateY(100px);
-                background: #48bb78;
-                color: white;
-                padding: 15px 30px;
-                border-radius: 12px;
-                font-size: 1rem;
-                opacity: 0;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 1000;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            }
-
-            .toast.show {
+            to {
                 opacity: 1;
-                transform: translateX(-50%) translateY(0);
+                transform: translateY(0);
             }
+        }
 
-            .loading {
-                text-align: center;
-                color: white;
-                padding: 40px;
+        @media (max-width: 768px) {
+            .dashboard-container {
+                padding: 1rem;
             }
-
-            .loading i {
-                margin-bottom: 15px;
+            
+            .users-grid {
+                grid-template-columns: 1fr;
             }
-
-            .error-container {
-                text-align: center;
-                color: white;
-                padding: 40px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border-radius: 20px;
-                margin: 20px;
+            
+            .header-section {
+                padding: 1.5rem;
             }
-
-            @keyframes fadeInDown {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            @keyframes fadeInUp {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            @media (max-width: 768px) {
-                .container {
-                    padding: 10px;
-                }
-
-                .header {
-                    padding: 20px;
-                    margin-bottom: 20px;
-                }
-
-                .header h1 {
-                    font-size: 2rem;
-                }
-
-                .user-grid {
-                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                    gap: 15px;
-                }
-
-                .stat-card {
-                    padding: 10px 20px;
-                }
-
-                .back-btn {
-                    bottom: 20px;
-                    right: 20px;
-                    padding: 12px 20px;
-                }
-            }
-
-            .skeleton {
-                background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-                background-size: 200% 100%;
-                animation: loading 1.5s infinite;
-            }
-
-            @keyframes loading {
-                0% {
-                    background-position: 200% 0;
-                }
-                100% {
-                    background-position: -200% 0;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1><i class="fas fa-users-gear"></i> User Management</h1>
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <i class="fas fa-users"></i>
-                        <span id="userCount">Loading...</span>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-clock"></i>
-                        <span id="lastUpdate">Updating...</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="userGrid" class="user-grid">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin fa-2x"></i>
-                    <p>Loading users...</p>
-                </div>
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header-section">
+            <h1><i class="fas fa-users-cog"></i> User Management</h1>
+            <p>Last Updated: ${currentDate} UTC</p>
+            
+            <div class="search-section">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="userSearch" class="search-input" placeholder="Search users by name, username, or ID...">
             </div>
         </div>
 
-        <a href="/admin" class="back-btn">
-            <i class="fas fa-arrow-left"></i>
-            <span>Dashboard</span>
-        </a>
-
-        <div id="toast" class="toast">
-            <i class="fas fa-check-circle"></i> Chat ID copied successfully!
+        <div id="usersGrid" class="users-grid">
+            <!-- Users will be loaded here -->
+            <div class="text-center text-white">
+                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
+                <p>Loading users...</p>
+            </div>
         </div>
+    </div>
 
-        <script>
-            const updateLastSeen = (timestamp) => {
-                const date = new Date(timestamp);
-                const now = new Date();
-                const diff = Math.floor((now - date) / 1000);
+    <div id="toast" class="toast-notification">
+        <i class="fas fa-check-circle"></i> Copied to clipboard!
+    </div>
 
-                if (diff < 60) return 'Just now';
-                if (diff < 3600) return \`\${Math.floor(diff / 60)} minutes ago\`;
-                if (diff < 86400) return \`\${Math.floor(diff / 3600)} hours ago\`;
-                return date.toLocaleDateString();
-            };
+    <script>
+        async function fetchUsers() {
+            try {
+                const response = await fetch('/admin/users');
+                const data = await response.json();
 
-            const createSkeletonCards = () => {
-                return Array(6).fill().map(() => \`
-                    <div class="user-card">
-                        <div class="skeleton" style="height: 200px;"></div>
+                const usersGrid = document.getElementById('usersGrid');
+                
+                if (!data.success) {
+                    usersGrid.innerHTML = \`
+                        <div class="text-center text-white">
+                            <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                            <h3>Error</h3>
+                            <p>\${data.message || 'Failed to load users'}</p>
+                        </div>
+                    \`;
+                    return;
+                }
+
+                if (data.users.length === 0) {
+                    usersGrid.innerHTML = \`
+                        <div class="text-center text-white">
+                            <i class="fas fa-users fa-2x mb-3"></i>
+                            <h3>No Users Found</h3>
+                            <p>Users will appear here when they start using the bot.</p>
+                        </div>
+                    \`;
+                    return;
+                }
+
+                usersGrid.innerHTML = data.users.map(user => \`
+                    <div class="user-card" data-search="\${user.firstName.toLowerCase()} \${user.lastName.toLowerCase()} \${user.username.toLowerCase()} \${user.chatid}">
+                        <div class="user-header">
+                            <img src="\${user.image}" alt="\${user.firstName}'s avatar" class="user-avatar"
+                                onerror="this.src='https://ui-avatars.com/api/?name=\${encodeURIComponent(user.firstName[0] || '?')}&background=random'">
+                            <div>
+                                <div class="user-name">\${user.firstName} \${user.lastName}</div>
+                                <div class="user-detail">
+                                    <i class="fas fa-at"></i>
+                                    <span>\${user.username || 'No username'}</span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="user-info">
-                            <div class="skeleton" style="height: 24px; width: 70%; margin-bottom: 10px;"></div>
-                            <div class="skeleton" style="height: 18px; width: 50%; margin-bottom: 20px;"></div>
-                            <div class="skeleton" style="height: 40px;"></div>
+                            <div class="user-detail">
+                                <i class="fas fa-fingerprint"></i>
+                                <span>Chat ID: \${user.chatid}</span>
+                            </div>
+                            <button class="copy-btn" onclick="copyToClipboard('\${user.chatid}')">
+                                <i class="fas fa-copy"></i>
+                                Copy ID
+                            </button>
                         </div>
                     </div>
                 \`).join('');
-            };
-
-            async function fetchUsers() {
-                const userGrid = document.getElementById('userGrid');
-                const userCount = document.getElementById('userCount');
-                const lastUpdate = document.getElementById('lastUpdate');
-
-                // Show skeleton loading
-                userGrid.innerHTML = createSkeletonCards();
-
-                try {
-                    const response = await fetch('/admin/users');
-                    const data = await response.json();
-
-                    if (!data.success) {
-                        throw new Error(data.message);
-                    }
-
-                    userCount.innerHTML = \`<strong>\${data.count}</strong> Users\`;
-                    lastUpdate.textContent = \`Updated \${updateLastSeen(data.lastUpdated)}\`;
-
-                    if (!data.users || data.users.length === 0) {
-                        userGrid.innerHTML = \`
-                            <div class="error-container">
-                                <i class="fas fa-users fa-3x mb-3"></i>
-                                <h3>No Users Found</h3>
-                                <p>Users will appear here once they start using the bot.</p>
-                                <button onclick="location.reload()" class="copy-btn mt-3">
-                                    <i class="fas fa-sync-alt"></i>
-                                    Refresh
-                                </button>
-                            </div>
-                        \`;
-                        return;
-                    }
-
-                    userGrid.innerHTML = data.users.map(user => \`
-                        <div class="user-card">
-                            <img src="\${user.image}" alt="\${user.firstName}'s avatar" class="user-image"
-                                onerror="this.src='https://ui-avatars.com/api/?name=U&background=random'">
-                            <div class="user-info">
-                                <div class="user-name">\${user.firstName} \${user.lastName}</div>
-                                <div class="user-username">
-                                    <i class="fas fa-at"></i>
-                                    \${user.username || 'No username'}
-                                </div>
-                                <div class="user-id">
-                                    <span><i class="fas fa-fingerprint"></i> \${user.chatid}</span>
-                                    <button class="copy-btn" onclick="copyToClipboard('\${user.chatid}')">
-                                        <i class="fas fa-copy"></i>
-                                        Copy ID
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    \`).join('');
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    userGrid.innerHTML = \`
-                        <div class="error-container">
-                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
-                            <h3>Error Loading Users</h3>
-                            <p>\${error.message}</p>
-                            <button onclick="fetchUsers()" class="copy-btn mt-3">
-                                <i class="fas fa-sync-alt"></i>
-                                Try Again
-                            </button>
-                        </div>
-                    \`;
-                }
-            }
-
-            function copyToClipboard(text) {
-                navigator.clipboard.writeText(text)
-                    .then(() => {
-                        const toast = document.getElementById('toast');
-                        toast.classList.add('show');
-                        setTimeout(() => {
-                            toast.classList.remove('show');
-                        }, 2000);
-                    })
-                    .catch(err => {
-                        console.error('Failed to copy:', err);
-                        alert('Failed to copy chat ID');
-                    });
-            }
-
-            // Initialize
-            document.addEventListener('DOMContentLoaded', fetchUsers);
-
-            // Auto-refresh every 5 minutes
-            setInterval(fetchUsers, 300000);
-
-            // Add real-time updates
-            let lastUpdateTime = Date.now();
-            
-            // Update the "last updated" text every minute
-            setInterval(() => {
-                const lastUpdate = document.getElementById('lastUpdate');
-                if (lastUpdate) {
-                    lastUpdate.textContent = `Updated ${updateLastSeen(lastUpdateTime)}`;
-                }
-            }, 60000);
-
-            // Add keyboard shortcuts
-            document.addEventListener('keydown', (e) => {
-                // Press 'R' to refresh
-                if (e.key === 'r' && !e.ctrlKey && !e.metaKey) {
-                    fetchUsers();
-                }
-                // Press 'B' to go back to dashboard
-                if (e.key === 'b' && !e.ctrlKey && !e.metaKey) {
-                    window.location.href = '/admin';
-                }
-            });
-
-            // Add offline support
-            window.addEventListener('online', () => {
-                fetchUsers();
-                showToast('Connection restored', 'success');
-            });
-
-            window.addEventListener('offline', () => {
-                showToast('Connection lost', 'error');
-            });
-
-            // Enhanced toast function
-            function showToast(message, type = 'success') {
-                const toast = document.getElementById('toast');
-                toast.className = 'toast';
-                toast.classList.add(type);
-                toast.innerHTML = `
-                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                    ${message}
-                `;
-                toast.classList.add('show');
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
-
-            // Add search functionality
-            const addSearch = () => {
-                const header = document.querySelector('.header');
-                const searchHTML = `
-                    <div class="search-container">
-                        <input type="text" 
-                               id="userSearch" 
-                               placeholder="Search users..." 
-                               class="search-input"
-                               style="
-                                    padding: 10px 20px;
-                                    border-radius: 30px;
-                                    border: none;
-                                    background: rgba(255, 255, 255, 0.2);
-                                    backdrop-filter: blur(5px);
-                                    color: white;
-                                    width: 300px;
-                                    margin-top: 20px;
-                                    outline: none;
-                               "
-                        >
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('usersGrid').innerHTML = \`
+                    <div class="text-center text-white">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                        <h3>Error</h3>
+                        <p>Failed to load users. Please try again later.</p>
                     </div>
-                `;
-                header.insertAdjacentHTML('beforeend', searchHTML);
+                \`;
+            }
+        }
 
-                const searchInput = document.getElementById('userSearch');
-                searchInput.addEventListener('input', (e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const userCards = document.querySelectorAll('.user-card');
-                    
-                    userCards.forEach(card => {
-                        const userName = card.querySelector('.user-name').textContent.toLowerCase();
-                        const userUsername = card.querySelector('.user-username').textContent.toLowerCase();
-                        const userId = card.querySelector('.user-id').textContent.toLowerCase();
-                        
-                        if (userName.includes(searchTerm) || 
-                            userUsername.includes(searchTerm) || 
-                            userId.includes(searchTerm)) {
-                            card.style.display = '';
-                            card.style.animation = 'fadeInUp 0.3s ease forwards';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            };
-
-            // Initialize search after DOM loads
-            document.addEventListener('DOMContentLoaded', () => {
-                fetchUsers();
-                addSearch();
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 3000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy chat ID');
             });
+        }
 
-            // Add loading progress bar
-            const addProgressBar = () => {
-                const progress = document.createElement('div');
-                progress.innerHTML = `
-                    <div id="progressBar" 
-                         style="
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            height: 3px;
-                            width: 0;
-                            background: linear-gradient(to right, #4361ee, #3f37c9);
-                            transition: width 0.3s ease;
-                            z-index: 1000;
-                         "
-                    ></div>
-                `;
-                document.body.appendChild(progress);
-            };
+        function setupSearch() {
+            const searchInput = document.getElementById('userSearch');
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                document.querySelectorAll('.user-card').forEach(card => {
+                    const searchData = card.dataset.search;
+                    card.style.display = searchData.includes(searchTerm) ? 'block' : 'none';
+                });
+            });
+        }
 
-            // Show progress bar during fetch
-            const updateProgress = (percent) => {
-                const progressBar = document.getElementById('progressBar');
-                if (progressBar) {
-                    progressBar.style.width = `${percent}%`;
-                    if (percent === 100) {
-                        setTimeout(() => {
-                            progressBar.style.width = '0';
-                        }, 500);
-                    }
-                }
-            };
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUsers();
+            setupSearch();
+        });
 
-            // Initialize progress bar
-            addProgressBar();
-        </script>
-    </body>
-    </html>
-  `);
+        // Refresh data every 5 minutes
+        setInterval(fetchUsers, 300000);
+    </script>
+</body>
+</html>
+  `.trim());
 });
 
 // Debug endpoint
