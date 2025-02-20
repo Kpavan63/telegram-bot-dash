@@ -157,34 +157,33 @@ async function sendDataToSheet(data) {
 }
 
 // Function to read users from Google Sheets
+// Read users function
 async function readUsers() {
+  try {
+    // Using your Stein Store URL
     const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
-    try {
-        const response = await axios.get(url);
-        console.log('Raw response from Sheets:', response.data); // Debug log
+    const response = await axios.get(url);
+    
+    console.log('Raw sheet data:', response.data); // Debug log
 
-        if (!Array.isArray(response.data)) {
-            console.error('Invalid data format from Sheets:', response.data);
-            return [];
-        }
-
-        // Map and validate each user
-        return response.data.map(user => ({
-            chatid: user.chatid?.toString() || '',
-            firstName: user.firstName || '',
-            lastName: user.lastName || '',
-            username: user.username || '',
-            // Add computed fields
-            displayName: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Unknown User',
-            image: `https://ui-avatars.com/api/?name=${encodeURIComponent((user.firstName || 'U')[0])}+${encodeURIComponent((user.lastName || 'U')[0])}&background=random&size=200`,
-            status: 'active',
-            joinDate: new Date().toISOString()
-        }));
-    } catch (error) {
-        console.error('Error reading users from Sheets:', error);
-        throw new Error(`Failed to read users: ${error.message}`);
+    // Validate and transform the data
+    if (!Array.isArray(response.data)) {
+      console.error('Invalid data format from sheet:', response.data);
+      return [];
     }
+
+    return response.data.map(user => ({
+      chatid: user.chatid?.toString() || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      username: user.username || ''
+    }));
+  } catch (error) {
+    console.error('Error reading users from sheet:', error);
+    throw new Error(`Failed to read users: ${error.message}`);
+  }
 }
+
 
 
 async function writeUsers(userData) {
@@ -242,35 +241,39 @@ app.get('/send-chatid/:chatid', async (req, res) => {
 
 // API endpoint to get all users with enhanced data
 // Modified API endpoint
+// User route handler
 app.get('/admin/users', async (req, res) => {
-    try {
-        const users = await readUsers();
-        console.log('Processed users:', users); // Debug log
+  try {
+    const users = await readUsers();
+    console.log('Users fetched:', users); // Debug log
 
-        if (!users || users.length === 0) {
-            return res.json({
-                success: true,
-                count: 0,
-                users: [],
-                message: 'No users found'
-            });
-        }
+    // Transform user data
+    const enhancedUsers = users.map(user => ({
+      ...user,
+      firstName: user.firstName || 'Unknown',
+      lastName: user.lastName || 'User',
+      username: user.username || 'No username',
+      image: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || 'U')}&background=random`,
+      status: 'active',
+      lastUpdate: new Date().toISOString()
+    }));
 
-        res.json({
-            success: true,
-            count: users.length,
-            lastUpdated: new Date().toISOString(),
-            users: users
-        });
-    } catch (error) {
-        console.error('Error in /admin/users endpoint:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch users',
-            error: error.message
-        });
-    }
+    res.json({
+      success: true,
+      count: enhancedUsers.length,
+      users: enhancedUsers,
+      lastUpdated: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Error in /admin/users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch users',
+      error: error.message
+    });
+  }
 });
+
 
 // Debug endpoint with detailed error reporting
 app.get('/debug/sheets', async (req, res) => {
@@ -332,337 +335,154 @@ app.get('/admin/users/:chatid', async (req, res) => {
 });
 
 // Serve the user details page
-// User Management Dashboard
+// Users view route
 app.get('/admin/users/view', (req, res) => {
-  const currentDate = new Date().toLocaleString('en-US', { 
-    timeZone: 'UTC',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-
   res.send(`
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Products Bot - User Management</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --accent: #48bb78;
-            --background: #f8fafc;
-            --text: #2d3748;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            min-height: 100vh;
-            color: var(--text);
-        }
-
-        .dashboard-container {
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .header-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            color: white;
-            text-align: center;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .search-section {
-            margin: 1.5rem 0;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            max-width: 400px;
-            padding: 0.8rem 1rem 0.8rem 3rem;
-            border: none;
-            border-radius: 2rem;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-        }
-
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-        }
-
-        .users-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .user-card {
-            background: white;
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .user-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .user-header {
-            padding: 1.5rem;
-            background: var(--background);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .user-info {
-            padding: 1.5rem;
-        }
-
-        .user-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .user-detail {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            color: #666;
-        }
-
-        .copy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .copy-btn:hover {
-            background: var(--secondary);
-        }
-
-        .toast-notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--accent);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.5rem;
-            opacity: 0;
-            transform: translateY(1rem);
-            transition: all 0.3s ease;
-        }
-
-        .toast-notification.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Management</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
+            body {
+                background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+                min-height: 100vh;
+                padding: 20px;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .user-card {
+                background: white;
+                border-radius: 15px;
+                overflow: hidden;
+                margin-bottom: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
             }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 1rem;
+            .user-card:hover {
+                transform: translateY(-5px);
             }
+            .loading {
+                color: white;
+                text-align: center;
+                padding: 20px;
+            }
+            .error-message {
+                background: rgba(255, 255, 255, 0.9);
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                margin: 20px auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="text-center text-white mb-4">
+                <h1><i class="fas fa-users"></i> User Management</h1>
+                <p id="userCount">Loading users...</p>
+            </div>
             
-            .users-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-section {
-                padding: 1.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="dashboard-container">
-        <div class="header-section">
-            <h1><i class="fas fa-users-cog"></i> User Management</h1>
-            <p>Last Updated: ${currentDate} UTC</p>
-            
-            <div class="search-section">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" id="userSearch" class="search-input" placeholder="Search users by name, username, or ID...">
+            <div id="userGrid" class="row">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading users...</p>
+                </div>
             </div>
         </div>
 
-        <div id="usersGrid" class="users-grid">
-            <!-- Users will be loaded here -->
-            <div class="text-center text-white">
-                <i class="fas fa-spinner fa-spin fa-2x mb-3"></i>
-                <p>Loading users...</p>
-            </div>
-        </div>
-    </div>
+        <script>
+            async function loadUsers() {
+                try {
+                    const response = await fetch('/admin/users');
+                    const data = await response.json();
+                    console.log('Received data:', data); // Debug log
 
-    <div id="toast" class="toast-notification">
-        <i class="fas fa-check-circle"></i> Copied to clipboard!
-    </div>
+                    const userGrid = document.getElementById('userGrid');
+                    const userCount = document.getElementById('userCount');
 
-    <script>
-        async function fetchUsers() {
-            try {
-                const response = await fetch('/admin/users');
-                const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.message || 'Failed to load users');
+                    }
 
-                const usersGrid = document.getElementById('usersGrid');
-                
-                if (!data.success) {
-                    usersGrid.innerHTML = \`
-                        <div class="text-center text-white">
-                            <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
-                            <h3>Error</h3>
-                            <p>\${data.message || 'Failed to load users'}</p>
-                        </div>
-                    \`;
-                    return;
-                }
+                    userCount.textContent = \`\${data.count} Users Found\`;
 
-                if (data.users.length === 0) {
-                    usersGrid.innerHTML = \`
-                        <div class="text-center text-white">
-                            <i class="fas fa-users fa-2x mb-3"></i>
-                            <h3>No Users Found</h3>
-                            <p>Users will appear here when they start using the bot.</p>
-                        </div>
-                    \`;
-                    return;
-                }
+                    if (data.users.length === 0) {
+                        userGrid.innerHTML = \`
+                            <div class="col-12">
+                                <div class="error-message">
+                                    <i class="fas fa-users fa-3x mb-3"></i>
+                                    <h3>No Users Found</h3>
+                                    <p>Users will appear here once they start using the bot.</p>
+                                </div>
+                            </div>
+                        \`;
+                        return;
+                    }
 
-                usersGrid.innerHTML = data.users.map(user => \`
-                    <div class="user-card" data-search="\${user.firstName.toLowerCase()} \${user.lastName.toLowerCase()} \${user.username.toLowerCase()} \${user.chatid}">
-                        <div class="user-header">
-                            <img src="\${user.image}" alt="\${user.firstName}'s avatar" class="user-avatar"
-                                onerror="this.src='https://ui-avatars.com/api/?name=\${encodeURIComponent(user.firstName[0] || '?')}&background=random'">
-                            <div>
-                                <div class="user-name">\${user.firstName} \${user.lastName}</div>
-                                <div class="user-detail">
-                                    <i class="fas fa-at"></i>
-                                    <span>\${user.username || 'No username'}</span>
+                    userGrid.innerHTML = data.users.map(user => \`
+                        <div class="col-md-4">
+                            <div class="user-card">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="\${user.image}" alt="\${user.firstName}'s avatar" 
+                                             class="rounded-circle me-3" style="width: 50px; height: 50px;">
+                                        <div>
+                                            <h5 class="mb-0">\${user.firstName} \${user.lastName}</h5>
+                                            <small class="text-muted">@\${user.username}</small>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">ID: \${user.chatid}</span>
+                                        <button onclick="copyId('\${user.chatid}')" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-copy"></i> Copy ID
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="user-info">
-                            <div class="user-detail">
-                                <i class="fas fa-fingerprint"></i>
-                                <span>Chat ID: \${user.chatid}</span>
+                    \`).join('');
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('userGrid').innerHTML = \`
+                        <div class="col-12">
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-triangle fa-3x mb-3 text-danger"></i>
+                                <h3>Error Loading Users</h3>
+                                <p>\${error.message}</p>
+                                <button onclick="loadUsers()" class="btn btn-primary mt-3">
+                                    <i class="fas fa-sync"></i> Try Again
+                                </button>
                             </div>
-                            <button class="copy-btn" onclick="copyToClipboard('\${user.chatid}')">
-                                <i class="fas fa-copy"></i>
-                                Copy ID
-                            </button>
                         </div>
-                    </div>
-                \`).join('');
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('usersGrid').innerHTML = \`
-                    <div class="text-center text-white">
-                        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
-                        <h3>Error</h3>
-                        <p>Failed to load users. Please try again later.</p>
-                    </div>
-                \`;
+                    \`;
+                }
             }
-        }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('toast');
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                alert('Failed to copy chat ID');
-            });
-        }
+            function copyId(id) {
+                navigator.clipboard.writeText(id)
+                    .then(() => alert('ID copied to clipboard!'))
+                    .catch(err => console.error('Failed to copy:', err));
+            }
 
-        function setupSearch() {
-            const searchInput = document.getElementById('userSearch');
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                document.querySelectorAll('.user-card').forEach(card => {
-                    const searchData = card.dataset.search;
-                    card.style.display = searchData.includes(searchTerm) ? 'block' : 'none';
-                });
-            });
-        }
+            // Load users when page loads
+            document.addEventListener('DOMContentLoaded', loadUsers);
+        </script>
+    </body>
+    </html>
+  `);
+});
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchUsers();
-            setupSearch();
-        });
-
-        // Refresh data every 5 minutes
-        setInterval(fetchUsers, 300000);
-    </script>
-</body>
-</html>
-  `.trim());
+// Add error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Server error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Internal server error',
+    error: err.message
+  });
 });
 
 // Debug endpoint
