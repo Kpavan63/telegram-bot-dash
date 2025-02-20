@@ -285,7 +285,7 @@ app.get('/api/users', async (req, res) => {
             count: users.length,
             users: users.map(user => ({
                 ...user,
-                image: 'https://via.placeholder.com/150'
+                image: 'https://img.freepik.com/premium-photo/beautiful-sunset-lake-with-textured-foreground_128937-74.jpg?size=626&ext=jpg'
             }))
         });
     } catch (error) {
