@@ -142,200 +142,68 @@ async function writeTodayDeals(deals) {
 }
 
 // Function to send data to Google Sheets using Steinhq API
-// Google Sheets functions
 async function sendDataToSheet(data) {
-  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
+  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1'; // Use the provided API URL and adjust the sheet name if needed
   try {
-    const formattedData = Array.isArray(data) ? data : [data];
-    const response = await axios.post(url, formattedData);
+    const response = await axios.post(url, data);
     console.log('Data sent to Google Sheet:', response.data);
-    return response.data;
   } catch (error) {
     console.error('Error sending data to Google Sheet:', error);
     throw new Error('Failed to send data to Google Sheet');
   }
 }
 
-// Function to read users from Google Sheets
-// Read users function
+// Update the readUsers function
 async function readUsers() {
+  const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
-    // Using your Stein Store URL
-    const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
     const response = await axios.get(url);
-    
-    console.log('Raw sheet data:', response.data); // Debug log
-
-    // Validate and transform the data
-    if (!Array.isArray(response.data)) {
-      console.error('Invalid data format from sheet:', response.data);
-      return [];
-    }
-
+    // Extract just the chatid values from the response data
     return response.data.map(user => ({
-      chatid: user.chatid?.toString() || '',
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      username: user.username || ''
+      chatid: user.chatid,
+      name: user.name || 'Unknown',
+      image: user.image || 'https://via.placeholder.com/150'
     }));
   } catch (error) {
-    console.error('Error reading users from sheet:', error);
-    throw new Error(`Failed to read users: ${error.message}`);
+    console.error('Error reading users:', error);
+    return [];
   }
 }
 
-
-
-async function writeUsers(userData) {
+// Function to write users to Google Sheets
+async function writeUsers(chatId) {
+  const data = [{ chatid: chatId }];
   try {
-    const data = {
-      chatid: userData.chatid.toString(),
-      firstName: userData.firstName || '',
-      lastName: userData.lastName || '',
-      username: userData.username || ''
-    };
-    return await sendDataToSheet([data]);
+    await sendDataToSheet(data);
   } catch (error) {
     console.error('Error writing user:', error);
-    throw error;
   }
 }
 
-// API endpoint to send chat ID and user data to Google Sheets
+// API endpoint to send chat ID to Google Sheets
 app.get('/send-chatid/:chatid', async (req, res) => {
   const chatid = req.params.chatid;
   try {
-    // Get user data from Telegram API
-    const userInfoResponse = await axios.get(
-      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/getChat`,
-      { params: { chat_id: chatid } }
-    );
-
-    if (!userInfoResponse.data.ok) {
-      throw new Error('Failed to fetch user data from Telegram');
-    }
-
-    const userData = {
-      chatid: chatid,
-      firstName: userInfoResponse.data.result.first_name || '',
-      lastName: userInfoResponse.data.result.last_name || '',
-      username: userInfoResponse.data.result.username || '',
-      joinDate: new Date().toISOString() // Adding timestamp
-    };
-
-    await writeUsers(userData);
-    res.json({ 
-      success: true, 
-      message: 'User data sent to Google Sheet successfully!',
-      userData: userData 
-    });
+    await writeUsers(chatid);
+    res.json({ success: true, message: 'Chat ID sent to Google Sheet successfully!' });
   } catch (error) {
-    console.error('Error sending user data to Google Sheet:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to send user data to Google Sheet.',
-      error: error.message 
-    });
+    console.error('Error sending chat ID to Google Sheet:', error);
+    res.status(500).json({ success: false, message: 'Failed to send chat ID to Google Sheet.' });
   }
 });
 
-// API endpoint to get all users with enhanced data
-// Modified API endpoint
-// User route handler
+// API endpoint to get all users
 app.get('/admin/users', async (req, res) => {
   try {
     const users = await readUsers();
-    console.log('Users fetched:', users); // Debug log
-
-    // Transform user data
-    const enhancedUsers = users.map(user => ({
-      ...user,
-      firstName: user.firstName || 'Unknown',
-      lastName: user.lastName || 'User',
-      username: user.username || 'No username',
-      image: `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || 'U')}&background=random`,
-      status: 'active',
-      lastUpdate: new Date().toISOString()
-    }));
-
-    res.json({
-      success: true,
-      count: enhancedUsers.length,
-      users: enhancedUsers,
-      lastUpdated: new Date().toISOString()
-    });
+    res.json(users);
   } catch (error) {
-    console.error('Error in /admin/users:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch users',
-      error: error.message
-    });
-  }
-});
-
-
-// Debug endpoint with detailed error reporting
-app.get('/debug/sheets', async (req, res) => {
-    try {
-        const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
-        const response = await axios.get(url);
-        
-        res.json({
-            success: true,
-            rawData: response.data,
-            status: response.status,
-            headers: response.headers
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: error.message,
-            stack: error.stack,
-            response: error.response?.data
-        });
-    }
-});
-
-// New endpoint to get specific user details
-app.get('/admin/users/:chatid', async (req, res) => {
-  const chatid = req.params.chatid;
-  try {
-    const users = await readUsers();
-    const user = users.find(u => u.chatid === chatid);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    // Enhance user data with additional information
-    const enhancedUser = {
-      ...user,
-      displayName: `${user.firstName} ${user.lastName}`.trim() || 'Unknown User',
-      image: user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName || 'U')}+${encodeURIComponent(user.lastName || 'U')}&background=random`,
-      status: 'active',
-      lastSeen: user.lastSeen || user.joinDate || new Date().toISOString()
-    };
-
-    res.json({
-      success: true,
-      user: enhancedUser
-    });
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch user details',
-      error: error.message
-    });
+    console.error('Error fetching users:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch users.' });
   }
 });
 
 // Serve the user details page
-// Users view route
 app.get('/admin/users/view', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -343,164 +211,268 @@ app.get('/admin/users/view', (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>User Management</title>
+        <title>User Management Dashboard</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
             body {
-                background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
                 min-height: 100vh;
                 padding: 20px;
             }
-            .user-card {
-                background: white;
+
+            .dashboard-title {
+                color: #2c3e50;
+                text-align: center;
+                margin: 2rem 0;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                position: relative;
+            }
+
+            .dashboard-title:after {
+                content: '';
+                display: block;
+                width: 50px;
+                height: 3px;
+                background: #3498db;
+                margin: 10px auto;
+            }
+
+            .card {
+                border: none;
                 border-radius: 15px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                margin-bottom: 30px;
                 overflow: hidden;
-                margin-bottom: 20px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                background: white;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            }
+
+            .card-img-wrapper {
+                position: relative;
+                padding-top: 100%;
+                overflow: hidden;
+                background: #f8f9fa;
+            }
+
+            .card-img-top {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
                 transition: transform 0.3s ease;
             }
-            .user-card:hover {
-                transform: translateY(-5px);
+
+            .card:hover .card-img-top {
+                transform: scale(1.05);
             }
-            .loading {
+
+            .card-body {
+                padding: 1.5rem;
+                background: white;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+                font-weight: 600;
+                color: #2c3e50;
+                margin-bottom: 0.5rem;
+            }
+
+            .card-text {
+                color: #7f8c8d;
+                font-size: 0.9rem;
+            }
+
+            .user-status {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #2ecc71;
+                border: 2px solid white;
+            }
+
+            .loading-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255,255,255,0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+                border: 5px solid #f3f3f3;
+                border-top: 5px solid #3498db;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .empty-state {
+                text-align: center;
+                padding: 40px;
+                color: #7f8c8d;
+            }
+
+            .back-button {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 15px 30px;
+                border-radius: 30px;
+                background: #3498db;
                 color: white;
-                text-align: center;
-                padding: 20px;
+                border: none;
+                box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+                transition: all 0.3s ease;
             }
-            .error-message {
-                background: rgba(255, 255, 255, 0.9);
-                padding: 20px;
-                border-radius: 10px;
-                text-align: center;
-                margin: 20px auto;
+
+            .back-button:hover {
+                background: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+            }
+
+            .user-count {
+                background: rgba(52, 152, 219, 0.1);
+                color: #3498db;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                margin-bottom: 2rem;
+                display: inline-block;
+            }
+
+            @media (max-width: 768px) {
+                .card {
+                    margin-bottom: 20px;
+                }
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="text-center text-white mb-4">
-                <h1><i class="fas fa-users"></i> User Management</h1>
-                <p id="userCount">Loading users...</p>
-            </div>
-            
-            <div id="userGrid" class="row">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin fa-2x"></i>
-                    <p>Loading users...</p>
+            <h1 class="dashboard-title">User Management Dashboard</h1>
+            <div class="text-center">
+                <div id="userCount" class="user-count">
+                    <i class="fas fa-users"></i>
+                    <span>Loading users...</span>
                 </div>
+            </div>
+            <div class="row" id="userCards">
+                <!-- User cards will be populated here -->
             </div>
         </div>
 
+        <div id="loadingContainer" class="loading-container">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <a href="/admin" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Admin
+        </a>
+
         <script>
-            async function loadUsers() {
+            async function fetchUsers() {
                 try {
                     const response = await fetch('/admin/users');
-                    const data = await response.json();
-                    console.log('Received data:', data); // Debug log
-
-                    const userGrid = document.getElementById('userGrid');
+                    const users = await response.json();
+                    const userCards = document.getElementById('userCards');
+                    const loadingContainer = document.getElementById('loadingContainer');
                     const userCount = document.getElementById('userCount');
 
-                    if (!data.success) {
-                        throw new Error(data.message || 'Failed to load users');
-                    }
+                    // Update user count
+                    userCount.innerHTML = \`
+                        <i class="fas fa-users"></i>
+                        <span>\${users.length} Users Found</span>
+                    \`;
 
-                    userCount.textContent = \`\${data.count} Users Found\`;
-
-                    if (data.users.length === 0) {
-                        userGrid.innerHTML = \`
+                    if (users.length === 0) {
+                        userCards.innerHTML = \`
                             <div class="col-12">
-                                <div class="error-message">
+                                <div class="empty-state">
                                     <i class="fas fa-users fa-3x mb-3"></i>
                                     <h3>No Users Found</h3>
-                                    <p>Users will appear here once they start using the bot.</p>
+                                    <p>Start adding users to see them here.</p>
                                 </div>
                             </div>
                         \`;
-                        return;
-                    }
-
-                    userGrid.innerHTML = data.users.map(user => \`
-                        <div class="col-md-4">
-                            <div class="user-card">
-                                <div class="card-body p-4">
-                                    <div class="d-flex align-items-center mb-3">
-                                        <img src="\${user.image}" alt="\${user.firstName}'s avatar" 
-                                             class="rounded-circle me-3" style="width: 50px; height: 50px;">
-                                        <div>
-                                            <h5 class="mb-0">\${user.firstName} \${user.lastName}</h5>
-                                            <small class="text-muted">@\${user.username}</small>
-                                        </div>
+                    } else {
+                        userCards.innerHTML = users.map(user => \`
+                            <div class="col-md-4 col-lg-3">
+                                <div class="card">
+                                    <div class="card-img-wrapper">
+                                        <div class="user-status"></div>
+                                        <img src="\${user.image}"
+                                             class="card-img-top"
+                                             alt="User Avatar">
                                     </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-muted">ID: \${user.chatid}</span>
-                                        <button onclick="copyId('\${user.chatid}')" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-copy"></i> Copy ID
-                                        </button>
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-user-circle"></i>
+                                            \${user.name}
+                                        </h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-id-badge"></i> Chat ID: \${user.chatid}
+                                            </small>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    \`).join('');
+                        \`).join('');
+                    }
+
+                    // Add fade-out animation to loading screen
+                    loadingContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingContainer.style.display = 'none';
+                    }, 500);
 
                 } catch (error) {
-                    console.error('Error:', error);
-                    document.getElementById('userGrid').innerHTML = \`
+                    console.error('Error fetching users:', error);
+                    document.getElementById('userCards').innerHTML = \`
                         <div class="col-12">
-                            <div class="error-message">
-                                <i class="fas fa-exclamation-triangle fa-3x mb-3 text-danger"></i>
-                                <h3>Error Loading Users</h3>
-                                <p>\${error.message}</p>
-                                <button onclick="loadUsers()" class="btn btn-primary mt-3">
-                                    <i class="fas fa-sync"></i> Try Again
-                                </button>
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Error loading users. Please try again later.
                             </div>
                         </div>
                     \`;
                 }
             }
 
-            function copyId(id) {
-                navigator.clipboard.writeText(id)
-                    .then(() => alert('ID copied to clipboard!'))
-                    .catch(err => console.error('Failed to copy:', err));
-            }
-
-            // Load users when page loads
-            document.addEventListener('DOMContentLoaded', loadUsers);
+            document.addEventListener('DOMContentLoaded', fetchUsers);
         </script>
     </body>
     </html>
   `);
 });
 
-// Add error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Server error:', err);
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-    error: err.message
-  });
-});
-
-// Debug endpoint
-app.get('/debug/users', async (req, res) => {
-  try {
-    const users = await readUsers();
-    res.json({
-      success: true,
-      count: users.length,
-      users: users
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message
-    });
-  }
-});
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unexpected error:', err);
@@ -600,93 +572,31 @@ app.post('/admin/send-notification', async (req, res) => {
 // Telegram Bot Handlers
 bot.onText(/\/start/, async (msg) => {
     let chatId = msg.chat.id;
-    
+    const userName = msg.from.first_name; // Fetch the user's first name
+
     try {
+        // Convert and validate chatId
+        if (typeof chatId === 'string' && chatId.startsWith('{')) {
+            chatId = JSON.parse(chatId);
+        }
         chatId = Number(chatId);
+
         if (isNaN(chatId)) {
-            throw new Error('Invalid chat ID format');
+            console.error('Invalid chatId:', chatId);
+            return;
         }
 
-        const userData = {
-            chatid: chatId,
-            firstName: msg.from.first_name || '',
-            lastName: msg.from.last_name || '',
-            username: msg.from.username || ''
-        };
-
-        // Save user data
         const users = await readUsers();
-        const existingUser = users.find(user => user.chatid === chatId.toString());
 
-        if (existingUser) {
-            await writeUsers({
-                ...existingUser,
-                ...userData
-            });
-        } else {
-            await writeUsers(userData);
+        // Add the chat ID if it doesn't already exist
+        if (!users.includes(chatId)) {
+            await writeUsers(chatId);
         }
 
-        // First message - Welcome
-        const welcomeMessage = `
-🎉 <b>Welcome to AI Products Bot!</b>
-
-Hello <b>${userData.firstName}</b>! I'm your personal shopping assistant.`;
-
-        await bot.sendMessage(chatId, welcomeMessage, { 
-            parse_mode: 'HTML' 
-        });
-
-        // Second message - Platforms (after 500ms)
-        setTimeout(async () => {
-            const platformsMessage = `
-<b>🛍️ I Can Search Products From:</b>
-
-📦 <b>Amazon</b> - Best Deals
-🔷 <b>Flipkart</b> - Top Offers
-💫 <b>Meesho</b> - Budget Picks`;
-
-            await bot.sendMessage(chatId, platformsMessage, { 
-                parse_mode: 'HTML' 
-            });
-        }, 500);
-
-        // Third message - How to use (after 1000ms)
-        setTimeout(async () => {
-            const howToMessage = `
-<b>📝 How to Use:</b>
-
-Simply type any product name to search!
-Example: "iPhone 13" or "Nike shoes"`;
-
-            await bot.sendMessage(chatId, howToMessage, { 
-                parse_mode: 'HTML' 
-            });
-        }, 1000);
-
-        // Fourth message - Tips (after 1500ms)
-        setTimeout(async () => {
-            const tipsMessage = `
-<b>💡 Pro Tips:</b>
-
-• Use specific product names
-• Include brand names
-• Ask for "deals" or "offers"
-
-<i>Ready to start? Type a product name!</i> 🚀`;
-
-            await bot.sendMessage(chatId, tipsMessage, { 
-                parse_mode: 'HTML' 
-            });
-        }, 1500);
-
+        // Send a personalized welcome message
+        bot.sendMessage(chatId, `Welcome, ${userName}! Please enter a product name to search.`);
     } catch (error) {
-        console.error('Error in /start command:', error);
-        try {
-            await bot.sendMessage(chatId, '❌ Sorry, I encountered an error. Please try again later.');
-        } catch (msgError) {
-            console.error('Error sending error message:', msgError);
-        }
+        console.error('Error handling /start command:', error);
     }
 });
 
