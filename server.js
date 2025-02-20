@@ -419,29 +419,33 @@ app.get('/admin/users/view', (req, res) => {
                             </div>
                         \`;
                     } else {
-                        userCards.innerHTML = users.map(user => \`
-                            <div class="col-md-4 col-lg-3">
-                                <div class="card">
-                                    <div class="card-img-wrapper">
-                                        <div class="user-status"></div>
-                                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=\${user.chatid}"
-                                             class="card-img-top"
-                                             alt="User Avatar">
-                                    </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">
-                                            <i class="fas fa-user-circle"></i>
-                                            User \${user.chatid.substring(0, 8)}
-                                        </h5>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                <i class="fas fa-id-badge"></i> Chat ID: \${user.chatid}
-                                            </small>
-                                        </p>
+                        userCards.innerHTML = users.map(user => {
+                            // Ensure chatid is defined before accessing it
+                            const chatid = user.chatid || 'Unknown';
+                            return \`
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="card">
+                                        <div class="card-img-wrapper">
+                                            <div class="user-status"></div>
+                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=\${chatid}"
+                                                 class="card-img-top"
+                                                 alt="User Avatar">
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="fas fa-user-circle"></i>
+                                                User \${chatid.substring(0, 8)}
+                                            </h5>
+                                            <p class="card-text">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-id-badge"></i> Chat ID: \${chatid}
+                                                </small>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        \`).join('');
+                            \`;
+                        }).join('');
                     }
 
                     // Add fade-out animation to loading screen
