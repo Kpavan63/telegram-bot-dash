@@ -159,7 +159,11 @@ async function readUsers() {
   try {
     const response = await axios.get(url);
     // Extract just the chatid values from the response data
-    return response.data.map(user => user.chatid);
+    return response.data.map(user => ({
+      chatid: user.chatid,
+      name: user.name || 'Unknown',
+      image: user.image || 'https://via.placeholder.com/150'
+    }));
   } catch (error) {
     console.error('Error reading users:', error);
     return [];
@@ -200,7 +204,6 @@ app.get('/admin/users', async (req, res) => {
 });
 
 // Serve the user details page
-// Update the /admin/users/view endpoint handler
 app.get('/admin/users/view', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -419,33 +422,29 @@ app.get('/admin/users/view', (req, res) => {
                             </div>
                         \`;
                     } else {
-                        userCards.innerHTML = users.map(user => {
-                            // Ensure chatid is defined before accessing it
-                            const chatid = user.chatid || 'Unknown';
-                            return \`
-                                <div class="col-md-4 col-lg-3">
-                                    <div class="card">
-                                        <div class="card-img-wrapper">
-                                            <div class="user-status"></div>
-                                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=\${chatid}"
-                                                 class="card-img-top"
-                                                 alt="User Avatar">
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">
-                                                <i class="fas fa-user-circle"></i>
-                                                User \${chatid.substring(0, 8)}
-                                            </h5>
-                                            <p class="card-text">
-                                                <small class="text-muted">
-                                                    <i class="fas fa-id-badge"></i> Chat ID: \${chatid}
-                                                </small>
-                                            </p>
-                                        </div>
+                        userCards.innerHTML = users.map(user => \`
+                            <div class="col-md-4 col-lg-3">
+                                <div class="card">
+                                    <div class="card-img-wrapper">
+                                        <div class="user-status"></div>
+                                        <img src="\${user.image}"
+                                             class="card-img-top"
+                                             alt="User Avatar">
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="fas fa-user-circle"></i>
+                                            \${user.name}
+                                        </h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                <i class="fas fa-id-badge"></i> Chat ID: \${user.chatid}
+                                            </small>
+                                        </p>
                                     </div>
                                 </div>
-                            \`;
-                        }).join('');
+                            </div>
+                        \`).join('');
                     }
 
                     // Add fade-out animation to loading screen
@@ -516,7 +515,8 @@ app.post('/admin/send-notification', async (req, res) => {
     };
 
     // Send notification to each user
-    for (const chatId of users) {
+    for (const user of users) {
+      const chatId = user.chatid;
       try {
         if (typeof chatId !== 'string' && typeof chatId !== 'number') {
           throw new Error(`Invalid chat ID format: ${chatId}`);
