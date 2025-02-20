@@ -142,18 +142,20 @@ async function writeTodayDeals(deals) {
 }
 
 // Function to send data to Google Sheets using Steinhq API
+// Google Sheets functions
 async function sendDataToSheet(data) {
   const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
-    const response = await axios.post(url, data);
+    const formattedData = Array.isArray(data) ? data : [data];
+    const response = await axios.post(url, formattedData);
     console.log('Data sent to Google Sheet:', response.data);
+    return response.data;
   } catch (error) {
     console.error('Error sending data to Google Sheet:', error);
     throw new Error('Failed to send data to Google Sheet');
   }
 }
 
-// Update the readUsers function to include all user fields
 async function readUsers() {
   const url = 'https://api.steinhq.com/v1/storages/67b5f4dac088333365771865/Sheet1';
   try {
@@ -163,7 +165,7 @@ async function readUsers() {
       firstName: user.firstName || '',
       lastName: user.lastName || '',
       username: user.username || '',
-      image: user.image || 'https://via.placeholder.com/150'
+      image: `https://ui-avatars.com/api/?name=${encodeURIComponent((user.firstName || 'U')[0])}+${encodeURIComponent((user.lastName || 'U')[0])}&background=random&size=200`
     }));
   } catch (error) {
     console.error('Error reading users:', error);
@@ -171,18 +173,18 @@ async function readUsers() {
   }
 }
 
-// Function to write users to Google Sheets with additional fields
 async function writeUsers(userData) {
-  const data = [{
-    chatid: userData.chatid,
-    firstName: userData.firstName || '',
-    lastName: userData.lastName || '',
-    username: userData.username || ''
-  }];
   try {
-    await sendDataToSheet(data);
+    const data = {
+      chatid: userData.chatid.toString(),
+      firstName: userData.firstName || '',
+      lastName: userData.lastName || '',
+      username: userData.username || ''
+    };
+    return await sendDataToSheet([data]);
   } catch (error) {
     console.error('Error writing user:', error);
+    throw error;
   }
 }
 
@@ -293,6 +295,7 @@ app.get('/admin/users/:chatid', async (req, res) => {
 });
 
 // Serve the user details page
+// User Management Dashboard
 app.get('/admin/users/view', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -300,96 +303,71 @@ app.get('/admin/users/view', (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>User Management Dashboard</title>
+        <title>User Management</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <style>
-            :root {
-                --primary-color: #4361ee;
-                --secondary-color: #3f37c9;
-                --accent-color: #4895ef;
-                --success-color: #4cc9f0;
-            }
-
             body {
-                font-family: 'Poppins', sans-serif;
+                font-family: 'Segoe UI', sans-serif;
                 background: linear-gradient(135deg, #4361ee 0%, #3f37c9 100%);
                 min-height: 100vh;
                 padding: 20px;
             }
 
-            .dashboard-container {
+            .container {
                 max-width: 1200px;
                 margin: 0 auto;
             }
 
-            .dashboard-header {
+            .header {
                 text-align: center;
                 color: white;
-                padding: 2rem 0;
+                margin-bottom: 40px;
                 opacity: 0;
                 transform: translateY(-20px);
                 animation: fadeInDown 0.6s ease forwards;
             }
 
-            .dashboard-title {
+            .header h1 {
                 font-size: 2.5rem;
                 font-weight: 700;
                 margin-bottom: 1rem;
             }
 
-            .user-count {
+            .user-counter {
                 background: rgba(255, 255, 255, 0.2);
-                padding: 0.5rem 1.5rem;
+                padding: 10px 20px;
                 border-radius: 20px;
-                font-size: 1.1rem;
                 display: inline-block;
+                margin-top: 10px;
             }
 
             .user-grid {
                 display: grid;
                 grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 25px;
-                padding: 20px;
+                gap: 20px;
+                opacity: 0;
+                transform: translateY(20px);
+                animation: fadeInUp 0.6s ease forwards 0.3s;
             }
 
             .user-card {
-                background: rgba(255, 255, 255, 0.95);
-                border-radius: 20px;
+                background: white;
+                border-radius: 15px;
                 overflow: hidden;
                 box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            .user-card.animate {
-                animation: fadeInUp 0.6s ease forwards;
             }
 
             .user-card:hover {
-                transform: translateY(-10px);
+                transform: translateY(-5px);
                 box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             }
 
-            .user-image-container {
-                position: relative;
-                padding-top: 100%;
-                background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            }
-
             .user-image {
-                position: absolute;
-                top: 0;
-                left: 0;
                 width: 100%;
-                height: 100%;
+                height: 200px;
                 object-fit: cover;
-                transition: transform 0.5s ease;
-            }
-
-            .user-card:hover .user-image {
-                transform: scale(1.1);
             }
 
             .user-info {
@@ -397,60 +375,77 @@ app.get('/admin/users/view', (req, res) => {
             }
 
             .user-name {
-                font-size: 1.4rem;
+                font-size: 1.25rem;
                 font-weight: 600;
-                color: var(--secondary-color);
-                margin-bottom: 10px;
+                color: #2d3748;
+                margin-bottom: 5px;
             }
 
             .user-username {
-                color: #666;
-                font-size: 1rem;
+                color: #718096;
+                font-size: 0.9rem;
                 margin-bottom: 15px;
             }
 
-            .user-chatid {
+            .user-id {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                background: #f8f9fa;
+                background: #f7fafc;
                 padding: 8px 12px;
-                border-radius: 10px;
+                border-radius: 8px;
                 font-size: 0.9rem;
             }
 
             .copy-btn {
-                background: var(--success-color);
+                background: #4361ee;
                 color: white;
                 border: none;
                 padding: 5px 15px;
                 border-radius: 5px;
                 cursor: pointer;
-                transition: all 0.3s ease;
+                transition: all 0.2s ease;
                 font-size: 0.9rem;
             }
 
             .copy-btn:hover {
-                background: var(--accent-color);
-                transform: scale(1.05);
+                background: #3f37c9;
             }
 
-            .copied-toast {
+            .back-btn {
                 position: fixed;
                 bottom: 20px;
                 right: 20px;
-                background: var(--success-color);
-                color: white;
-                padding: 10px 20px;
-                border-radius: 5px;
-                opacity: 0;
-                transform: translateY(20px);
+                background: white;
+                color: #4361ee;
+                padding: 12px 25px;
+                border-radius: 30px;
+                text-decoration: none;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
                 transition: all 0.3s ease;
             }
 
-            .copied-toast.show {
+            .back-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .toast {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #48bb78;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-size: 0.9rem;
+                opacity: 0;
+                transition: all 0.3s ease;
+            }
+
+            .toast.show {
                 opacity: 1;
-                transform: translateY(0);
             }
 
             @keyframes fadeInDown {
@@ -467,46 +462,42 @@ app.get('/admin/users/view', (req, res) => {
                 }
             }
 
-            .back-button {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                background: white;
-                color: var(--primary-color);
-                padding: 12px 25px;
-                border-radius: 30px;
-                text-decoration: none;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-                transition: all 0.3s ease;
+            .loading {
+                text-align: center;
+                color: white;
+                padding: 20px;
             }
 
-            .back-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-                color: var(--accent-color);
+            @media (max-width: 768px) {
+                .user-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                }
             }
         </style>
     </head>
     <body>
-        <div class="dashboard-container">
-            <header class="dashboard-header">
-                <h1 class="dashboard-title">User Management</h1>
-                <div class="user-count">
+        <div class="container">
+            <div class="header">
+                <h1>User Management</h1>
+                <div class="user-counter">
                     <i class="fas fa-users"></i>
-                    <span id="userCountText">Loading users...</span>
+                    <span id="userCount">Loading users...</span>
                 </div>
-            </header>
+            </div>
 
-            <div class="user-grid" id="userGrid">
-                <!-- Users will be populated here -->
+            <div id="userGrid" class="user-grid">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading users...</p>
+                </div>
             </div>
         </div>
 
-        <a href="/admin" class="back-button">
+        <a href="/admin" class="back-btn">
             <i class="fas fa-arrow-left"></i> Back to Dashboard
         </a>
 
-        <div class="copied-toast" id="copiedToast">
+        <div id="toast" class="toast">
             Chat ID copied to clipboard!
         </div>
 
@@ -514,15 +505,19 @@ app.get('/admin/users/view', (req, res) => {
             async function fetchUsers() {
                 try {
                     const response = await fetch('/admin/users');
-                    const users = await response.json();
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        throw new Error(data.message);
+                    }
+
+                    document.getElementById('userCount').textContent = \`\${data.count} Users Found\`;
+
                     const userGrid = document.getElementById('userGrid');
-                    const userCountText = document.getElementById('userCountText');
-
-                    userCountText.textContent = \`\${users.length} Users Found\`;
-
-                    if (users.length === 0) {
+                    
+                    if (data.users.length === 0) {
                         userGrid.innerHTML = \`
-                            <div class="no-users">
+                            <div style="grid-column: 1/-1; text-align: center; color: white;">
                                 <i class="fas fa-users fa-3x mb-3"></i>
                                 <h3>No Users Found</h3>
                                 <p>Start adding users to see them here.</p>
@@ -531,16 +526,14 @@ app.get('/admin/users/view', (req, res) => {
                         return;
                     }
 
-                    userGrid.innerHTML = users.map((user, index) => \`
-                        <div class="user-card" style="animation-delay: \${index * 0.1}s;">
-                            <div class="user-image-container">
-                                <img src="\${user.image}" class="user-image" alt="\${user.firstName}'s avatar">
-                            </div>
+                    userGrid.innerHTML = data.users.map(user => \`
+                        <div class="user-card">
+                            <img src="\${user.image}" alt="\${user.firstName}'s avatar" class="user-image">
                             <div class="user-info">
                                 <div class="user-name">\${user.firstName} \${user.lastName}</div>
                                 <div class="user-username">@\${user.username || 'No username'}</div>
-                                <div class="user-chatid">
-                                    <span>Chat ID: \${user.chatid}</span>
+                                <div class="user-id">
+                                    <span>ID: \${user.chatid}</span>
                                     <button class="copy-btn" onclick="copyToClipboard('\${user.chatid}')">
                                         <i class="fas fa-copy"></i> Copy
                                     </button>
@@ -549,34 +542,31 @@ app.get('/admin/users/view', (req, res) => {
                         </div>
                     \`).join('');
 
-                    // Add animation class to cards after they're added to DOM
-                    setTimeout(() => {
-                        document.querySelectorAll('.user-card').forEach(card => {
-                            card.classList.add('animate');
-                        });
-                    }, 100);
-
                 } catch (error) {
-                    console.error('Error fetching users:', error);
+                    console.error('Error:', error);
                     document.getElementById('userGrid').innerHTML = \`
-                        <div class="alert alert-danger" role="alert">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            Error loading users. Please try again later.
+                        <div style="grid-column: 1/-1; text-align: center; color: white;">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                            <h3>Error Loading Users</h3>
+                            <p>\${error.message}</p>
                         </div>
                     \`;
                 }
             }
 
             function copyToClipboard(text) {
-                navigator.clipboard.writeText(text).then(() => {
-                    const toast = document.getElementById('copiedToast');
-                    toast.classList.add('show');
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                    }, 2000);
-                }).catch(err => {
-                    console.error('Failed to copy text:', err);
-                });
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        const toast = document.getElementById('toast');
+                        toast.classList.add('show');
+                        setTimeout(() => {
+                            toast.classList.remove('show');
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy:', err);
+                        alert('Failed to copy chat ID');
+                    });
             }
 
             document.addEventListener('DOMContentLoaded', fetchUsers);
@@ -586,6 +576,22 @@ app.get('/admin/users/view', (req, res) => {
   `);
 });
 
+// Debug endpoint
+app.get('/debug/users', async (req, res) => {
+  try {
+    const users = await readUsers();
+    res.json({
+      success: true,
+      count: users.length,
+      users: users
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unexpected error:', err);
@@ -687,97 +693,88 @@ bot.onText(/\/start/, async (msg) => {
     let chatId = msg.chat.id;
     
     try {
-        // Convert and validate chatId
-        if (typeof chatId === 'string' && chatId.startsWith('{')) {
-            chatId = JSON.parse(chatId);
-        }
         chatId = Number(chatId);
-
         if (isNaN(chatId)) {
-            console.error('Invalid chatId:', chatId);
-            return;
+            throw new Error('Invalid chat ID format');
         }
 
-        // Get user information from the message
         const userData = {
             chatid: chatId,
             firstName: msg.from.first_name || '',
             lastName: msg.from.last_name || '',
-            username: msg.from.username || '',
-            joinDate: new Date().toISOString(),
-            lastSeen: new Date().toISOString()
+            username: msg.from.username || ''
         };
 
-        // Get user's profile photos
-        try {
-            const userPhotos = await bot.getUserProfilePhotos(msg.from.id, { limit: 1 });
-            if (userPhotos && userPhotos.photos.length > 0) {
-                const photoFile = await bot.getFile(userPhotos.photos[0][0].file_id);
-                userData.image = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${photoFile.file_path}`;
-            } else {
-                // Generate avatar using user initials if no photo
-                const initials = `${(userData.firstName || 'U')[0]}${(userData.lastName || 'U')[0]}`;
-                userData.image = `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=random&size=200`;
-            }
-        } catch (photoError) {
-            console.error('Error fetching user photo:', photoError);
-            // Set default avatar if photo fetch fails
-            userData.image = `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.firstName || 'U')}&background=random&size=200`;
-        }
-
+        // Save user data
         const users = await readUsers();
+        const existingUser = users.find(user => user.chatid === chatId.toString());
 
-        // Check if user already exists
-        const existingUser = users.find(user => user.chatid === chatId);
-        if (!existingUser) {
-            // Add new user
-            await writeUsers(userData);
-            console.log('New user added:', userData);
-        } else {
-            // Update existing user's information
-            await sendDataToSheet([{
+        if (existingUser) {
+            await writeUsers({
                 ...existingUser,
-                ...userData,
-                lastSeen: new Date().toISOString()
-            }]);
-            console.log('Existing user updated:', userData);
+                ...userData
+            });
+        } else {
+            await writeUsers(userData);
         }
 
-        // Send a personalized welcome message with a nice card format
+        // First message - Welcome
         const welcomeMessage = `
-🌟 *Welcome, ${userData.firstName}!* 🌟
+🎉 <b>Welcome to AI Products Bot!</b>
 
-I'm your AI-powered shopping assistant! I can help you find the best products from:
-• Amazon
-• Flipkart
-• Meesho
+Hello <b>${userData.firstName}</b>! I'm your personal shopping assistant.`;
 
-Simply type a product name to get started!
-
-*Quick Tips:*
-• Use specific keywords for better results
-• Include brand names if you have preferences
-• You can ask for deals and offers too!
-
-Ready to start shopping? 🛍️`;
-
-        await bot.sendMessage(chatId, welcomeMessage, {
-            parse_mode: 'Markdown',
-            reply_markup: {
-                keyboard: [
-                    ['🔍 Search Products'],
-                    ['🎯 Today\'s Deals', '❤️ My Wishlist'],
-                    ['📱 Contact Support', '❓ Help']
-                ],
-                resize_keyboard: true
-            }
+        await bot.sendMessage(chatId, welcomeMessage, { 
+            parse_mode: 'HTML' 
         });
 
+        // Second message - Platforms (after 500ms)
+        setTimeout(async () => {
+            const platformsMessage = `
+<b>🛍️ I Can Search Products From:</b>
+
+📦 <b>Amazon</b> - Best Deals
+🔷 <b>Flipkart</b> - Top Offers
+💫 <b>Meesho</b> - Budget Picks`;
+
+            await bot.sendMessage(chatId, platformsMessage, { 
+                parse_mode: 'HTML' 
+            });
+        }, 500);
+
+        // Third message - How to use (after 1000ms)
+        setTimeout(async () => {
+            const howToMessage = `
+<b>📝 How to Use:</b>
+
+Simply type any product name to search!
+Example: "iPhone 13" or "Nike shoes"`;
+
+            await bot.sendMessage(chatId, howToMessage, { 
+                parse_mode: 'HTML' 
+            });
+        }, 1000);
+
+        // Fourth message - Tips (after 1500ms)
+        setTimeout(async () => {
+            const tipsMessage = `
+<b>💡 Pro Tips:</b>
+
+• Use specific product names
+• Include brand names
+• Ask for "deals" or "offers"
+
+<i>Ready to start? Type a product name!</i> 🚀`;
+
+            await bot.sendMessage(chatId, tipsMessage, { 
+                parse_mode: 'HTML' 
+            });
+        }, 1500);
+
     } catch (error) {
-        console.error('Error handling /start command:', error);
-        // Try to send an error message to the user
+        console.error('Error in /start command:', error);
         try {
-            await bot.sendMessage(chatId, 'Sorry, I encountered an error. Please try again later.');
+            await bot.sendMessage(chatId, '❌ Sorry, I encountered an error. Please try again later.');
         } catch (msgError) {
             console.error('Error sending error message:', msgError);
         }
