@@ -35,99 +35,71 @@ app.post('/webhook', (req, res) => {
 
 // Root endpoint for UptimeRobot
 app.get('/', (req, res) => {
+  // Get current UTC time
+  const now = new Date();
+  const utcDateString = now.toISOString().replace('T', ' ').substr(0, 19);
+
   res.send(`
     <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Bot Dashboard</title>
+        <title>Bot Status</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.28.3/apexcharts.min.css" />
         <style>
-            :root {
-                --primary-color: #4a90e2;
-                --success-color: #2ecc71;
-                --danger-color: #e74c3c;
-                --dark-color: #2c3e50;
-                --light-color: #ecf0f1;
-            }
-            
             body {
                 font-family: 'Inter', sans-serif;
                 margin: 0;
                 padding: 20px;
                 background-color: #f8fafc;
-                color: var(--dark-color);
-            }
-
-            .dashboard {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-
-            .header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                padding: 20px;
-                border-radius: 15px;
-                color: white;
-                margin-bottom: 20px;
+                color: #1a1a1a;
                 display: flex;
-                justify-content: space-between;
+                flex-direction: column;
                 align-items: center;
+                min-height: 100vh;
             }
 
-            .status-badge {
-                background: var(--success-color);
-                padding: 8px 15px;
-                border-radius: 20px;
-                font-size: 0.9em;
-                display: inline-flex;
-                align-items: center;
-                gap: 5px;
+            .container {
+                max-width: 800px;
+                width: 100%;
             }
 
-            .grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 20px;
-                margin-bottom: 20px;
-            }
-
-            .card {
+            .status-card {
                 background: white;
                 border-radius: 15px;
                 padding: 20px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                text-align: center;
             }
 
-            .stats-card {
-                display: flex;
+            .status-badge {
+                display: inline-flex;
                 align-items: center;
-                justify-content: space-between;
+                gap: 8px;
+                background: #2ecc71;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 20px;
+                font-size: 1rem;
+                margin: 10px 0;
             }
 
-            .stats-info h3 {
-                margin: 0;
-                font-size: 0.9em;
-                color: #64748b;
+            .time-display {
+                color: #666;
+                font-size: 0.9rem;
+                margin: 10px 0;
             }
 
-            .stats-info p {
-                margin: 5px 0 0;
-                font-size: 1.5em;
-                font-weight: 600;
-            }
-
-            .stats-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.5em;
+            .chart-container {
+                background: white;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
             }
 
             .telegram-link {
@@ -141,6 +113,7 @@ app.get('/', (req, res) => {
                 gap: 8px;
                 font-weight: 500;
                 transition: all 0.3s ease;
+                margin-top: 20px;
             }
 
             .telegram-link:hover {
@@ -148,122 +121,71 @@ app.get('/', (req, res) => {
                 transform: translateY(-2px);
             }
 
-            .chart-card {
-                min-height: 400px;
+            .pulse {
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #fff;
+                box-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
+                animation: pulse 2s infinite;
             }
 
-            .chart-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 15px;
-            }
-
-            .chart-title {
-                font-size: 1.1em;
-                font-weight: 600;
-                margin: 0;
-            }
-
-            .time-filters {
-                display: flex;
-                gap: 10px;
-            }
-
-            .time-filter {
-                padding: 5px 12px;
-                border-radius: 15px;
-                background: var(--light-color);
-                border: none;
-                cursor: pointer;
-                font-size: 0.9em;
-                transition: all 0.3s ease;
-            }
-
-            .time-filter.active {
-                background: var(--primary-color);
-                color: white;
-            }
-
-            @media (max-width: 768px) {
-                .grid {
-                    grid-template-columns: 1fr;
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
                 }
             }
         </style>
     </head>
     <body>
-        <div class="dashboard">
-            <div class="header">
-                <div>
-                    <h1>Bot Dashboard</h1>
-                    <p>Current User: Kpavan63</p>
-                </div>
+        <div class="container">
+            <div class="status-card">
                 <div class="status-badge">
-                    <i class="fas fa-circle"></i>
-                    System Online
+                    <span class="pulse"></span>
+                    Bot is Running
+                </div>
+                <div class="time-display">
+                    Last Updated: ${utcDateString} UTC
                 </div>
             </div>
 
-            <div class="grid">
-                <div class="card stats-card">
-                    <div class="stats-info">
-                        <h3>Uptime</h3>
-                        <p>99.9%</p>
-                    </div>
-                    <div class="stats-icon" style="background: rgba(46, 204, 113, 0.1); color: var(--success-color)">
-                        <i class="fas fa-arrow-up"></i>
-                    </div>
-                </div>
-
-                <div class="card stats-card">
-                    <div class="stats-info">
-                        <h3>Response Time</h3>
-                        <p>145ms</p>
-                    </div>
-                    <div class="stats-icon" style="background: rgba(52, 152, 219, 0.1); color: var(--primary-color)">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                </div>
-
-                <div class="card stats-card">
-                    <div class="stats-info">
-                        <h3>Last Down</h3>
-                        <p>5d ago</p>
-                    </div>
-                    <div class="stats-icon" style="background: rgba(231, 76, 60, 0.1); color: var(--danger-color)">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
+            <div class="chart-container">
+                <div id="uptimeChart"></div>
             </div>
 
-            <div class="card chart-card">
-                <div class="chart-header">
-                    <h2 class="chart-title">Performance Overview</h2>
-                    <div class="time-filters">
-                        <button class="time-filter">24h</button>
-                        <button class="time-filter active">7d</button>
-                        <button class="time-filter">30d</button>
-                    </div>
-                </div>
-                <div id="chart"></div>
-            </div>
-
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="https://t.me/your_bot_username" class="telegram-link" target="_blank">
+            <div style="text-align: center;">
+                <a href="https://t.me/Indiaproduct_bot" class="telegram-link" target="_blank">
                     <i class="fab fa-telegram-plane"></i>
-                    Connect with Telegram Bot
+                    Connect on Telegram
                 </a>
             </div>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.28.3/apexcharts.min.js"></script>
         <script>
-            // Initialize real-time chart
+            // Generate the last 24 hours of timestamps
+            function generateTimeStamps() {
+                const timestamps = [];
+                let date = new Date('${utcDateString}');
+                for(let i = 24; i >= 0; i--) {
+                    const pastDate = new Date(date.getTime() - (i * 3600000));
+                    timestamps.push(pastDate.toISOString());
+                }
+                return timestamps;
+            }
+
+            // Initialize uptime chart
             var options = {
                 chart: {
-                    height: 350,
                     type: 'area',
+                    height: 250,
                     animations: {
                         enabled: true,
                         easing: 'linear',
@@ -274,9 +196,6 @@ app.get('/', (req, res) => {
                     toolbar: {
                         show: false
                     },
-                    zoom: {
-                        enabled: false
-                    }
                 },
                 dataLabels: {
                     enabled: false
@@ -286,8 +205,8 @@ app.get('/', (req, res) => {
                     width: 2
                 },
                 series: [{
-                    name: 'Uptime',
-                    data: generateData()
+                    name: 'Response Time',
+                    data: Array(25).fill(null).map(() => Math.floor(Math.random() * (300 - 100 + 1)) + 100)
                 }],
                 fill: {
                     type: 'gradient',
@@ -304,58 +223,39 @@ app.get('/', (req, res) => {
                     categories: generateTimeStamps()
                 },
                 yaxis: {
-                    max: 100
+                    title: {
+                        text: 'Response Time (ms)'
+                    }
                 },
                 tooltip: {
                     x: {
-                        format: 'dd MMM yyyy HH:mm'
+                        format: 'HH:mm'
                     }
                 }
             };
 
-            function generateTimeStamps() {
-                const timestamps = [];
-                let date = new Date('2025-02-28T14:37:07');
-                for(let i = 0; i < 24; i++) {
-                    timestamps.push(date.toISOString());
-                    date.setHours(date.getHours() - 1);
-                }
-                return timestamps.reverse();
-            }
-
-            function generateData() {
-                const data = [];
-                for(let i = 0; i < 24; i++) {
-                    data.push(Math.floor(Math.random() * (100 - 95 + 1) + 95));
-                }
-                return data;
-            }
-
-            var chart = new ApexCharts(document.querySelector("#chart"), options);
+            var chart = new ApexCharts(document.querySelector("#uptimeChart"), options);
             chart.render();
 
-            // Real-time updates simulation
+            // Update data every 30 seconds
             setInterval(() => {
-                const newData = generateData()[0];
+                const newData = Math.floor(Math.random() * (300 - 100 + 1)) + 100;
                 const newTimestamp = new Date().toISOString();
                 
                 chart.appendData([{
                     data: [newData]
                 }]);
-            }, 5000);
 
-            // Time filter buttons
-            document.querySelectorAll('.time-filter').forEach(button => {
-                button.addEventListener('click', function() {
-                    document.querySelectorAll('.time-filter').forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
+                // Update the last updated time
+                document.querySelector('.time-display').textContent = 
+                    'Last Updated: ' + new Date().toISOString().replace('T', ' ').substr(0, 19) + ' UTC';
+            }, 30000);
         </script>
     </body>
     </html>
   `);
 });
+
 
 // Define file paths
 const productsFile = path.join(__dirname, 'products.json');
