@@ -1366,7 +1366,7 @@ app.get('/admin', (req, res) => {
       </div>
 
       <script>
-        const correctPin = '${process.env.ADMIN_PIN || '6300'}'; // Fetch PIN from environment variable or use default
+        const correctPin = '${process.env.ADMIN_PIN || '9722'}'; // Fetch PIN from environment variable or use default
 
         // Check if the PIN has already been verified
         const isPinVerified = localStorage.getItem('pinVerified') === 'true';
