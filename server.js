@@ -35,7 +35,326 @@ app.post('/webhook', (req, res) => {
 
 // Root endpoint for UptimeRobot
 app.get('/', (req, res) => {
-  res.send('Bot is running!');
+  res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bot Dashboard</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.28.3/apexcharts.min.css" />
+        <style>
+            :root {
+                --primary-color: #4a90e2;
+                --success-color: #2ecc71;
+                --danger-color: #e74c3c;
+                --dark-color: #2c3e50;
+                --light-color: #ecf0f1;
+            }
+            
+            body {
+                font-family: 'Inter', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background-color: #f8fafc;
+                color: var(--dark-color);
+            }
+
+            .dashboard {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 20px;
+                border-radius: 15px;
+                color: white;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .status-badge {
+                background: var(--success-color);
+                padding: 8px 15px;
+                border-radius: 20px;
+                font-size: 0.9em;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+
+            .card {
+                background: white;
+                border-radius: 15px;
+                padding: 20px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .stats-card {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .stats-info h3 {
+                margin: 0;
+                font-size: 0.9em;
+                color: #64748b;
+            }
+
+            .stats-info p {
+                margin: 5px 0 0;
+                font-size: 1.5em;
+                font-weight: 600;
+            }
+
+            .stats-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5em;
+            }
+
+            .telegram-link {
+                background: #0088cc;
+                color: white;
+                text-decoration: none;
+                padding: 12px 25px;
+                border-radius: 25px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+            }
+
+            .telegram-link:hover {
+                background: #006699;
+                transform: translateY(-2px);
+            }
+
+            .chart-card {
+                min-height: 400px;
+            }
+
+            .chart-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            .chart-title {
+                font-size: 1.1em;
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .time-filters {
+                display: flex;
+                gap: 10px;
+            }
+
+            .time-filter {
+                padding: 5px 12px;
+                border-radius: 15px;
+                background: var(--light-color);
+                border: none;
+                cursor: pointer;
+                font-size: 0.9em;
+                transition: all 0.3s ease;
+            }
+
+            .time-filter.active {
+                background: var(--primary-color);
+                color: white;
+            }
+
+            @media (max-width: 768px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="dashboard">
+            <div class="header">
+                <div>
+                    <h1>Bot Dashboard</h1>
+                    <p>Current User: Kpavan63</p>
+                </div>
+                <div class="status-badge">
+                    <i class="fas fa-circle"></i>
+                    System Online
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card stats-card">
+                    <div class="stats-info">
+                        <h3>Uptime</h3>
+                        <p>99.9%</p>
+                    </div>
+                    <div class="stats-icon" style="background: rgba(46, 204, 113, 0.1); color: var(--success-color)">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+
+                <div class="card stats-card">
+                    <div class="stats-info">
+                        <h3>Response Time</h3>
+                        <p>145ms</p>
+                    </div>
+                    <div class="stats-icon" style="background: rgba(52, 152, 219, 0.1); color: var(--primary-color)">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                </div>
+
+                <div class="card stats-card">
+                    <div class="stats-info">
+                        <h3>Last Down</h3>
+                        <p>5d ago</p>
+                    </div>
+                    <div class="stats-icon" style="background: rgba(231, 76, 60, 0.1); color: var(--danger-color)">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Performance Overview</h2>
+                    <div class="time-filters">
+                        <button class="time-filter">24h</button>
+                        <button class="time-filter active">7d</button>
+                        <button class="time-filter">30d</button>
+                    </div>
+                </div>
+                <div id="chart"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="https://t.me/your_bot_username" class="telegram-link" target="_blank">
+                    <i class="fab fa-telegram-plane"></i>
+                    Connect with Telegram Bot
+                </a>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.28.3/apexcharts.min.js"></script>
+        <script>
+            // Initialize real-time chart
+            var options = {
+                chart: {
+                    height: 350,
+                    type: 'area',
+                    animations: {
+                        enabled: true,
+                        easing: 'linear',
+                        dynamicAnimation: {
+                            speed: 1000
+                        }
+                    },
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: {
+                        enabled: false
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
+                },
+                series: [{
+                    name: 'Uptime',
+                    data: generateData()
+                }],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.7,
+                        opacityTo: 0.3,
+                        stops: [0, 90, 100]
+                    }
+                },
+                colors: ['#4a90e2'],
+                xaxis: {
+                    type: 'datetime',
+                    categories: generateTimeStamps()
+                },
+                yaxis: {
+                    max: 100
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd MMM yyyy HH:mm'
+                    }
+                }
+            };
+
+            function generateTimeStamps() {
+                const timestamps = [];
+                let date = new Date('2025-02-28T14:37:07');
+                for(let i = 0; i < 24; i++) {
+                    timestamps.push(date.toISOString());
+                    date.setHours(date.getHours() - 1);
+                }
+                return timestamps.reverse();
+            }
+
+            function generateData() {
+                const data = [];
+                for(let i = 0; i < 24; i++) {
+                    data.push(Math.floor(Math.random() * (100 - 95 + 1) + 95));
+                }
+                return data;
+            }
+
+            var chart = new ApexCharts(document.querySelector("#chart"), options);
+            chart.render();
+
+            // Real-time updates simulation
+            setInterval(() => {
+                const newData = generateData()[0];
+                const newTimestamp = new Date().toISOString();
+                
+                chart.appendData([{
+                    data: [newData]
+                }]);
+            }, 5000);
+
+            // Time filter buttons
+            document.querySelectorAll('.time-filter').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.time-filter').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        </script>
+    </body>
+    </html>
+  `);
 });
 
 // Define file paths
